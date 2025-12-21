@@ -9,8 +9,12 @@ let app;
 
 // Setup in-memory database and express app for testing
 beforeAll(async () => {
+    jest.setTimeout(30000); // 30s timeout
     process.env.JWT_SECRET = 'testsecret';
     process.env.NODE_ENV = 'test';
+
+    // Mock sendEmail to avoid SMTP overhead/failures
+    jest.mock('../utils/sendEmail', () => jest.fn(() => Promise.resolve()));
 
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
@@ -27,6 +31,7 @@ beforeAll(async () => {
     app.use('/api/shops', require('../routes/shopRoutes'));
     app.use('/api/orders', require('../routes/orderRoutes'));
     app.use('/api/cart', require('../routes/cartRoutes'));
+    app.use('/api/analytics', require('../routes/analyticsRoutes'));
 
     app.use(errorHandler);
 });
@@ -167,5 +172,38 @@ describe('Cart & Orders (Edge Cases included)', () => {
         const Product = require('../models/Product');
         const product = await Product.findById(productId);
         expect(product.stock).toEqual(3); // 5 - 2 = 3
+    });
+});
+
+describe('Analytics API', () => {
+    let adminToken;
+    let vendorToken;
+
+    beforeAll(async () => {
+        const adminRes = await request(app).post('/api/auth/register').send({
+            name: 'Admin', email: 'admin@test.com', password: 'password123', role: 'admin'
+        });
+        adminToken = adminRes.body.token;
+
+        const vendorRes = await request(app).post('/api/auth/login').send({
+            email: 'vendor@example.com', password: 'password123'
+        });
+        vendorToken = vendorRes.body.token;
+    });
+
+    it('should fetch admin analytics', async () => {
+        const res = await request(app)
+            .get('/api/analytics/admin')
+            .set('Authorization', `Bearer ${adminToken}`);
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.data).toHaveProperty('totalRevenue');
+    });
+
+    it('should fetch vendor analytics', async () => {
+        const res = await request(app)
+            .get('/api/analytics/vendor')
+            .set('Authorization', `Bearer ${vendorToken}`);
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.data).toHaveProperty('totalItemsSold');
     });
 });

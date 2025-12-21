@@ -3,115 +3,85 @@ import axios from 'axios';
 import ProductManager from './ProductManager';
 
 const VendorDashboard = ({ user }) => {
+    const [analytics, setAnalytics] = useState(null);
     const [orders, setOrders] = useState([]);
-    const [hasShop, setHasShop] = useState(true);
-    const [isChecking, setIsChecking] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const checkShopAndFetchOrders = async () => {
-            try {
-                if (!user || !user.token) return;
-
-                // 1. Check if user has a shop
-                const shopRes = await axios.get('http://localhost:5000/api/shops', {
-                    headers: { Authorization: `Bearer ${user.token}` }
-                });
-
-                const myShop = shopRes.data.data.find(s => s.owner === user._id);
-                setHasShop(!!myShop);
-
-                // 2. Fetch orders
-                const orderRes = await axios.get('http://localhost:5000/api/orders/vendor', {
-                    headers: { Authorization: `Bearer ${user.token}` }
-                });
-                setOrders(orderRes.data);
-            } catch (error) {
-                console.error(error);
-                if (error.response?.status === 404) setHasShop(false);
-            } finally {
-                setIsChecking(false);
-            }
-        };
-        checkShopAndFetchOrders();
+        if (user) {
+            fetchData();
+        }
     }, [user]);
 
-    const initializeShop = async () => {
-        setIsLoading(true);
+    const fetchData = async () => {
         try {
-            await axios.post('http://localhost:5000/api/shops', {
-                name: `${user.name}'s Shop`,
-                description: 'Initial shop setup.'
-            }, {
-                headers: { Authorization: `Bearer ${user.token}` }
-            });
-            setHasShop(true);
+            const config = {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            };
+            const [analyticsRes, ordersRes] = await Promise.all([
+                axios.get('http://localhost:5000/api/analytics/vendor', config),
+                axios.get('http://localhost:5000/api/orders/vendor', config)
+            ]);
+            setAnalytics(analyticsRes.data.data);
+            setOrders(ordersRes.data);
+            setLoading(false);
         } catch (error) {
-            alert('Failed to initialize shop: ' + (error.response?.data?.message || error.message));
-        } finally {
-            setIsLoading(false);
+            console.error('Error fetching dashboard data:', error);
+            setLoading(false);
         }
     };
 
-    if (!user || user.role !== 'vendor') return <div className="centered-box"><h2>Access Denied</h2></div>;
-    if (isChecking) return <div className="centered-box"><div className="card"><p>Loading dashboard...</p><div className="loading-indicator" style={{ marginTop: '1rem' }}></div></div></div>;
-
-    if (!hasShop) {
-        return (
-            <div className="centered-box">
-                <div className="card" style={{ width: '100%', maxWidth: '480px', textAlign: 'center' }}>
-                    <h3>Shop Setup Required</h3>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '2rem' }}>
-                        You haven't set up your shop profile yet. Initialize your shop to start selling products.
-                    </p>
-                    <button onClick={initializeShop} disabled={isLoading} style={{ width: '100%' }}>
-                        {isLoading ? 'Setting up...' : 'Initialize My Shop'}
-                    </button>
-                    {isLoading && <div className="loading-indicator" style={{ marginTop: '1rem' }}></div>}
-                </div>
-            </div>
-        );
-    }
+    if (!user || user.role !== 'vendor') return <div>Access Denied</div>;
+    if (loading) return <div>Loading Dashboard...</div>;
 
     return (
-        <div>
-            <h2 style={{ marginBottom: '2rem' }}>Vendor Dashboard</h2>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
+            <h2>Vendor Dashboard</h2>
 
-            <section style={{ marginBottom: '4rem' }}>
-                <h3 style={{ marginBottom: '1.5rem' }}>Recent Sales</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', margin: '20px 0' }}>
+                <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
+                    <small>Total Products</small>
+                    <h3>{analytics?.totalProducts || 0}</h3>
+                </div>
+                <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
+                    <small>Total Orders</small>
+                    <h3>{analytics?.totalOrders || 0}</h3>
+                </div>
+                <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
+                    <small>Items Sold</small>
+                    <h3>{analytics?.totalItemsSold || 0}</h3>
+                </div>
+            </div>
+
+            <section style={{ marginTop: '40px' }}>
+                <h3>Recent Orders</h3>
                 {orders.length === 0 ? (
-                    <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-                        <p style={{ color: 'var(--muted)' }}>No transactions recorded yet.</p>
-                    </div>
+                    <p>No orders yet.</p>
                 ) : (
-                    <div className="table-container">
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Customer</th>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+                        <thead>
+                            <tr style={{ background: '#f5f5f5', textAlign: 'left' }}>
+                                <th style={{ padding: '10px' }}>Date</th>
+                                <th style={{ padding: '10px' }}>Product</th>
+                                <th style={{ padding: '10px' }}>Qty</th>
+                                <th style={{ padding: '10px' }}>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {orders.map((order, i) => (
+                                <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
+                                    <td style={{ padding: '10px' }}>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                    <td style={{ padding: '10px' }}>{order.products.map(p => p.product.name).join(', ')}</td>
+                                    <td style={{ padding: '10px' }}>{order.products.reduce((acc, p) => acc + p.quantity, 0)}</td>
+                                    <td style={{ padding: '10px' }}>{order.status}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {orders.map((item, index) => (
-                                    <tr key={index}>
-                                        <td>{new Date(item.date).toLocaleDateString()}</td>
-                                        <td>{item.product.name}</td>
-                                        <td>{item.quantity}</td>
-                                        <td>{item.customer ? item.customer.name : 'Guest'}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                            ))}
+                        </tbody>
+                    </table>
                 )}
             </section>
 
-            <div className="hr"></div>
-
-            <ProductManager user={user} />
+            <ProductManager user={user} refreshAnalytics={fetchData} />
         </div>
     );
 };

@@ -107,6 +107,11 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
         req.body.shop = shop._id;
     }
 
+    // Handle file upload
+    if (req.file) {
+        req.body.images = [`/uploads/${req.file.filename}`];
+    }
+
     const product = await Product.create(req.body);
 
     res.status(201).json({ success: true, data: product });
@@ -126,6 +131,11 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
 
     if (shop.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return next(new ErrorResponse(`User ${req.user.id} is not authorized to update this product`, 403));
+    }
+
+    // Handle file upload
+    if (req.file) {
+        req.body.images = [`/uploads/${req.file.filename}`];
     }
 
     product = await Product.findByIdAndUpdate(req.params.id, req.body, {

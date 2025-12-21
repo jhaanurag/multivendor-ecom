@@ -27,8 +27,13 @@ app.use(mongoSanitize()); // Prevent NoSQL Injection
 app.use(xss()); // Prevent XSS
 app.use(limiter); // Rate Limiting
 app.use(cors());
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: false, // Allow images to be loaded from our server
+}));
 app.use(morgan('dev'));
+
+// Static folder
+app.use('/uploads', express.static('uploads'));
 
 // Basic route
 app.get('/', (req, res) => {
@@ -41,6 +46,7 @@ app.use('/api/shops', require('./routes/shopRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/cart', require('./routes/cartRoutes'));
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
 // Error Handler
 app.use(errorHandler);

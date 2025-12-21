@@ -1,30 +1,28 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ProductManager = ({ user }) => {
+const ProductManager = ({ user, refreshAnalytics }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [editingProduct, setEditingProduct] = useState(null);
+    const [image, setImage] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         price: '',
-        stock: ''
+        stock: '',
+        tags: ''
     });
 
-    const API_URL = 'http://localhost:5000/api/products';
-    const VENDOR_API_URL = 'http://localhost:5000/api/products/vendor';
-    const config = {
-        headers: { Authorization: `Bearer ${user.token}` }
-    };
-
     useEffect(() => {
-        fetchMyProducts();
+        fetchProducts();
     }, []);
 
-    const fetchMyProducts = async () => {
+    const fetchProducts = async () => {
         try {
-            const res = await axios.get(VENDOR_API_URL, config);
+            const config = {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            };
+            const res = await axios.get('http://localhost:5000/api/products/vendor', config);
             setProducts(res.data.data);
             setLoading(false);
         } catch (error) {
@@ -37,143 +35,98 @@ const ProductManager = ({ user }) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleFileChange = (e) => {
+        setImage(e.target.files[0]);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const data = new FormData();
+        data.append('name', formData.name);
+        data.append('description', formData.description);
+        data.append('price', formData.price);
+        data.append('stock', formData.stock);
+        data.append('tags', formData.tags);
+        if (image) {
+            data.append('image', image);
+        }
+
         try {
-            if (editingProduct) {
-                await axios.put(`${API_URL}/${editingProduct._id}`, formData, config);
-            } else {
-                await axios.post(API_URL, formData, config);
-            }
-            setFormData({ name: '', description: '', price: '', stock: '' });
-            setEditingProduct(null);
-            fetchMyProducts();
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            };
+            await axios.post('http://localhost:5000/api/products', data, config);
+            setFormData({ name: '', description: '', price: '', stock: '', tags: '' });
+            setImage(null);
+            fetchProducts();
+            refreshAnalytics();
+            alert('Product added!');
         } catch (error) {
-            alert('Operation failed: ' + (error.response?.data?.message || error.message));
+            alert('Error: ' + error.response?.data?.message);
         }
     };
 
-    const handleEdit = (product) => {
-        setEditingProduct(product);
-        setFormData({
-            name: product.name,
-            description: product.description,
-            price: product.price,
-            stock: product.stock
-        });
-    };
-
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            try {
-                await axios.delete(`${API_URL}/${id}`, config);
-                fetchMyProducts();
-            } catch (error) {
-                alert('Delete failed: ' + (error.response?.data?.message || error.message));
-            }
+        if (!window.confirm('Delete?')) return;
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            };
+            await axios.delete(`http://localhost:5000/api/products/${id}`, config);
+            fetchProducts();
+            refreshAnalytics();
+        } catch (error) {
+            console.error('Error deleting product:', error);
         }
     };
 
     return (
-        <div style={{ marginTop: '4rem' }}>
-            <h3 style={{ marginBottom: '2rem' }}>Inventory Management</h3>
+        <div style={{ marginTop: '40px' }}>
+            <h3>Manage Products</h3>
 
-            <div className="card" style={{ maxWidth: '600px', marginBottom: '4rem' }}>
-                <h4 style={{ marginBottom: '1.5rem' }}>{editingProduct ? 'Edit Product' : 'Add New Product'}</h4>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Product Name</label>
-                        <input name="name" value={formData.name} onChange={handleInputChange} required placeholder="e.g. Wireless Mouse" />
-                    </div>
-                    <div className="form-group">
-                        <label>Description</label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="Brief product description"
-                            style={{ minHeight: '100px', resize: 'vertical' }}
-                        />
-                    </div>
-                    <div className="flex-gap" style={{ marginBottom: '1.5rem' }}>
-                        <div className="form-group" style={{ flex: 1 }}>
-                            <label>Price ($)</label>
-                            <input type="number" name="price" value={formData.price} onChange={handleInputChange} required placeholder="0.00" step="0.01" />
-                        </div>
-                        <div className="form-group" style={{ flex: 1 }}>
-                            <label>Stock Level</label>
-                            <input type="number" name="stock" value={formData.stock} onChange={handleInputChange} required placeholder="0" />
-                        </div>
-                    </div>
-                    <div className="flex-gap">
-                        <button type="submit" style={{ flex: 1 }}>{editingProduct ? 'Update Product' : 'Add Product'}</button>
-                        {editingProduct && (
-                            <button
-                                type="button"
-                                onClick={() => { setEditingProduct(null); setFormData({ name: '', description: '', price: '', stock: '' }); }}
-                                className="btn-ghost secondary"
-                                style={{ flex: 1 }}
-                            >
-                                Cancel
-                            </button>
-                        )}
-                    </div>
+            <div style={{ border: '1px solid #eee', padding: '20px', borderRadius: '8px', margin: '20px 0' }}>
+                <h4>Add New Product</h4>
+                <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '10px', marginTop: '10px' }}>
+                    <input name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required />
+                    <textarea name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} required />
+                    <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} required />
+                    <input type="number" name="stock" placeholder="Stock" value={formData.stock} onChange={handleInputChange} required />
+                    <input name="tags" placeholder="Tags (comma separated)" value={formData.tags} onChange={handleInputChange} />
+                    <input type="file" onChange={handleFileChange} accept="image/*" />
+                    <button type="submit" style={{ padding: '10px', background: '#333', color: '#fff', border: 'none' }}>Add Product</button>
                 </form>
             </div>
 
-            <h4 style={{ marginBottom: '1.5rem' }}>Current Stock</h4>
-            {loading ? (
-                <div className="card"><div className="loading-indicator"></div></div>
-            ) : (
-                <div className="table-container">
-                    <table className="table">
+            <div style={{ marginTop: '20px' }}>
+                <h4>Your Products</h4>
+                {loading ? <p>Loading...</p> : (
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
                         <thead>
-                            <tr>
-                                <th>Item Name</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-                                <th style={{ textAlign: 'right' }}>Actions</th>
+                            <tr style={{ background: '#f5f5f5', textAlign: 'left' }}>
+                                <th style={{ padding: '10px' }}>Name</th>
+                                <th style={{ padding: '10px' }}>Price</th>
+                                <th style={{ padding: '10px' }}>Stock</th>
+                                <th style={{ padding: '10px' }}>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {products.length === 0 ? (
-                                <tr>
-                                    <td colSpan="4" style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)' }}>
-                                        No products in inventory.
+                            {products.map(p => (
+                                <tr key={p._id} style={{ borderBottom: '1px solid #eee' }}>
+                                    <td style={{ padding: '10px' }}>{p.name}</td>
+                                    <td style={{ padding: '10px' }}>${p.price}</td>
+                                    <td style={{ padding: '10px' }}>{p.stock}</td>
+                                    <td style={{ padding: '10px' }}>
+                                        <button onClick={() => handleDelete(p._id)} style={{ color: 'red' }}>Delete</button>
                                     </td>
                                 </tr>
-                            ) : (
-                                products.map((product) => (
-                                    <tr key={product._id}>
-                                        <td style={{ fontWeight: 500 }}>{product.name}</td>
-                                        <td>${product.price}</td>
-                                        <td>{product.stock}</td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                                <button
-                                                    onClick={() => handleEdit(product)}
-                                                    className="btn-ghost"
-                                                    style={{ fontSize: '0.75rem', padding: '0.4rem 0.6rem' }}
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(product._id)}
-                                                    className="btn-ghost"
-                                                    style={{ fontSize: '0.75rem', padding: '0.4rem 0.6rem', color: 'var(--error)' }}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
+                            ))}
                         </tbody>
                     </table>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };
