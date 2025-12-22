@@ -195,6 +195,12 @@ export const Preloader = ({ isLoading, onComplete }) => {
       return;
     }
 
+    // Ensure refs exist before animating
+    if (!textRef.current || !progressRef.current || !preloaderRef.current) {
+      if (!isLoading) onComplete?.();
+      return;
+    }
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ onComplete });
 

@@ -59,16 +59,20 @@ const Navigation = ({ user, logout }) => {
     return () => ctx.revert();
   }, []);
 
-  // Hide/show nav based on scroll direction
+  // Sticky Nav Logic (Simplified - No Hiding)
   useEffect(() => {
-    if (prefersReducedMotion() || !navRef.current) return;
-
+    if (!navRef.current) return;
+    
+    // Always visible, just glass effect on scroll
     gsap.to(navRef.current, {
-      y: direction === "down" && isScrolled ? -100 : 0,
-      duration: 0.4,
-      ease: "power3.out",
+      y: 0, 
+      backgroundColor: isScrolled ? "var(--bg-alt)" : "transparent", // Solid/Glass on scroll
+      backdropFilter: isScrolled ? "blur(12px)" : "none",
+      borderBottom: isScrolled ? "1px solid var(--border)" : "none",
+      duration: 0.3,
+      ease: "power2.out"
     });
-  }, [direction, isScrolled]);
+  }, [isScrolled]);
 
   // Menu open/close animation
   useLayoutEffect(() => {
@@ -362,7 +366,7 @@ const Navigation = ({ user, logout }) => {
                   ref={(el) => (linksRef.current[filteredLinks.length + idx] = el)}
                   onMouseMove={(e) => handleLinkMouseMove(e, filteredLinks.length + idx)}
                   onMouseLeave={() => handleLinkMouseLeave(filteredLinks.length + idx)}
-                  className="nav__link"
+                  className={`nav__link ${link.to === "/register" ? "nav__link--register" : ""}`}
                   style={{
                     textDecoration: "none",
                     color: link.to === "/register" ? "var(--bg)" : "var(--fg)",
