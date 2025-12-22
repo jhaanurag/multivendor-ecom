@@ -18,6 +18,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
   const scaleThriveRef = useRef(null);
   const joinSectionRef = useRef(null);
   const statsRef = useRef([]);
+  const iconRefs = useRef([]); // Refs for Bento SVGs
 
   // Master GSAP Context
   useLayoutEffect(() => {
@@ -47,14 +48,8 @@ const LandingPage = ({ isPreloaderFinished }) => {
         );
       });
 
-      // Subtext Reveal (Line by Line)
-      heroTl.to(".hero-subtext-line", {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        stagger: 0.1,
-        ease: "power3.out",
-      }, "-=0.8"); // Start while headline is still finishing
+      // Subtext Reveal (Moved to ScrollTrigger below)
+
 
       // ===================================
       // 2. SCALE / THRIVE (Parallax Marquee)
@@ -139,6 +134,90 @@ const LandingPage = ({ isPreloaderFinished }) => {
         });
       });
 
+      // ===================================
+      // 6. MOVED HERO TEXT (Fade Up)
+      // ===================================
+      gsap.utils.toArray('.moved-hero-text').forEach((text) => {
+        gsap.to(text, {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: text,
+            start: "top 85%",
+          }
+        });
+      });
+
+      // ===================================
+      // 7. BENTO ICON ANIMATIONS (Simplified GSAP)
+      // ===================================
+
+      // 1. Global Payments: Card Float + Coin Pulse
+      if (iconRefs.current[0]) {
+        const card = iconRefs.current[0].querySelector('.svg-card-body');
+        const coins = iconRefs.current[0].querySelectorAll('.svg-coin');
+
+        if (card) gsap.to(card, { y: -4, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+        gsap.to(coins, { scale: 1.15, duration: 1.2, yoyo: true, repeat: -1, stagger: 0.3, ease: "power1.inOut", transformOrigin: "center" });
+      }
+
+      // 2. Analytics: Bars Grow
+      if (iconRefs.current[1]) {
+        const bars = iconRefs.current[1].querySelectorAll('.svg-bar');
+        const trendLine = iconRefs.current[1].querySelector('.svg-trend');
+
+        gsap.to(bars, {
+          scaleY: 1.3,
+          transformOrigin: "bottom center",
+          duration: 1,
+          stagger: { each: 0.15, yoyo: true, repeat: -1 },
+          ease: "power1.inOut"
+        });
+
+        if (trendLine) {
+          const length = trendLine.getTotalLength ? trendLine.getTotalLength() : 100;
+          gsap.set(trendLine, { strokeDasharray: length, strokeDashoffset: length });
+          gsap.to(trendLine, { strokeDashoffset: 0, duration: 1.5, repeat: -1, repeatDelay: 1.5, ease: "power2.out" });
+        }
+      }
+
+      // 3. Edge Scale: Server Pulse + Ring Expand
+      if (iconRefs.current[2]) {
+        const server = iconRefs.current[2].querySelector('.svg-server');
+        const rings = iconRefs.current[2].querySelectorAll('.svg-ring');
+        const satellites = iconRefs.current[2].querySelectorAll('.svg-satellite');
+
+        if (server) gsap.to(server, { scale: 1.08, duration: 1.5, yoyo: true, repeat: -1, ease: "sine.inOut", transformOrigin: "center" });
+        gsap.to(rings, { scale: 2.5, opacity: 0, duration: 2, stagger: { each: 1, repeat: -1 }, ease: "power1.out", transformOrigin: "center" });
+        gsap.to(satellites, { scale: 1.2, duration: 1, yoyo: true, repeat: -1, stagger: 0.25, ease: "power1.inOut", transformOrigin: "center" });
+      }
+
+      // 4. Enterprise Security: Shield Pulse + Scan Line
+      if (iconRefs.current[3]) {
+        const shield = iconRefs.current[3].querySelector('.svg-shield');
+        const scanLine = iconRefs.current[3].querySelector('.svg-scan');
+
+        if (shield) gsap.to(shield, { scale: 1.02, duration: 2, yoyo: true, repeat: -1, ease: "sine.inOut", transformOrigin: "center 70%" });
+        if (scanLine) gsap.to(scanLine, { y: 50, duration: 1.2, repeat: -1, ease: "power1.inOut", yoyo: true });
+      }
+
+      // 5. Vendor Dashboard: Shimmer + Element Pulse
+      if (iconRefs.current[4]) {
+        const shimmer = iconRefs.current[4].querySelector('.svg-shimmer');
+        const elements = iconRefs.current[4].querySelectorAll('.svg-ui-el');
+
+        if (shimmer) gsap.to(shimmer, { x: 260, duration: 2.5, repeat: -1, repeatDelay: 1, ease: "power1.inOut" });
+        gsap.to(elements, { opacity: 0.7, duration: 0.8, stagger: { each: 0.1, yoyo: true, repeat: -1 }, ease: "power1.inOut" });
+      }
+
+      // 6. Support: Typing Dots Bounce
+      if (iconRefs.current[5]) {
+        const dots = iconRefs.current[5].querySelectorAll('.svg-typing-dot');
+        gsap.to(dots, { y: -4, duration: 0.4, stagger: { each: 0.12, yoyo: true, repeat: -1 }, ease: "power1.inOut" });
+      }
+
     }, containerRef);
 
     return () => ctx.revert();
@@ -207,52 +286,23 @@ const LandingPage = ({ isPreloaderFinished }) => {
           </div>
 
           {/* Bottom Row: Buttons (Left) & Text (Right) */}
-          <div style={{
-            marginTop: "6rem",
+          {/* Bottom Buttons - Centered */}
+          <div ref={el => heroTextRef.current[3] = el} style={{
+            marginTop: "3rem",
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "2rem",
             width: "100%"
           }}>
-
-            {/* CTA Group - LEFT */}
-            <div ref={el => heroTextRef.current[3] = el} style={{
-              display: "flex",
-              gap: "1rem"
-            }}>
-              <Link to="/register" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
-                <span className="hero-btn-bubble"></span>
-                <span className="hero-btn-text">Start Selling</span>
-              </Link>
-              <Link to="/shop" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
-                <span className="hero-btn-bubble"></span>
-                <span className="hero-btn-text">Explore Shop</span>
-              </Link>
-            </div>
-
-            {/* Subtext - RIGHT - Line by Line Animation */}
-            <div style={{ textAlign: "right" }}>
-              {[
-                "The definitive platform for modern scaling.",
-                "Empowering sellers, delighting customers,",
-                "and redefining possibilities."
-              ].map((line, i) => (
-                <div key={i} style={{ overflow: "hidden" }}>
-                  <p className="hero-subtext-line" style={{
-                    fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
-                    color: "rgba(255, 255, 255, 0.9)",
-                    margin: 0,
-                    lineHeight: 1.4,
-                    fontWeight: 500,
-                    fontFamily: "var(--font-display)",
-                    transform: "translateY(100%)", // Start hidden down
-                    opacity: 0
-                  }}>
-                    {line}
-                  </p>
-                </div>
-              ))}
-            </div>
+            <Link to="/register" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
+              <span className="hero-btn-bubble"></span>
+              <span className="hero-btn-text">Start Selling</span>
+            </Link>
+            <Link to="/shop" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
+              <span className="hero-btn-bubble"></span>
+              <span className="hero-btn-text">Explore Shop</span>
+            </Link>
           </div>
         </div>
       </section>
@@ -331,6 +381,38 @@ const LandingPage = ({ isPreloaderFinished }) => {
         </div>
       </section>
 
+      {/* ================= MOVED TEXT SECTION ================= */}
+      <section style={{
+        padding: "8rem var(--space-lg)",
+        background: "var(--bg)",
+        display: "flex",
+        justifyContent: "center",
+        textAlign: "center"
+      }}>
+        <div style={{ maxWidth: "900px" }}>
+          {[
+            "The definitive platform for modern scaling.",
+            "Empowering sellers, delighting customers,",
+            "and redefining possibilities."
+          ].map((line, i) => (
+            <div key={i} style={{ overflow: "hidden" }}>
+              <p className="moved-hero-text" style={{
+                fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+                color: "var(--fg)",
+                margin: 0,
+                lineHeight: 1.3,
+                fontWeight: 500,
+                fontFamily: "var(--font-display)",
+                transform: "translateY(50px)", // Start offset for scroll trigger
+                opacity: 0
+              }}>
+                {line}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ================= MARQUEE SECTION ================= */}
       <section style={{
         padding: "6rem 0",
@@ -386,35 +468,165 @@ const LandingPage = ({ isPreloaderFinished }) => {
           </div>
 
           <div className="bento-grid" style={{ gridAutoRows: "250px", gap: "2rem" }}>
-            <div className="bento-item bento-item--large feature-card">
-              <div style={{ position: "absolute", top: 0, right: 0, padding: "2rem", fontSize: "4rem", opacity: 0.1 }}>💳</div>
-              <h3 style={{ fontSize: "2rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Global Payments</h3>
-              <p style={{ color: "var(--muted)", maxWidth: "80%" }}>Accept payments from anywhere in the world with automated tax handling and conversion at the edge.</p>
-            </div>
-            <div className="bento-item feature-card">
-              <div style={{ fontSize: "2rem", marginBottom: "auto" }}>📊</div>
-              <h3 style={{ fontSize: "1.2rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Analytics</h3>
-            </div>
-            <div className="bento-item feature-card">
-              <div style={{ fontSize: "2rem", marginBottom: "auto" }}>🚀</div>
-              <h3 style={{ fontSize: "1.2rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Edge Scale</h3>
-            </div>
-            <div className="bento-item bento-item--wide feature-card">
-              <div style={{ position: "absolute", bottom: 0, right: 0, padding: "1rem", fontSize: "3rem", opacity: 0.1 }}>🔒</div>
-              <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Enterprise Security</h3>
-              <p style={{ color: "var(--muted)" }}>Military-grade encryption for every transaction and user profile.</p>
+
+            {/* ======= GLOBAL PAYMENTS (Large - 2x2) ======= */}
+            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "row", padding: 0 }}>
+              {/* Text Zone */}
+              <div style={{ flex: "1 1 50%", padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                <h3 style={{ fontSize: "2rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Global Payments</h3>
+                <p style={{ color: "var(--muted)" }}>Accept payments from anywhere in the world with automated tax handling.</p>
+              </div>
+              {/* SVG Zone */}
+              <div ref={el => iconRefs.current[0] = el} style={{ flex: "1 1 50%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem" }}>
+                <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "200px", height: "auto" }}>
+                  {/* Credit Card */}
+                  <g className="svg-card-body">
+                    <rect x="10" y="15" width="80" height="50" rx="6" fill="var(--fg)" />
+                    <rect className="svg-chip" x="18" y="28" width="16" height="12" rx="2" fill="var(--bg)" opacity="0.6" />
+                    <rect className="svg-stripe" x="10" y="48" width="80" height="8" fill="var(--muted)" opacity="0.3" />
+                  </g>
+                  {/* Coins */}
+                  <circle className="svg-coin" cx="100" cy="25" r="10" fill="var(--muted)" stroke="var(--bg)" strokeWidth="2" />
+                  <circle className="svg-coin" cx="105" cy="55" r="8" fill="var(--muted)" stroke="var(--bg)" strokeWidth="2" />
+                </svg>
+              </div>
             </div>
 
-            {/* Perfectly Tiled Bottom Row */}
-            <div className="bento-item bento-item--large feature-card">
-              <h3 style={{ fontSize: "2rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Vendor <br /> Dashboard</h3>
-              <p style={{ color: "var(--muted)" }}>Manage your entire empire from a single, high-performance interface.</p>
-              <div style={{ marginTop: "auto", fontSize: "4rem", opacity: 0.2 }}>🏗️</div>
+            {/* ======= ANALYTICS (Small) ======= */}
+            <div className="bento-item feature-card" style={{ display: "flex", flexDirection: "column", padding: 0 }}>
+              {/* SVG Zone */}
+              <div ref={el => iconRefs.current[1] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "1.5rem" }}>
+                <svg viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "120px", height: "auto" }}>
+                  {/* Bars */}
+                  <rect className="svg-bar" x="10" y="45" width="15" height="20" fill="var(--fg)" />
+                  <rect className="svg-bar" x="32" y="30" width="15" height="35" fill="var(--fg)" />
+                  <rect className="svg-bar" x="54" y="18" width="15" height="47" fill="var(--fg)" />
+                  <rect className="svg-bar" x="76" y="5" width="15" height="60" fill="var(--muted)" />
+                  {/* Trend Line */}
+                  <path className="svg-trend" d="M17 42 L39 27 L61 15 L83 3" stroke="var(--accent)" strokeWidth="2" fill="none" strokeLinecap="round" />
+                </svg>
+              </div>
+              {/* Text Zone */}
+              <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid var(--border)" }}>
+                <h3 style={{ fontSize: "1.1rem", marginBottom: "0.25rem", fontFamily: "var(--font-display)" }}>Analytics</h3>
+                <p style={{ color: "var(--muted)", fontSize: "0.8rem", margin: 0 }}>Real-time insights.</p>
+              </div>
             </div>
-            <div className="bento-item bento-item--large feature-card">
-              <h3 style={{ fontSize: "2rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Support</h3>
-              <p style={{ color: "var(--muted)" }}>Dedicated enterprise support team available 24/7 for all your scaling needs.</p>
-              <div style={{ marginTop: "auto", fontSize: "4rem", opacity: 0.2 }}>💎</div>
+
+            {/* ======= EDGE SCALE (Small) ======= */}
+            <div className="bento-item feature-card" style={{ display: "flex", flexDirection: "column", padding: 0 }}>
+              {/* SVG Zone */}
+              <div ref={el => iconRefs.current[2] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "1.5rem" }}>
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "100px", height: "auto" }}>
+                  {/* Pulse Rings */}
+                  <circle className="svg-ring" cx="50" cy="50" r="15" stroke="var(--muted)" strokeWidth="1" fill="none" opacity="0.5" />
+                  <circle className="svg-ring" cx="50" cy="50" r="15" stroke="var(--muted)" strokeWidth="1" fill="none" opacity="0.5" />
+                  {/* Server Core */}
+                  <rect className="svg-server" x="40" y="40" width="20" height="20" rx="3" fill="var(--fg)" />
+                  {/* Satellites */}
+                  <circle className="svg-satellite" cx="50" cy="12" r="6" fill="var(--muted)" />
+                  <circle className="svg-satellite" cx="88" cy="50" r="5" fill="var(--muted)" />
+                  <circle className="svg-satellite" cx="12" cy="50" r="5" fill="var(--muted)" />
+                  <circle className="svg-satellite" cx="50" cy="88" r="5" fill="var(--muted)" />
+                  {/* Connection Lines */}
+                  <line className="svg-connection" x1="50" y1="40" x2="50" y2="18" stroke="var(--muted)" strokeWidth="1" strokeDasharray="3 3" />
+                  <line className="svg-connection" x1="60" y1="50" x2="83" y2="50" stroke="var(--muted)" strokeWidth="1" strokeDasharray="3 3" />
+                  <line className="svg-connection" x1="40" y1="50" x2="17" y2="50" stroke="var(--muted)" strokeWidth="1" strokeDasharray="3 3" />
+                  <line className="svg-connection" x1="50" y1="60" x2="50" y2="83" stroke="var(--muted)" strokeWidth="1" strokeDasharray="3 3" />
+                </svg>
+              </div>
+              {/* Text Zone */}
+              <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid var(--border)" }}>
+                <h3 style={{ fontSize: "1.1rem", marginBottom: "0.25rem", fontFamily: "var(--font-display)" }}>Edge Scale</h3>
+                <p style={{ color: "var(--muted)", fontSize: "0.8rem", margin: 0 }}>Global distribution.</p>
+              </div>
+            </div>
+
+            {/* ======= ENTERPRISE SECURITY (Wide - 2x1) ======= */}
+            <div className="bento-item bento-item--wide feature-card" style={{ display: "flex", flexDirection: "row", padding: 0 }}>
+              {/* Text Zone */}
+              <div style={{ flex: "1 1 55%", padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Enterprise Security</h3>
+                <p style={{ color: "var(--muted)" }}>Military-grade encryption for every transaction.</p>
+              </div>
+              {/* SVG Zone */}
+              <div ref={el => iconRefs.current[3] = el} style={{ flex: "1 1 45%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem" }}>
+                <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "80px", height: "auto" }}>
+                  {/* Shield */}
+                  <path className="svg-shield" d="M40 95 C40 95 75 75 75 40 L75 15 L40 5 L5 15 L5 40 C5 75 40 95 40 95 Z" fill="var(--fg)" />
+                  {/* Scan Line */}
+                  <rect className="svg-scan" x="10" y="20" width="60" height="2" fill="var(--accent)" opacity="0.8" />
+                  {/* Check */}
+                  <path className="svg-check" d="M28 50 L36 58 L54 40" stroke="var(--bg)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                </svg>
+              </div>
+            </div>
+
+            {/* ======= VENDOR DASHBOARD (Large - 2x2) ======= */}
+            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: 0 }}>
+              {/* Text Zone */}
+              <div style={{ padding: "2rem", borderBottom: "1px solid var(--border)" }}>
+                <h3 style={{ fontSize: "2rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Vendor Dashboard</h3>
+                <p style={{ color: "var(--muted)", margin: 0 }}>Manage your entire empire from a single interface.</p>
+              </div>
+              {/* SVG Zone */}
+              <div ref={el => iconRefs.current[4] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem" }}>
+                <svg viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "350px", height: "auto" }}>
+                  {/* Dashboard Frame */}
+                  <rect x="0" y="0" width="200" height="100" rx="6" fill="var(--bg)" stroke="var(--border)" strokeWidth="1" />
+                  {/* Header */}
+                  <rect className="svg-ui-el" x="0" y="0" width="200" height="16" fill="var(--fg)" opacity="0.08" />
+                  <circle cx="10" cy="8" r="3" fill="var(--muted)" opacity="0.5" />
+                  <circle cx="20" cy="8" r="3" fill="var(--muted)" opacity="0.5" />
+                  <circle cx="30" cy="8" r="3" fill="var(--muted)" opacity="0.5" />
+                  {/* Sidebar */}
+                  <rect className="svg-ui-el" x="0" y="16" width="40" height="84" fill="var(--fg)" opacity="0.04" />
+                  {/* Content */}
+                  <rect className="svg-ui-el" x="50" y="26" width="80" height="10" rx="2" fill="var(--fg)" opacity="0.15" />
+                  <rect className="svg-ui-el" x="50" y="44" width="120" height="6" rx="1" fill="var(--muted)" opacity="0.1" />
+                  <rect className="svg-ui-el" x="50" y="56" width="100" height="6" rx="1" fill="var(--muted)" opacity="0.1" />
+                  <rect className="svg-ui-el" x="50" y="72" width="60" height="16" rx="3" fill="var(--fg)" opacity="0.2" />
+                  {/* Shimmer */}
+                  <defs><linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="transparent" /><stop offset="50%" stopColor="var(--fg)" stopOpacity="0.05" /><stop offset="100%" stopColor="transparent" /></linearGradient></defs>
+                  <rect className="svg-shimmer" x="-60" y="0" width="60" height="100" fill="url(#shimmerGrad)" />
+                </svg>
+              </div>
+            </div>
+
+            {/* ======= SUPPORT (Large - 2x2) ======= */}
+            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: 0 }}>
+              {/* Text Zone */}
+              <div style={{ padding: "2rem", borderBottom: "1px solid var(--border)" }}>
+                <h3 style={{ fontSize: "2rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Support</h3>
+                <p style={{ color: "var(--muted)", margin: 0 }}>Dedicated enterprise support available 24/7.</p>
+              </div>
+              {/* SVG Zone */}
+              <div ref={el => iconRefs.current[5] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem" }}>
+                <svg viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "200px", height: "auto" }}>
+                  {/* Bubble 1 (Left - User) */}
+                  <g className="svg-bubble">
+                    <rect x="5" y="50" width="60" height="40" rx="8" fill="var(--muted)" opacity="0.25" />
+                    <polygon points="20,90 25,90 15,100" fill="var(--muted)" opacity="0.25" />
+                    {/* Typing dots inside user bubble */}
+                    <circle cx="22" cy="70" r="4" fill="var(--fg)" opacity="0.4" />
+                    <circle cx="35" cy="70" r="4" fill="var(--fg)" opacity="0.4" />
+                    <circle cx="48" cy="70" r="4" fill="var(--fg)" opacity="0.4" />
+                  </g>
+                  {/* Bubble 2 (Right - Support) */}
+                  <g className="svg-bubble">
+                    <rect x="75" y="10" width="60" height="45" rx="8" fill="var(--fg)" />
+                    <polygon points="120,55 125,55 130,65" fill="var(--fg)" />
+                    {/* Lines inside support bubble */}
+                    <rect x="85" y="22" width="40" height="4" rx="2" fill="var(--bg)" opacity="0.6" />
+                    <rect x="85" y="32" width="30" height="4" rx="2" fill="var(--bg)" opacity="0.4" />
+                    <rect x="85" y="42" width="35" height="4" rx="2" fill="var(--bg)" opacity="0.4" />
+                  </g>
+                  {/* Typing Dots */}
+                  <circle className="svg-typing-dot" cx="22" cy="70" r="4" fill="var(--fg)" opacity="0.6" />
+                  <circle className="svg-typing-dot" cx="35" cy="70" r="4" fill="var(--fg)" opacity="0.6" />
+                  <circle className="svg-typing-dot" cx="48" cy="70" r="4" fill="var(--fg)" opacity="0.6" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -425,6 +637,10 @@ const LandingPage = ({ isPreloaderFinished }) => {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+
+       /* Removed old bento css */
+
+
       `}</style>
 
       {/* ================= STATS SECTION ================= */}
