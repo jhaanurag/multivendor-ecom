@@ -375,7 +375,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
 
           <div style={{ marginBottom: "6rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
             <div>
-              <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", marginBottom: "1rem", color: "var(--muted)" }}>Everything you need.</p>
+              <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", marginBottom: "1rem", color: "var(--muted)", fontSize: "1.5rem" }}>Everything you need.</p>
               <h2 style={{ fontSize: "clamp(2rem, 5vw, 4rem)", fontFamily: "var(--font-display)", marginBottom: "1rem", lineHeight: 1 }}>
                 Built for the <br /><span style={{ fontStyle: "italic", color: "var(--muted)" }}>Modern</span> Web.
               </h2>
