@@ -238,8 +238,10 @@ void main() {
   flowValue += mouseInfluence * 0.5;
   
   // Generate highly saturated color using HSB
-  // Hue based on flowValue, Saturation = 1.0, Brightness = 0.8
-  vec3 hsb = vec3(fract(flowValue * 0.2 + u_colorShift), 1.0, 0.85);
+  // Restrict Hue to 0.5 - 0.9 (Cyan -> Blue -> Purple -> Magenta) to avoid red/green
+  float hueBase = fract(flowValue * 0.15 + u_colorShift);
+  float restrictedHue = 0.5 + hueBase * 0.4; 
+  vec3 hsb = vec3(restrictedHue, 1.0, 0.85);
   vec3 color = hsb2rgb(hsb);
   
   // No additive glows or highlights to avoid "white wash"
