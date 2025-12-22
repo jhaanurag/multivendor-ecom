@@ -201,63 +201,67 @@ void main() {
   // Diagonal flow direction
   vec2 flowDir = normalize(vec2(1.0, 0.7));
   
-  // Time-based animation (slow, elegant)
-  float time = u_time * u_flowSpeed;
+  // Time-based animation (faster, more dynamic)
+  float time = u_time * u_flowSpeed * 1.5; // Bumped multiplier
   
-  // Mouse interaction - stronger distortion for follow effect
+  // Mouse interaction - aggressive distortion for high-impact follow effect
   vec2 mousePos = u_mouse;
   float mouseDist = length(uv - mousePos);
-  float mouseInfluence = smoothstep(0.6, 0.0, mouseDist) * 0.25; // Increased range and intensity
+  float mouseInfluence = smoothstep(0.8, 0.0, mouseDist) * 0.45; // Increased range and intensity
   
-  // UV distortion for fluid motion + mouse
+  // UV distortion for fluid motion + aggressive mouse pull
   vec2 distortedUV = uv * aspect;
-  distortedUV += (mousePos - 0.5) * mouseInfluence * 0.5; // Stronger push
+  distortedUV += (mousePos - 0.5) * mouseInfluence * 1.5; // Triple the push
   
-  // Multiple layers of noise for depth
-  float noise1 = fbm(vec3(distortedUV * u_noiseScale, time * 0.3), 4);
-  float noise2 = fbm(vec3(distortedUV * u_noiseScale * 0.5 + 100.0, time * 0.2), 3);
-  float noise3 = fbm(vec3(distortedUV * u_noiseScale * 2.0 + 200.0, time * 0.4), 2);
+  // Multiple layers of noise for extreme depth and motion
+  float noise1 = fbm(vec3(distortedUV * u_noiseScale, time * 0.4), 5); // Faster, more octaves
+  float noise2 = fbm(vec3(distortedUV * u_noiseScale * 0.4 + 100.0, time * 0.25), 4);
+  float noise3 = fbm(vec3(distortedUV * u_noiseScale * 1.8 + 200.0, time * 0.6), 3);
   
-  // Combine noise layers with different weights
-  float combinedNoise = noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2;
+  // Massive swells of motion
+  float noiseSwell = snoise(vec3(uv * 0.5, time * 0.1)) * 0.2;
   
-  // Apply diagonal flow
-  float flowValue = dot(uv, flowDir) + combinedNoise * 0.4;
+  // Combine noise layers with aggressive weighting
+  float combinedNoise = (noise1 * 0.4 + noise2 * 0.4 + noise3 * 0.2) + noiseSwell;
   
-  // Add scroll-based offset (subtle)
-  flowValue += u_scrollProgress * 0.15;
+  // Apply diagonal flow with more distortion
+  float flowValue = dot(uv, flowDir) + combinedNoise * 0.6;
   
-  // Add subtle mouse-based color shift
-  flowValue += mouseInfluence * 0.3;
+  // Add scroll-based offset
+  flowValue += u_scrollProgress * 0.25;
+  
+  // Aggressive mouse-based color shift
+  flowValue += mouseInfluence * 0.5;
   
   // Get gradient color
   vec3 color = getGradientColor(flowValue, u_colorShift);
   
-  // Add subtle glow/bloom effect
-  float glow = fbm(vec3(distortedUV * 3.0, time * 0.5), 2) * 0.5 + 0.5;
-  color += glow * 0.08;
+  // Add prominent glow/bloom effect
+  float glow = fbm(vec3(distortedUV * 2.5, time * 0.6), 3) * 0.5 + 0.5;
+  color += glow * 0.15;
   
-  // Mouse glow effect - stronger highlight near cursor
-  color += mouseInfluence * 0.25;
+  // Mouse highlight - prominent near cursor
+  color += mouseInfluence * 0.4;
   
-  // Add light diffusion (soft highlights)
-  float highlight = pow(noise2 * 0.5 + 0.5, 2.0);
-  color += highlight * 0.1;
+  // Add heavy light diffusion
+  float highlight = pow(noise2 * 0.5 + 0.5, 1.5);
+  color += highlight * 0.2;
   
-  // Apply brightness and contrast
-  color = (color - 0.5) * u_contrast + 0.5;
+  // Apply brightness and contrast - slightly more contrast for grain visibility
+  color = (color - 0.5) * (u_contrast + 0.2) + 0.5;
   color *= u_brightness;
   
-  // Film grain effect - doubled intensity for cinematic feel
-  float grain = snoise(vec3(uv * 800.0, time * 12.0)) * 0.06;
-  color += grain;
+  // HEAVY Film grain effect - much higher frequency and amplitude
+  float grain1 = snoise(vec3(uv * 1200.0, time * 15.0)) * 0.15;
+  float grain2 = snoise(vec3(uv * 2400.0, time * 20.0)) * 0.08; // High frequency micro-grain
+  color += (grain1 + grain2) * (1.0 - mouseInfluence * 0.5); // Slightly reduce grain in cursor ripple for "focus"
   
-  // Soft vignette for depth
-  float vignette = 1.0 - length((uv - 0.5) * 0.8);
+  // Soft vignette for edge depth
+  float vignette = 1.0 - length((uv - 0.5) * 1.1);
   vignette = smoothstep(0.0, 1.0, vignette);
-  color *= 0.9 + vignette * 0.1;
+  color *= 0.85 + vignette * 0.15;
   
-  // Output with slight transparency for overlay blending
+  // Final color output
   fragColor = vec4(color, 1.0);
 }
 `;
@@ -595,7 +599,7 @@ const StripeGradientBackground = ({
         />
       )}
 
-      {/* Noise overlay for texture - enhanced grain */}
+      {/* Noise overlay for texture - aggressively enhanced grain */}
       <div
         style={{
           position: "absolute",
@@ -603,8 +607,8 @@ const StripeGradientBackground = ({
           left: 0,
           width: "100%",
           height: "100%",
-          opacity: 0.06,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          opacity: 0.15, // Bumped from 0.06
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
           pointerEvents: "none",
           mixBlendMode: "overlay",
         }}
