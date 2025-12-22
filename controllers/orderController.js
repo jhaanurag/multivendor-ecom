@@ -177,9 +177,16 @@ exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
 
     if (allFinished) {
         const parentOrder = await Order.findById(subOrder.parentOrder);
+        if (!parentOrder) {
+            return next(new ErrorResponse('Parent order not found', 404));
+        }
         // This is a simplified logic - you might want more nuanced parent status
-        parentOrder.status = 'delivered'; // or some 'completed' flag
-        await parentOrder.save();
+        try {
+            parentOrder.status = 'delivered'; // or some 'completed' flag
+            await parentOrder.save();
+        } catch (err) {
+            return next(new ErrorResponse('Failed to update parent order status', 500));
+        }
     }
 
     res.status(200).json({ success: true, data: subOrder });
