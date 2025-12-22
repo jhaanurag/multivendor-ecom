@@ -194,6 +194,13 @@ vec3 getGradientColor(float t, float shift) {
 // MAIN SHADER LOGIC
 // ============================================
 
+// HSB to RGB Conversion for maximum vibrancy
+vec3 hsb2rgb(vec3 c) {
+  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
 void main() {
   vec2 uv = v_uv;
   vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
@@ -201,28 +208,25 @@ void main() {
   // Diagonal flow direction
   vec2 flowDir = normalize(vec2(1.0, 0.7));
   
-  // Time-based animation (faster, more dynamic)
-  float time = u_time * u_flowSpeed * 1.5; // Bumped multiplier
+  // Time-based animation (fast, vibrant motion)
+  float time = u_time * u_flowSpeed * 2.0; 
   
-  // Mouse interaction - aggressive distortion for high-impact follow effect
+  // Mouse interaction - aggressive distortion
   vec2 mousePos = u_mouse;
   float mouseDist = length(uv - mousePos);
-  float mouseInfluence = smoothstep(0.8, 0.0, mouseDist) * 0.45; // Increased range and intensity
+  float mouseInfluence = smoothstep(0.8, 0.0, mouseDist) * 0.45;
   
   // UV distortion for fluid motion + aggressive mouse pull
   vec2 distortedUV = uv * aspect;
-  distortedUV += (mousePos - 0.5) * mouseInfluence * 1.5; // Triple the push
+  distortedUV += (mousePos - 0.5) * mouseInfluence * 1.5;
   
-  // Multiple layers of noise for extreme depth and motion
-  float noise1 = fbm(vec3(distortedUV * u_noiseScale, time * 0.4), 5); // Faster, more octaves
+  // noise layers for extreme depth and motion
+  float noise1 = fbm(vec3(distortedUV * u_noiseScale, time * 0.4), 5);
   float noise2 = fbm(vec3(distortedUV * u_noiseScale * 0.4 + 100.0, time * 0.25), 4);
   float noise3 = fbm(vec3(distortedUV * u_noiseScale * 1.8 + 200.0, time * 0.6), 3);
   
-  // Massive swells of motion
-  float noiseSwell = snoise(vec3(uv * 0.5, time * 0.1)) * 0.2;
-  
-  // Combine noise layers with aggressive weighting
-  float combinedNoise = (noise1 * 0.4 + noise2 * 0.4 + noise3 * 0.2) + noiseSwell;
+  // Combine noise layers
+  float combinedNoise = (noise1 * 0.4 + noise2 * 0.4 + noise3 * 0.2);
   
   // Apply diagonal flow with more distortion
   float flowValue = dot(uv, flowDir) + combinedNoise * 0.6;
@@ -230,31 +234,24 @@ void main() {
   // Add scroll-based offset
   flowValue += u_scrollProgress * 0.25;
   
-  // Aggressive mouse-based color shift
+  // Aggressive mouse-based hue shift
   flowValue += mouseInfluence * 0.5;
   
-  // Get gradient color
-  vec3 color = getGradientColor(flowValue, u_colorShift);
+  // Generate highly saturated color using HSB
+  // Hue based on flowValue, Saturation = 1.0, Brightness = 0.8
+  vec3 hsb = vec3(fract(flowValue * 0.2 + u_colorShift), 1.0, 0.85);
+  vec3 color = hsb2rgb(hsb);
   
-  // Add prominent glow/bloom effect
-  float glow = fbm(vec3(distortedUV * 2.5, time * 0.6), 3) * 0.5 + 0.5;
-  color += glow * 0.15;
+  // No additive glows or highlights to avoid "white wash"
   
-  // Mouse highlight - prominent near cursor
-  color += mouseInfluence * 0.4;
-  
-  // Add heavy light diffusion
-  float highlight = pow(noise2 * 0.5 + 0.5, 1.5);
-  color += highlight * 0.2;
-  
-  // Apply brightness and contrast
-  color = (color - 0.5) * (u_contrast + 0.1) + 0.5;
+  // Apply individual brightness and contrast
+  color = (color - 0.5) * (u_contrast + 0.3) + 0.5;
   color *= u_brightness;
   
-  // Soft vignette for edge depth
-  float vignette = 1.0 - length((uv - 0.5) * 1.1);
+  // Deep vignette for contrast and edge depth
+  float vignette = 1.0 - length((uv - 0.5) * 1.2);
   vignette = smoothstep(0.0, 1.0, vignette);
-  color *= 0.85 + vignette * 0.15;
+  color *= 0.7 + vignette * 0.3; // Deeper darkening at edges
   
   // Final color output
   fragColor = vec4(color, 1.0);
@@ -596,20 +593,7 @@ const StripeGradientBackground = ({
 
       {/* Removed noise overlay per request */}
 
-      {/* Optional overlay for content readability */}
-      {overlay && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: `rgba(255, 255, 255, ${overlayOpacity})`,
-            pointerEvents: "none",
-          }}
-        />
-      )}
+      {/* Removed overlay per request to ensure maximum vibrancy */}
 
       {/* Vignette overlay */}
       <div
