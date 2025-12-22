@@ -16,7 +16,8 @@ const LandingPage = () => {
   const containerRef = useRef(null);
   const heroTextRef = useRef([]);
   const scaleThriveRef = useRef(null);
-  const marqueeRef = useRef(null);
+  const joinSectionRef = useRef(null);
+  const statsRef = useRef([]);
   
   // Master GSAP Context
   useLayoutEffect(() => {
@@ -29,9 +30,6 @@ const LandingPage = () => {
       
       heroTextRef.current.forEach((el, i) => {
         if (!el) return;
-        // Split text logic would go here, but for simplicity/performance in React 
-        // without a library like SplitType, we animate the block or lines.
-        // For "Unique Best Ever" feel, we simply slide them up with precision.
         
         gsap.fromTo(el, 
           { y: 150, opacity: 0, rotateX: -20 },
@@ -46,12 +44,19 @@ const LandingPage = () => {
         );
       });
 
+      // Subtext Reveal (Line by Line)
+      gsap.to(".hero-subtext-line", {
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
+        stagger: 0.1,
+        ease: "power3.out",
+        delay: 1.2
+      });
+
       // ===================================
       // 2. SCALE / THRIVE (Parallax Marquee)
       // ===================================
-      // This fixes the "wrong alignment" by forcing a rigid structure 
-      // controlled entirely by GSAP scroll scrubbing.
-      
       const scaleTrack = scaleThriveRef.current.querySelector('.scale-track');
       const thriveTrack = scaleThriveRef.current.querySelector('.thrive-track');
       
@@ -86,6 +91,26 @@ const LandingPage = () => {
           }
         );
       });
+
+      // ===================================
+      // 4. JOIN TEXT SPLIT REVEAL
+      // ===================================
+      const joinWords = joinSectionRef.current.querySelectorAll('.join-word span');
+      gsap.fromTo(joinWords, 
+        { y: 100, opacity: 0, rotateX: -45 },
+        {
+          y: 0,
+          opacity: 1,
+          rotateX: 0,
+          duration: 1,
+          stagger: 0.05,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: joinSectionRef.current,
+            start: "top 75%",
+          }
+        }
+      );
 
     }, containerRef);
 
@@ -125,88 +150,88 @@ const LandingPage = () => {
         position: "relative"
       }}>
         
-        {/* Brand Tag */}
-        <div style={{ 
-          position: "absolute", top: "8rem", left: "50%", transform: "translateX(-50%)",
-          textTransform: "uppercase", letterSpacing: "0.2em", fontSize: "0.75rem", fontWeight: 600, opacity: 0.6
-        }}>
-          Multi-Vendor Platform © 2025
-        </div>
-
-        <div className="hero-content" style={{ textAlign: "center", zIndex: 10 }}>
+        <div className="hero-content" style={{ zIndex: 10, maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
           {/* Main Headline - Broken into lines for animation */}
-          <div style={{ overflow: "hidden", lineHeight: 0.9 }}>
+          <div style={{ overflow: "hidden", lineHeight: 0.9, textAlign: "center" }}>
             <h1 ref={el => heroTextRef.current[0] = el} style={{ 
               fontFamily: 'var(--font-display)', 
               fontSize: "clamp(4rem, 15vw, 12rem)", 
               letterSpacing: "-0.04em",
               color: "var(--fg)",
-              margin: 0
+              margin: 0,
+              textShadow: "0 10px 30px rgba(0,0,0,0.15)" // Better visibility
             }}>
               COMMERCE
             </h1>
           </div>
           
-          <div style={{ overflow: "hidden", lineHeight: 0.9 }}>
+          <div style={{ overflow: "hidden", lineHeight: 0.9, textAlign: "center" }}>
             <h1 ref={el => heroTextRef.current[1] = el} style={{ 
               fontFamily: 'var(--font-display)', 
               fontSize: "clamp(4rem, 15vw, 12rem)", 
               letterSpacing: "-0.04em",
               color: "var(--fg)",
               margin: 0,
-              fontStyle: "italic" // Stylistic choice
+              fontStyle: "italic", // Stylistic choice
+              textShadow: "0 10px 30px rgba(0,0,0,0.15)"
             }}>
               REIMAGINED
             </h1>
           </div>
 
-          {/* Subtext */}
-          <div style={{ overflow: "hidden", marginTop: "2rem" }}>
-             <p ref={el => heroTextRef.current[2] = el} style={{
-               fontSize: "clamp(1rem, 2vw, 1.5rem)",
-               maxWidth: "600px",
-               margin: "0 auto",
-               color: "var(--muted)",
-               lineHeight: 1.6
-             }}>
-               The definitive platform for modern scaling. Empowering sellers, delighting customers, and redefining possibilities.
-             </p>
-          </div>
+           {/* Bottom Row: Buttons (Left) & Text (Right) */}
+           <div style={{ 
+              marginTop: "5rem", 
+              display: "flex", 
+              justifyContent: "space-between", 
+              alignItems: "flex-end",
+              width: "100%",
+              padding: "0 2vw"
+           }}>
+              
+              {/* CTA Group - LEFT */}
+              <div ref={el => heroTextRef.current[3] = el} style={{ 
+                  display: "flex", 
+                  gap: "1rem"
+              }}>
+                <Link to="/register" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
+                  <span className="hero-btn-bubble"></span>
+                  <span className="hero-btn-text">Start Selling</span>
+                </Link>
+                <Link to="/shop" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-outline">
+                  <span className="hero-btn-bubble"></span>
+                  <span className="hero-btn-text">Explore Shop</span>
+                </Link>
+              </div>
 
-          {/* CTA Group */}
-          <div ref={el => heroTextRef.current[3] = el} style={{ marginTop: "6rem", display: "flex", gap: "1.5rem", justifyContent: "center" }}>
-            <Link to="/register" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="btn-primary" style={{
-              padding: "1.2rem 3rem",
-              backgroundColor: "var(--fg)",
-              color: "var(--bg)",
-              borderRadius: "50px",
-              fontSize: "0.9rem",
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              border: "1px solid var(--fg)"
-            }}>
-              Start Selling
-            </Link>
-            <Link to="/shop" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="btn-outline" style={{
-              padding: "1.2rem 3rem",
-              backgroundColor: "transparent",
-              color: "var(--fg)",
-              borderRadius: "50px",
-              fontSize: "0.9rem",
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              border: "1px solid var(--border)"
-            }}>
-              Explore Shop
-            </Link>
-          </div>
+              {/* Subtext - RIGHT - Line by Line Animation */}
+              <div style={{ textAlign: "right" }}>
+                {[
+                  "The definitive platform for modern scaling.",
+                  "Empowering sellers, delighting customers,",
+                  "and redefining possibilities."
+                ].map((line, i) => (
+                  <div key={i} style={{ overflow: "hidden" }}>
+                    <p className="hero-subtext-line" style={{
+                      fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
+                      color: "rgba(255, 255, 255, 0.9)",
+                      margin: 0,
+                      lineHeight: 1.4,
+                      fontWeight: 500,
+                      fontFamily: "var(--font-display)",
+                      transform: "translateY(100%)", // Start hidden down
+                      opacity: 0
+                    }}>
+                      {line}
+                    </p>
+                  </div>
+                ))}
+              </div>
+           </div>
         </div>
       </section>
 
-      {/* ================= SCALE / THRIVE SECTION (FIXED) ================= */}
-      {/* This section uses huge text moving in opposing directions for maximum impact */}
+      {/* ================= SCALE / THRIVE SECTION ================= */}
       <section ref={scaleThriveRef} style={{ 
         padding: "10rem 0", 
         background: "var(--bg)", 
@@ -243,7 +268,7 @@ const LandingPage = () => {
         <div className="thrive-track" style={{ 
           whiteSpace: "nowrap", 
           display: "flex", 
-          gap: "4rem",
+          gap: "4rem", 
           willChange: "transform"
         }}>
           {[...Array(8)].map((_, i) => (
@@ -262,13 +287,19 @@ const LandingPage = () => {
           ))}
         </div>
         
-        {/* Overlay Label */}
+        {/* Overlay Label - Clean Text */}
         <div style={{
           position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-          background: "var(--bg)", padding: "1rem 2rem", border: "1px solid var(--border)",
-          borderRadius: "100px", zIndex: 5
+          zIndex: 5
         }}>
-          <span style={{ fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>
+          <span style={{ 
+            fontSize: "1rem", 
+            fontWeight: 700, 
+            letterSpacing: "0.2em", 
+            textTransform: "uppercase",
+            color: "var(--fg)",
+            textShadow: "0 0 20px var(--bg)" 
+          }}>
             Unlock Global Potential
           </span>
         </div>
@@ -304,6 +335,151 @@ const LandingPage = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ================= STATS SECTION (RESTORED) ================= */}
+      <section style={{ 
+        padding: "6rem var(--space-lg)", 
+        borderTop: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
+        background: "var(--bg)" // Dark background
+      }}>
+        <div style={{ 
+          maxWidth: "1400px", 
+          margin: "0 auto", 
+          display: "grid", 
+          gridTemplateColumns: "repeat(4, 1fr)", 
+          gap: "2rem"
+        }}>
+          {[
+            { number: 49632, suffix: "+", label: "Active Users" },
+            { number: 1191, suffix: "+", label: "Vendors" },
+            { number: 99, suffix: "%", label: "Uptime" },
+            { number: 4.9, suffix: "", label: "Rating" }
+          ].map((stat, i) => (
+             <div key={i} style={{ 
+               textAlign: "center", 
+               borderRight: i !== 3 ? "1px solid var(--border)" : "none",
+               display: "flex",
+               flexDirection: "column",
+               alignItems: "center",
+               justifyContent: "center"
+             }}>
+               <h3 
+                 ref={el => statsRef.current[i] = el}
+                 data-target={stat.number}
+                 data-suffix={stat.suffix}
+                 style={{ 
+                 fontSize: "clamp(2.5rem, 4vw, 3.5rem)", 
+                 fontFamily: "var(--font-serif)", // Serif for numbers
+                 fontWeight: 400,
+                 margin: 0,
+                 color: "var(--fg)",
+                 fontStyle: "italic",
+                 lineHeight: 1,
+                 fontVariantNumeric: "tabular-nums" // Prevent jumping
+               }}>
+                 0{stat.suffix}
+               </h3>
+               <p style={{ 
+                 fontSize: "0.8rem", 
+                 fontWeight: 600, 
+                 textTransform: "uppercase", 
+                 letterSpacing: "0.15em", 
+                 color: "var(--muted)", 
+                 marginTop: "0.5rem" 
+               }}>
+                 {stat.label}
+               </p>
+             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ================= JOIN SELLERS SECTION (RESTORED) ================= */}
+      <section ref={el => joinSectionRef.current = el} style={{ 
+        padding: "10rem var(--space-lg)", 
+        background: "var(--bg)", 
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden" 
+      }}>
+        {/* Decorative Blur */}
+        <div style={{
+           position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+           width: "600px", height: "600px", background: "radial-gradient(circle, var(--accent) 0%, transparent 70%)",
+           opacity: 0.5, pointerEvents: "none"
+        }} />
+
+        <div style={{ position: "relative", zIndex: 2, maxWidth: "1000px", margin: "0 auto" }}>
+          <p style={{ fontSize: "0.9rem", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "2rem", color: "var(--muted)" }}>
+            Ready to transform your business?
+          </p>
+          
+          {/* Main Headline - Split for Animation */}
+          <h2 style={{ 
+            fontFamily: "var(--font-display)", 
+            fontSize: "clamp(3rem, 7vw, 6rem)", 
+            lineHeight: 0.9,
+            marginBottom: "3rem",
+            color: "var(--fg)",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: "0.2em 0.3em" /* Gap between words */
+          }}>
+            {/* Row 1: Join thousands of */}
+            <div style={{ display: "flex", gap: "0.3em", flexWrap: "wrap", justifyContent: "center", width: "100%" }}>
+              {["Join", "thousands", "of"].map((word, i) => (
+                <span key={i} className="join-word" style={{ display: "inline-block", overflow: "hidden" }}>
+                  <span style={{ display: "inline-block" }}>{word}</span>
+                </span>
+              ))}
+            </div>
+
+            {/* Row 2: successful sellers */}
+            <div style={{ width: "100%", marginTop: "1rem" }}>
+               <span style={{ 
+                 fontSize: "0.6em", 
+                 display: "flex", 
+                 justifyContent: "center", 
+                 gap: "0.3em",
+                 fontStyle: "italic", 
+                 fontFamily: "var(--font-serif)", 
+                 color: "var(--muted)" 
+               }}>
+                  {["successful", "sellers."].map((word, i) => (
+                    <span key={i} className="join-word" style={{ display: "inline-block", overflow: "hidden" }}>
+                      <span style={{ display: "inline-block" }}>{word}</span>
+                    </span>
+                  ))}
+               </span>
+            </div>
+          </h2>
+          
+          <p style={{ fontSize: "1.1rem", color: "var(--muted)", marginBottom: "4rem" }}>
+            Start your journey today. No credit card required.
+          </p>
+
+          <Link to="/register" className="btn-primary" style={{
+              display: "inline-block",
+              padding: "1.2rem 3rem",
+              backgroundColor: "var(--fg)",
+              color: "var(--bg)",
+              borderRadius: "4px",
+              fontSize: "1rem",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              textDecoration: "none",
+              transition: "transform 0.3s ease"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+          >
+            Get Started Now
+          </Link>
         </div>
       </section>
       
@@ -362,6 +538,69 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
+
+      {/* Scoped Styles for Hero Buttons */}
+      <style>{`
+        .hero-btn {
+            position: relative;
+            padding: 1rem 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-decoration: none;
+            overflow: hidden;
+            border-radius: 0; /* Square */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent; /* Invisible border initially */
+            background: transparent;
+            color: var(--fg);
+            transition: border-color 0.4s ease;
+        }
+
+        .hero-btn-bubble {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 0;
+        }
+
+        .hero-btn-primary .hero-btn-bubble {
+            background-color: var(--fg); /* Black fill on hover */
+        }
+
+        .hero-btn-outline .hero-btn-bubble {
+             background-color: var(--bg); /* White fill on hover */
+             border: 1px solid var(--fg); /* Add border to bubble/box */
+        }
+
+        .hero-btn-text {
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hero-btn:hover .hero-btn-bubble {
+            transform: translateY(0);
+        }
+
+        /* Primary Button: Text turns White on Black */
+        .hero-btn-primary:hover .hero-btn-text {
+            color: var(--bg); 
+        }
+
+        /* Outline Button: Text stays Main, but box appears */
+        .hero-btn-outline:hover .hero-btn-text {
+            color: var(--fg); 
+        }
+
+      `}</style>
 
     </div>
   );

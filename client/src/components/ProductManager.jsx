@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import gsap from 'gsap';
 
 const ProductManager = ({ user, refreshAnalytics }) => {
     const [products, setProducts] = useState([]);
@@ -13,9 +14,22 @@ const ProductManager = ({ user, refreshAnalytics }) => {
         tags: ''
     });
 
+    const formRef = useRef(null);
+    const listRef = useRef(null);
+
     useEffect(() => {
         fetchProducts();
     }, []);
+
+    // Animation for list items when products load
+    useEffect(() => {
+        if (!loading && products.length > 0) {
+            gsap.fromTo(".product-row",
+                { y: 20, opacity: 0 },
+                { y: 0, opacity: 1, stagger: 0.05, duration: 0.5, ease: "power2.out" }
+            );
+        }
+    }, [products, loading]);
 
     const fetchProducts = async () => {
         try {
@@ -84,47 +98,114 @@ const ProductManager = ({ user, refreshAnalytics }) => {
     };
 
     return (
-        <div style={{ marginTop: '40px' }}>
-            <h3>Manage Products</h3>
+        <div style={{ marginTop: '60px' }}>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '20px' }}>
+                Manage Products
+            </h3>
 
-            <div style={{ border: '1px solid #eee', padding: '20px', borderRadius: '8px', margin: '20px 0' }}>
-                <h4>Add New Product</h4>
-                <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '10px', marginTop: '10px' }}>
-                    <input name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required />
-                    <textarea name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} required />
-                    <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} required />
-                    <input type="number" name="stock" placeholder="Stock" value={formData.stock} onChange={handleInputChange} required />
-                    <input name="tags" placeholder="Tags (comma separated)" value={formData.tags} onChange={handleInputChange} />
-                    <input type="file" onChange={handleFileChange} accept="image/*" />
-                    <button type="submit" style={{ padding: '10px', background: '#333', color: '#fff', border: 'none' }}>Add Product</button>
+            {/* Add Product Form */}
+            <div ref={formRef} style={{ 
+                background: 'var(--bg)', 
+                border: '1px solid var(--border)', 
+                padding: '30px', 
+                borderRadius: '4px', 
+                marginBottom: '40px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+            }}>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '20px' }}>Add New Product</h4>
+                <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <input name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required 
+                            style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+                        <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} required 
+                            style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+                    </div>
+
+                    <textarea name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} required 
+                        style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)', minHeight: '100px' }} />
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <input type="number" name="stock" placeholder="Stock" value={formData.stock} onChange={handleInputChange} required 
+                            style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+                         <input name="tags" placeholder="Tags (comma separated)" value={formData.tags} onChange={handleInputChange} 
+                            style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                         <input type="file" onChange={handleFileChange} accept="image/*" 
+                            style={{ flex: 1, padding: '10px', background: 'var(--bg-alt)', border: '1px solid var(--border)' }} />
+                        <button type="submit" className="btn" style={{ 
+                            padding: '15px 30px', 
+                            background: 'var(--fg)', 
+                            color: 'var(--bg)', 
+                            fontWeight: 600, 
+                            border: '1px solid var(--fg)',
+                            cursor: 'pointer'
+                        }}>
+                            Add Product
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            <div style={{ marginTop: '20px' }}>
-                <h4>Your Products</h4>
-                {loading ? <p>Loading...</p> : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
-                        <thead>
-                            <tr style={{ background: '#f5f5f5', textAlign: 'left' }}>
-                                <th style={{ padding: '10px' }}>Name</th>
-                                <th style={{ padding: '10px' }}>Price</th>
-                                <th style={{ padding: '10px' }}>Stock</th>
-                                <th style={{ padding: '10px' }}>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.map(p => (
-                                <tr key={p._id} style={{ borderBottom: '1px solid #eee' }}>
-                                    <td style={{ padding: '10px' }}>{p.name}</td>
-                                    <td style={{ padding: '10px' }}>${p.price}</td>
-                                    <td style={{ padding: '10px' }}>{p.stock}</td>
-                                    <td style={{ padding: '10px' }}>
-                                        <button onClick={() => handleDelete(p._id)} style={{ color: 'red' }}>Delete</button>
-                                    </td>
+            {/* Product List */}
+            <div ref={listRef}>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '20px' }}>Your Products</h4>
+                
+                {loading ? (
+                    <p style={{ color: 'var(--muted)' }}>Loading items...</p>
+                ) : (
+                    <div style={{ 
+                        overflowX: 'auto', 
+                        border: '1px solid var(--border)', 
+                        borderRadius: '4px',
+                        background: 'var(--bg)'
+                    }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                            <thead style={{ background: 'var(--bg-alt)', borderBottom: '1px solid var(--border)' }}>
+                                <tr>
+                                    {['Name', 'Price', 'Stock', 'Action'].map(head => (
+                                        <th key={head} style={{ 
+                                            padding: '20px', 
+                                            textAlign: 'left', 
+                                            fontWeight: 600, 
+                                            color: 'var(--muted)', 
+                                            textTransform: 'uppercase', 
+                                            fontSize: '0.75rem',
+                                            letterSpacing: '0.05em' 
+                                        }}>
+                                            {head}
+                                        </th>
+                                    ))}
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {products.map((p, i) => (
+                                    <tr key={p._id} className="product-row" style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <td style={{ padding: '20px', fontWeight: 500 }}>{p.name}</td>
+                                        <td style={{ padding: '20px' }}>${p.price}</td>
+                                        <td style={{ padding: '20px' }}>{p.stock}</td>
+                                        <td style={{ padding: '20px' }}>
+                                            <button onClick={() => handleDelete(p._id)} style={{ 
+                                                color: 'var(--error)', 
+                                                background: 'transparent', 
+                                                border: 'none', 
+                                                cursor: 'pointer',
+                                                fontSize: '0.9rem',
+                                                fontWeight: 600,
+                                                padding: '5px 10px',
+                                                border: '1px solid var(--error)',
+                                                borderRadius: '50px'
+                                            }}>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
         </div>
