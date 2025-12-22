@@ -1,7 +1,6 @@
 const Order = require('../models/Order');
 const SubOrder = require('../models/SubOrder');
 const Product = require('../models/Product');
-const Shop = require('../models/Shop');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const sendEmail = require('../utils/sendEmail');
