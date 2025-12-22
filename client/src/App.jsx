@@ -1,67 +1,135 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { useState } from 'react';
-import Login from './components/Login';
-import Register from './components/Register';
-import VendorDashboard from './components/VendorDashboard';
-import ProductCatalog from './components/ProductCatalog';
-import Cart from './components/Cart';
-import OrderHistory from './components/OrderHistory';
-import './App.css';
+/**
+ * Main Application Component
+ * Integrates GSAP animations, Lenis smooth scroll, and page transitions
+ */
 
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Context Providers
+import { LenisProvider } from "./context/LenisContext";
+
+// Components
+import Navigation from "./components/Navigation";
+import PageTransition, { Preloader } from "./components/PageTransition";
+import LandingPage from "./components/LandingPage";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import VendorDashboard from "./components/VendorDashboard";
+import ProductCatalog from "./components/ProductCatalog";
+import Cart from "./components/Cart";
+import OrderHistory from "./components/OrderHistory";
+
+// Styles
+import "./App.css";
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Main content wrapper with page transitions
+ */
+const AppContent = ({ user, setUser, logout }) => {
+  const location = useLocation();
+  const mainRef = useRef(null);
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    // Refresh ScrollTrigger on route change
+    ScrollTrigger.refresh();
+  }, [location.pathname]);
+
+  // Page enter animation
+  useLayoutEffect(() => {
+    if (!mainRef.current) return;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        mainRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power3.out",
+          delay: 0.1,
+        }
+      );
+    });
+
+    return () => ctx.revert();
+  }, [location.pathname]);
+
+  return (
+    <>
+      <Navigation user={user} logout={logout} />
+      <main ref={mainRef} style={{ flex: 1, paddingTop: "80px" }}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/shop" element={<ProductCatalog user={user} />} />
+          <Route path="/cart" element={<Cart user={user} />} />
+          <Route path="/orders" element={<OrderHistory user={user} />} />
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/register" element={<Register setUser={setUser} />} />
+          <Route path="/vendor" element={<VendorDashboard user={user} />} />
+        </Routes>
+      </main>
+    </>
+  );
+};
+
+/**
+ * Root App Component
+ */
 function App() {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate initial loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
   };
 
   return (
     <Router>
-      {/* theek hai done  */}
-      <div className="container">
-        <header className="navbar">
-          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <h1>MALL_PROTO</h1>
-          </Link>
-          <div className="nav-links">
-            <Link to="/" className="btn-ghost">Shop</Link>
-            <Link to="/cart" className="btn-ghost">Cart</Link>
-            {user ? (
-              <>
-                <Link to="/orders" className="btn-ghost">Orders</Link>
-                {user.role === 'vendor' && (
-                  <Link to="/vendor" className="btn-ghost">Dashboard</Link>
-                )}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '0.5rem', paddingLeft: '1rem', borderLeft: '1px solid var(--border)' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600 }}>
-                    {user.name}
-                  </span>
-                  <button onClick={logout} className="btn-ghost" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>
-                    Logout
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="btn-ghost">Login</Link>
-                <Link to="/register" className="btn-ghost">Register</Link>
-              </>
-            )}
-          </div>
-        </header>
+      <LenisProvider>
+        {/* Preloader */}
+        <Preloader
+          isLoading={isLoading}
+          onComplete={() => setIsLoading(false)}
+        />
 
-        <main>
-          <Routes>
-            <Route path="/" element={<ProductCatalog user={user} />} />
-            <Route path="/cart" element={<Cart user={user} />} />
-            <Route path="/orders" element={<OrderHistory user={user} />} />
-            <Route path="/login" element={<Login setUser={setUser} />} />
-            <Route path="/register" element={<Register setUser={setUser} />} />
-            <Route path="/vendor" element={<VendorDashboard user={user} />} />
-          </Routes>
-        </main>
-      </div>
+        {/* Main App */}
+        {!isLoading && (
+          <div className="app">
+            <AppContent user={user} setUser={setUser} logout={logout} />
+          </div>
+        )}
+      </LenisProvider>
     </Router>
   );
 }
