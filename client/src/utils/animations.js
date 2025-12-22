@@ -7,8 +7,6 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger);
-
 // Check for reduced motion preference
 export const prefersReducedMotion = () => {
   if (typeof window === "undefined") return false;
