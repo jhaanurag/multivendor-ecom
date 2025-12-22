@@ -208,28 +208,28 @@ void main() {
   // Diagonal flow direction
   vec2 flowDir = normalize(vec2(1.0, 0.7));
   
-  // Time-based animation (fast, vibrant motion)
-  float time = u_time * u_flowSpeed * 2.0; 
+  // Time-based animation (slower, more atmospheric)
+  float time = u_time * u_flowSpeed; 
   
-  // Mouse interaction - aggressive distortion
+  // Mouse interaction - sophisticated lens distortion
   vec2 mousePos = u_mouse;
   float mouseDist = length(uv - mousePos);
-  float mouseInfluence = smoothstep(0.8, 0.0, mouseDist) * 0.45;
+  float mouseInfluence = smoothstep(0.7, 0.0, mouseDist) * 0.35;
   
-  // UV distortion for fluid motion + aggressive mouse pull
+  // UV distortion for fluid motion + professional mouse pull
   vec2 distortedUV = uv * aspect;
-  distortedUV += (mousePos - 0.5) * mouseInfluence * 1.5;
+  distortedUV += (mousePos - 0.5) * mouseInfluence * 0.8;
   
   // noise layers for extreme depth and motion
   float noise1 = fbm(vec3(distortedUV * u_noiseScale, time * 0.4), 5);
   float noise2 = fbm(vec3(distortedUV * u_noiseScale * 0.4 + 100.0, time * 0.25), 4);
   float noise3 = fbm(vec3(distortedUV * u_noiseScale * 1.8 + 200.0, time * 0.6), 3);
   
-  // Combine noise layers
-  float combinedNoise = (noise1 * 0.4 + noise2 * 0.4 + noise3 * 0.2);
+  // Combine noise layers for broad, atmospheric shapes
+  float combinedNoise = (noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2);
   
-  // Apply diagonal flow with more distortion
-  float flowValue = dot(uv, flowDir) + combinedNoise * 0.6;
+  // Apply diagonal flow with broad distortion
+  float flowValue = dot(uv, flowDir) + combinedNoise * 0.4;
   
   // Add scroll-based offset
   flowValue += u_scrollProgress * 0.25;
@@ -247,13 +247,13 @@ void main() {
   // No additive glows or highlights to avoid "white wash"
   
   // Apply individual brightness and contrast
-  color = (color - 0.5) * (u_contrast + 0.3) + 0.5;
+  color = (color - 0.5) * (u_contrast + 0.4) + 0.5;
   color *= u_brightness;
   
-  // Deep vignette for contrast and edge depth
-  float vignette = 1.0 - length((uv - 0.5) * 1.2);
+  // Deeper vignette for cinematic professional look
+  float vignette = 1.0 - length((uv - 0.5) * 1.1);
   vignette = smoothstep(0.0, 1.0, vignette);
-  color *= 0.7 + vignette * 0.3; // Deeper darkening at edges
+  color *= 0.6 + vignette * 0.4; // Controlled edge darkening
   
   // Final color output
   fragColor = vec4(color, 1.0);
@@ -325,10 +325,10 @@ const StripeGradientBackground = ({
     time: 0,
     scrollProgress: 0,
     colorShift: colorShift,
-    noiseScale: 1.5,
-    flowSpeed: speed,
+    noiseScale: 0.75,
+    flowSpeed: speed * 0.5,
     brightness: 1.0,
-    contrast: 1.1,
+    contrast: 1.2,
     mouseX: 0.5,
     mouseY: 0.5,
     targetMouseX: 0.5,
@@ -484,12 +484,12 @@ const StripeGradientBackground = ({
       // Entrance animation
       gsap.fromTo(
         shaderValues.current,
-        { brightness: 0, noiseScale: 0.5 },
+        { brightness: 0, noiseScale: 0.4 },
         {
           brightness: 1.0,
-          noiseScale: 1.5,
-          duration: 2,
-          ease: "power2.out",
+          noiseScale: 0.75,
+          duration: 3,
+          ease: "expo.out",
         }
       );
 
