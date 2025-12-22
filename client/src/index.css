@@ -8,7 +8,7 @@
    CSS Custom Properties
    ======================================== */
 @import url('https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap&font-display=swap');
 
 :root {
   color-scheme: light dark;
@@ -922,15 +922,24 @@ button:disabled,
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
 }
+
 /* ========================================
    Micro-Animations & Bento Card Enhancements
    ======================================== */
 
 /* Wishlist Heart Animation */
 @keyframes heartPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .wishlist-btn {
@@ -991,8 +1000,10 @@ button:disabled,
   position: relative;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 0; /* Sharp edges */
-  padding: 0; /* Remove default padding for image flush */
+  border-radius: 0;
+  /* Sharp edges */
+  padding: 0;
+  /* Remove default padding for image flush */
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -1008,7 +1019,8 @@ button:disabled,
 .product-card__image-container {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1; /* Square for bento feel */
+  aspect-ratio: 1;
+  /* Square for bento feel */
   background: var(--bg-alt);
   width: 100%;
 }
@@ -1040,7 +1052,8 @@ button:disabled,
   height: 2.5rem;
   background: var(--fg);
   color: var(--bg);
-  border-radius: 0; /* Boxy */
+  border-radius: 0;
+  /* Boxy */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1058,8 +1071,15 @@ button:disabled,
 
 /* Empty State SVG Animation */
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .empty-state-icon {
@@ -1089,11 +1109,10 @@ button:disabled,
 }
 
 .product-card__meta {
-    margin-top: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
 }
-

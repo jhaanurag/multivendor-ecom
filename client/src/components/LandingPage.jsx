@@ -70,23 +70,23 @@ const LandingPage = ({ isPreloaderFinished }) => {
       });
 
       // ===================================
-      // 3. FEATURE CARDS (Magnetic & Fade)
+      // 3. FEATURE CARDS (Batched ScrollTrigger)
       // ===================================
-      const cards = gsap.utils.toArray('.feature-card');
-      cards.forEach((card, i) => {
-        gsap.fromTo(card,
-          { y: 100, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 85%",
+      ScrollTrigger.batch('.feature-card', {
+        onEnter: (elements) => {
+          gsap.fromTo(elements,
+            { y: 60, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              stagger: 0.15,
+              ease: "power3.out",
+              overwrite: true
             }
-          }
-        );
+          );
+        },
+        start: "top 90%"
       });
 
       // ===================================
@@ -135,19 +135,20 @@ const LandingPage = ({ isPreloaderFinished }) => {
       });
 
       // ===================================
-      // 6. MOVED HERO TEXT (Fade Up)
+      // 6. MOVED HERO TEXT (Batched)
       // ===================================
-      gsap.utils.toArray('.moved-hero-text').forEach((text) => {
-        gsap.to(text, {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: text,
-            start: "top 85%",
-          }
-        });
+      ScrollTrigger.batch('.moved-hero-text', {
+        onEnter: (elements) => {
+          gsap.to(elements, {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: 0.1,
+            ease: "power3.out",
+            overwrite: true
+          });
+        },
+        start: "top 90%"
       });
 
       // ===================================

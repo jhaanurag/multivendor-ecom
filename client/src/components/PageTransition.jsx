@@ -197,38 +197,35 @@ export const Preloader = ({ isLoading, onComplete }) => {
   const finalText = "MALL_PROTO";
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*_+-=";
 
-  // ASCII scramble effect
+  // Optimized ASCII scramble effect using GSAP for timing
   useEffect(() => {
     if (isExited) return;
 
-    let iteration = 0;
-    const maxIterations = 12; // How many scramble cycles
-    const revealSpeed = 80; // ms between updates
-
-    const interval = setInterval(() => {
-      setDisplayText(() => {
-        return finalText
-          .split("")
-          .map((char, index) => {
-            // Gradually reveal characters from left to right
-            if (index < iteration / 2) {
-              return finalText[index];
-            }
-            // Random character for unrevealed positions
-            if (char === "_") return "_"; // Keep underscore
-            return chars[Math.floor(Math.random() * chars.length)];
-          })
-          .join("");
+    let ctx = gsap.context(() => {
+      let obj = { i: 0 };
+      gsap.to(obj, {
+        i: finalText.length + 10,
+        duration: 1.2,
+        ease: "none",
+        onUpdate: () => {
+          const iteration = Math.floor(obj.i);
+          setDisplayText(() => {
+            return finalText
+              .split("")
+              .map((char, index) => {
+                if (index < iteration / 2.5) {
+                  return finalText[index];
+                }
+                if (char === "_") return "_";
+                return chars[Math.floor(Math.random() * chars.length)];
+              })
+              .join("");
+          });
+        }
       });
+    });
 
-      iteration++;
-      if (iteration > maxIterations + finalText.length * 2) {
-        setDisplayText(finalText);
-        clearInterval(interval);
-      }
-    }, revealSpeed);
-
-    return () => clearInterval(interval);
+    return () => ctx.revert();
   }, [isExited]);
 
   // Handle scroll lock
