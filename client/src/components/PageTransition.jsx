@@ -184,13 +184,52 @@ export const CurtainTransition = ({
 /**
  * Preloader Component
  * Initial loading animation before app loads
+ * Features: ASCII scramble text reveal, fast animations
  */
 export const Preloader = ({ isLoading, onComplete }) => {
   const preloaderRef = useRef(null);
   const textRef = useRef(null);
   const progressRef = useRef(null);
   const [isExited, setIsExited] = useState(false);
+  const [displayText, setDisplayText] = useState("MALL_PROTO");
   const { stop, start } = useLenis();
+
+  const finalText = "MALL_PROTO";
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*_+-=";
+
+  // ASCII scramble effect
+  useEffect(() => {
+    if (isExited) return;
+
+    let iteration = 0;
+    const maxIterations = 12; // How many scramble cycles
+    const revealSpeed = 80; // ms between updates
+
+    const interval = setInterval(() => {
+      setDisplayText(() => {
+        return finalText
+          .split("")
+          .map((char, index) => {
+            // Gradually reveal characters from left to right
+            if (index < iteration / 2) {
+              return finalText[index];
+            }
+            // Random character for unrevealed positions
+            if (char === "_") return "_"; // Keep underscore
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join("");
+      });
+
+      iteration++;
+      if (iteration > maxIterations + finalText.length * 2) {
+        setDisplayText(finalText);
+        clearInterval(interval);
+      }
+    }, revealSpeed);
+
+    return () => clearInterval(interval);
+  }, [isExited]);
 
   // Handle scroll lock
   useEffect(() => {
@@ -214,36 +253,36 @@ export const Preloader = ({ isLoading, onComplete }) => {
     if (!isLoading && preloaderRef.current) {
       const ctx = gsap.context(() => {
         const tl = gsap.timeline({
-          delay: 0.1, // Small buffer
+          delay: 0.05,
           onComplete: () => {
             setIsExited(true);
             onComplete?.();
           }
         });
 
-        // Animate text out
+        // Animate text out - FASTER
         tl.to(textRef.current, {
-          y: -50,
+          y: -30,
           opacity: 0,
-          duration: 0.5,
+          duration: 0.25,
           ease: "power2.in",
         })
-          // Animate progress bar
+          // Animate progress bar - FASTER
           .to(
             progressRef.current,
             {
               scaleX: 0,
-              duration: 0.4,
+              duration: 0.2,
               ease: "power2.in",
             },
-            "-=0.3"
+            "-=0.15"
           )
-          // Slide preloader up
+          // Slide preloader up - FASTER
           .to(preloaderRef.current, {
             yPercent: -100,
-            duration: 1.2, // Expert-smooth slide
+            duration: 0.6,
             ease: "power4.inOut",
-          }, "-=0.1");
+          }, "-=0.05");
       });
 
       return () => ctx.revert();
@@ -262,7 +301,7 @@ export const Preloader = ({ isLoading, onComplete }) => {
         left: 0,
         width: "100%",
         height: "100%",
-        backgroundColor: "#000000", // pure black as requested
+        backgroundColor: "#000000",
         zIndex: 10000,
         display: "flex",
         flexDirection: "column",
@@ -278,10 +317,11 @@ export const Preloader = ({ isLoading, onComplete }) => {
           fontSize: "2rem",
           fontWeight: 700,
           letterSpacing: "0.2em",
-          textTransform: "uppercase"
+          textTransform: "uppercase",
+          fontFamily: "monospace", // Monospace for ASCII effect
         }}
       >
-        MALL_PROTO
+        {displayText}
       </div>
       <div
         style={{

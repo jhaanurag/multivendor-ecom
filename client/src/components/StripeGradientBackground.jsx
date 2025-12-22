@@ -47,6 +47,7 @@ out vec4 fragColor;
 
 uniform float u_time;
 uniform vec2 u_resolution;
+uniform vec2 u_mouse;
 uniform float u_scrollProgress;
 uniform float u_colorShift;
 uniform float u_noiseScale;
@@ -203,8 +204,14 @@ void main() {
   // Time-based animation (slow, elegant)
   float time = u_time * u_flowSpeed;
   
-  // UV distortion for fluid motion
+  // Mouse interaction - subtle distortion
+  vec2 mousePos = u_mouse;
+  float mouseDist = length(uv - mousePos);
+  float mouseInfluence = smoothstep(0.5, 0.0, mouseDist) * 0.15;
+  
+  // UV distortion for fluid motion + mouse
   vec2 distortedUV = uv * aspect;
+  distortedUV += (mousePos - 0.5) * mouseInfluence * 0.3;
   
   // Multiple layers of noise for depth
   float noise1 = fbm(vec3(distortedUV * u_noiseScale, time * 0.3), 4);
@@ -220,12 +227,18 @@ void main() {
   // Add scroll-based offset (subtle)
   flowValue += u_scrollProgress * 0.15;
   
+  // Add subtle mouse-based color shift
+  flowValue += mouseInfluence * 0.2;
+  
   // Get gradient color
   vec3 color = getGradientColor(flowValue, u_colorShift);
   
   // Add subtle glow/bloom effect
   float glow = fbm(vec3(distortedUV * 3.0, time * 0.5), 2) * 0.5 + 0.5;
   color += glow * 0.08;
+  
+  // Mouse glow effect - subtle highlight near cursor
+  color += mouseInfluence * 0.15;
   
   // Add light diffusion (soft highlights)
   float highlight = pow(noise2 * 0.5 + 0.5, 2.0);
@@ -234,6 +247,10 @@ void main() {
   // Apply brightness and contrast
   color = (color - 0.5) * u_contrast + 0.5;
   color *= u_brightness;
+  
+  // Film grain effect
+  float grain = snoise(vec3(uv * 500.0, time * 10.0)) * 0.03;
+  color += grain;
   
   // Soft vignette for depth
   float vignette = 1.0 - length((uv - 0.5) * 0.8);
@@ -314,6 +331,10 @@ const StripeGradientBackground = ({
     flowSpeed: speed,
     brightness: 1.0,
     contrast: 1.1,
+    mouseX: 0.5,
+    mouseY: 0.5,
+    targetMouseX: 0.5,
+    targetMouseY: 0.5,
   });
 
   // Check for reduced motion preference
@@ -355,6 +376,7 @@ const StripeGradientBackground = ({
     uniformsRef.current = {
       time: gl.getUniformLocation(program, "u_time"),
       resolution: gl.getUniformLocation(program, "u_resolution"),
+      mouse: gl.getUniformLocation(program, "u_mouse"),
       scrollProgress: gl.getUniformLocation(program, "u_scrollProgress"),
       colorShift: gl.getUniformLocation(program, "u_colorShift"),
       noiseScale: gl.getUniformLocation(program, "u_noiseScale"),
@@ -410,9 +432,15 @@ const StripeGradientBackground = ({
       shaderValues.current.time = (Date.now() - startTimeRef.current) / 1000;
     }
 
+    // Smooth mouse lerping
+    const lerpFactor = 0.08;
+    shaderValues.current.mouseX += (shaderValues.current.targetMouseX - shaderValues.current.mouseX) * lerpFactor;
+    shaderValues.current.mouseY += (shaderValues.current.targetMouseY - shaderValues.current.mouseY) * lerpFactor;
+
     // Set uniforms
     gl.uniform1f(uniforms.time, shaderValues.current.time);
     gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
+    gl.uniform2f(uniforms.mouse, shaderValues.current.mouseX, shaderValues.current.mouseY);
     gl.uniform1f(uniforms.scrollProgress, shaderValues.current.scrollProgress);
     gl.uniform1f(uniforms.colorShift, shaderValues.current.colorShift);
     gl.uniform1f(
@@ -443,6 +471,15 @@ const StripeGradientBackground = ({
 
     // Resize listener
     window.addEventListener("resize", handleResize);
+
+    // Mouse move listener for shader interaction
+    const handleMouseMove = (e) => {
+      if (shaderValues.current) {
+        shaderValues.current.targetMouseX = e.clientX / window.innerWidth;
+        shaderValues.current.targetMouseY = 1.0 - (e.clientY / window.innerHeight); // Invert Y for shader coords
+      }
+    };
+    window.addEventListener("mousemove", handleMouseMove);
 
     // GSAP animations for smooth uniform changes
     const ctx = gsap.context(() => {
@@ -487,6 +524,7 @@ const StripeGradientBackground = ({
         cancelAnimationFrame(animationRef.current);
       }
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
       ctx.revert();
 
       // Cleanup WebGL
@@ -557,7 +595,7 @@ const StripeGradientBackground = ({
         />
       )}
 
-      {/* Noise overlay for texture */}
+      {/* Noise overlay for texture - enhanced grain */}
       <div
         style={{
           position: "absolute",
@@ -565,9 +603,10 @@ const StripeGradientBackground = ({
           left: 0,
           width: "100%",
           height: "100%",
-          opacity: 0.03,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          opacity: 0.06,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
           pointerEvents: "none",
+          mixBlendMode: "overlay",
         }}
       />
 

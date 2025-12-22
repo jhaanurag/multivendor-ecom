@@ -607,10 +607,6 @@ const LandingPage = ({ isPreloaderFinished }) => {
                   <g className="svg-bubble">
                     <rect x="5" y="50" width="60" height="40" rx="8" fill="var(--muted)" opacity="0.25" />
                     <polygon points="20,90 25,90 15,100" fill="var(--muted)" opacity="0.25" />
-                    {/* Typing dots inside user bubble */}
-                    <circle cx="22" cy="70" r="4" fill="var(--fg)" opacity="0.4" />
-                    <circle cx="35" cy="70" r="4" fill="var(--fg)" opacity="0.4" />
-                    <circle cx="48" cy="70" r="4" fill="var(--fg)" opacity="0.4" />
                   </g>
                   {/* Bubble 2 (Right - Support) */}
                   <g className="svg-bubble">
@@ -881,8 +877,8 @@ const LandingPage = ({ isPreloaderFinished }) => {
         }
 
         .hero-btn-primary {
-            background: var(--bg-alt); /* Subtle background */
-            border: 1px solid var(--border); /* Subtle border */
+            background: transparent;
+            border: none;
         }
 
         .hero-btn-bubble {
