@@ -21,7 +21,7 @@ const prefersReducedMotion = () => {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 };
 
-const Navigation = ({ user, logout }) => {
+const Navigation = ({ user, logout, isPreloaderFinished }) => {
   const navRef = useRef(null);
   const logoRef = useRef(null);
   const linksRef = useRef([]);
@@ -35,10 +35,10 @@ const Navigation = ({ user, logout }) => {
 
   // Initial navigation animation on mount
   useLayoutEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || !isPreloaderFinished) return;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.5 });
+      const tl = gsap.timeline({ delay: 0.1 }); // Minimal delay after preloader clears
 
       // Animate logo
       tl.fromTo(
@@ -57,18 +57,18 @@ const Navigation = ({ user, logout }) => {
     }, navRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isPreloaderFinished]);
 
   // Sticky Nav Logic (Simplified - No Hiding)
   useEffect(() => {
     if (!navRef.current) return;
-    
-    // Always visible, just glass effect on scroll
+
+    // Always transparent throughout
     gsap.to(navRef.current, {
-      y: 0, 
-      backgroundColor: isScrolled ? "var(--bg-alt)" : "transparent", // Solid/Glass on scroll
-      backdropFilter: isScrolled ? "blur(12px)" : "none",
-      borderBottom: isScrolled ? "1px solid var(--border)" : "none",
+      y: 0,
+      backgroundColor: "transparent",
+      backdropFilter: "none",
+      borderBottom: "none",
       duration: 0.3,
       ease: "power2.out"
     });
@@ -203,183 +203,145 @@ const Navigation = ({ user, logout }) => {
           left: 0,
           width: "100%",
           zIndex: 1000,
-          padding: "1.5rem 3rem",
+          backgroundColor: "transparent",
+          backdropFilter: "none",
+          borderBottom: "none",
+          transition: "background-color 0.3s, backdrop-filter 0.3s",
+          visibility: isPreloaderFinished ? "visible" : "hidden",
+        }}
+      >
+        <div style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          width: "100%",
+          padding: "1.5rem var(--space-lg)",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          backgroundColor: isScrolled
-            ? "rgba(255, 255, 255, 0.95)"
-            : "transparent",
-          backdropFilter: isScrolled ? "blur(10px)" : "none",
-          borderBottom: isScrolled ? "1px solid rgba(0, 0, 0, 0.1)" : "none",
-          transition: "background-color 0.3s, backdrop-filter 0.3s",
-        }}
-      >
-        {/* Logo */}
-        <Link
-          to="/"
-          ref={logoRef}
-          className="nav__logo"
-          style={{
-            textDecoration: "none",
-            color: "inherit",
-          }}
-        >
-          <span
+        }}>
+          {/* Logo */}
+          <Link
+            to="/"
+            ref={logoRef}
+            className="nav__logo"
             style={{
-              fontSize: "1.5rem",
-              fontWeight: 800,
-              letterSpacing: "-0.04em",
-              fontFamily: '"Helvetica Neue", Arial, sans-serif',
-              textTransform: "uppercase",
+              textDecoration: "none",
+              color: "inherit",
             }}
           >
-            MALL
-            <span style={{ fontWeight: 300 }}>_PROTO</span>
-          </span>
-        </Link>
-
-        {/* Desktop Navigation Links */}
-        <div
-          className="nav__links"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}
-        >
-          {filteredLinks.map((link, index) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              ref={(el) => (linksRef.current[index] = el)}
-              onMouseMove={(e) => handleLinkMouseMove(e, index)}
-              onMouseLeave={() => handleLinkMouseLeave(index)}
-              className="nav__link"
+            <span
               style={{
-                textDecoration: "none",
-                color: "var(--fg)",
-                padding: "1rem 1.75rem",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
+                fontSize: "1.5rem",
+                fontWeight: 800,
+                letterSpacing: "-0.04em",
+                fontFamily: 'var(--font-display)',
                 textTransform: "uppercase",
-                position: "relative",
-                overflow: "hidden", // Changed to hidden for crisp edges
-                borderRadius: "2px", // Sharp but slightly softened
               }}
             >
-              {/* Rectangular Hover Bubble - No Shadow */}
-              <span
-                className="nav__link-bubble"
-                style={{
-                  position: "absolute",
-                  top: "0",
-                  left: "0",
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "var(--fg)",
-                  transform: "translateY(100%)", // Start from bottom
-                  transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)", // Expert-like snappy easing
-                  zIndex: 0,
-                  pointerEvents: "none",
-                }}
-              />
-              <span
-                className="nav__link-text"
-                style={{
-                  position: "relative",
-                  zIndex: 1,
-                  transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                }}
-              >
-                {link.label}
-              </span>
-            </Link>
-          ))}
+              MALL
+              <span style={{ fontWeight: 300 }}>_PROTO</span>
+            </span>
+          </Link>
 
-          {/* Auth Links */}
-          {user ? (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                marginLeft: "1rem",
-                paddingLeft: "1.5rem",
-                borderLeft: "1px solid var(--border)",
-              }}
-            >
-              <span
+          {/* Desktop Navigation Links */}
+          <div
+            className="nav__links"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            {filteredLinks.map((link, index) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                ref={(el) => (linksRef.current[index] = el)}
+                onMouseMove={(e) => handleLinkMouseMove(e, index)}
+                onMouseLeave={() => handleLinkMouseLeave(index)}
+                className="nav__link"
                 style={{
-                  fontSize: "0.7rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "var(--muted)",
-                }}
-              >
-                {user.name}
-              </span>
-              <button
-                onClick={logout}
-                style={{
-                  background: "transparent",
-                  border: "1px solid var(--fg)",
+                  textDecoration: "none",
                   color: "var(--fg)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.7rem",
+                  padding: "1rem 1.75rem",
+                  fontSize: "0.85rem",
                   fontWeight: 600,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  cursor: "pointer",
-                  transition: "all 0.3s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--fg)";
-                  e.currentTarget.style.color = "var(--bg)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = "var(--fg)";
+                  position: "relative",
+                  overflow: "hidden",
+                  borderRadius: "0",
                 }}
               >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                marginLeft: "1rem",
-              }}
-            >
-              {[
-                { to: "/login", label: "Login" },
-                { to: "/register", label: "Register" }
-              ].map((link, idx) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  ref={(el) => (linksRef.current[filteredLinks.length + idx] = el)}
-                  onMouseMove={(e) => handleLinkMouseMove(e, filteredLinks.length + idx)}
-                  onMouseLeave={() => handleLinkMouseLeave(filteredLinks.length + idx)}
-                  className={`nav__link ${link.to === "/register" ? "nav__link--register" : ""}`}
+                {/* Rectangular Hover Bubble - No Shadow */}
+                <span
+                  className="nav__link-bubble"
                   style={{
-                    textDecoration: "none",
-                    color: link.to === "/register" ? "var(--bg)" : "var(--fg)",
-                    backgroundColor: link.to === "/register" ? "var(--fg)" : "transparent",
-                    padding: "0.6rem 1.25rem",
+                    position: "absolute",
+                    top: "0",
+                    left: "0",
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "var(--fg)",
+                    transform: "translateY(100%)", // Start from bottom
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)", // Expert-like snappy easing
+                    zIndex: 0,
+                    pointerEvents: "none",
+                  }}
+                />
+                <span
+                  className="nav__link-text"
+                  style={{
+                    position: "relative",
+                    zIndex: 1,
+                    transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                  }}
+                >
+                  {link.label}
+                </span>
+              </Link>
+            ))}
+
+            {/* Auth Links */}
+            {user ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginLeft: "1rem",
+                  paddingLeft: "1.5rem",
+                  borderLeft: "1px solid var(--border)",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "0.7rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "var(--muted)",
+                  }}
+                >
+                  {user.name}
+                </span>
+                <button
+                  onClick={logout}
+                  className="nav__link"
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: "var(--fg)",
+                    padding: "1rem 1.75rem",
                     fontSize: "0.85rem",
                     fontWeight: 600,
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
+                    cursor: "pointer",
+                    transition: "all 0.3s",
+                    borderRadius: "0",
                     position: "relative",
                     overflow: "hidden",
-                    borderRadius: "2px",
-                    border: link.to === "/register" ? "none" : "1px solid transparent", // Alignment helper
                   }}
                 >
                   <span
@@ -390,79 +352,141 @@ const Navigation = ({ user, logout }) => {
                       left: "0",
                       width: "100%",
                       height: "100%",
-                      backgroundColor: link.to === "/register" ? "var(--bg)" : "var(--fg)",
+                      backgroundColor: "var(--fg)",
                       transform: "translateY(100%)",
                       transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                       zIndex: 0,
                     }}
                   />
                   <span
+                    className="nav__link-text"
                     style={{
                       position: "relative",
                       zIndex: 1,
                       transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                      color: "inherit"
                     }}
                   >
-                    {link.label}
+                    Logout
                   </span>
-                </Link>
-              ))}
-            </div>
-          )}
+                </button>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  marginLeft: "1rem",
+                }}
+              >
+                {[
+                  { to: "/login", label: "Login" },
+                  { to: "/register", label: "Register" }
+                ].map((link, idx) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    ref={(el) => (linksRef.current[filteredLinks.length + idx] = el)}
+                    onMouseMove={(e) => handleLinkMouseMove(e, filteredLinks.length + idx)}
+                    onMouseLeave={() => handleLinkMouseLeave(filteredLinks.length + idx)}
+                    className={`nav__link ${link.to === "/register" ? "nav__link--register" : ""}`}
+                    style={{
+                      textDecoration: "none",
+                      color: "var(--fg)",
+                      backgroundColor: "transparent",
+                      padding: "1rem 1.75rem",
+                      fontSize: "0.85rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      position: "relative",
+                      overflow: "hidden",
+                      borderRadius: "0",
+                      border: "none",
+                    }}
+                  >
+                    <span
+                      className="nav__link-bubble"
+                      style={{
+                        position: "absolute",
+                        top: "0",
+                        left: "0",
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "var(--fg)",
+                        transform: "translateY(100%)",
+                        transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                        zIndex: 0,
+                      }}
+                    />
+                    <span
+                      style={{
+                        position: "relative",
+                        zIndex: 1,
+                        transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                        color: "inherit"
+                      }}
+                    >
+                      {link.label}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
 
-          {/* Mobile Menu Button */}
-          <button
-            ref={menuRef}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="nav__menu-btn"
-            aria-label="Toggle menu"
-            style={{
-              display: "none",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "48px",
-              height: "48px",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              gap: "6px",
-              marginLeft: "1rem",
-            }}
-          >
-            <span
+            {/* Mobile Menu Button */}
+            <button
+              ref={menuRef}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="nav__menu-btn"
+              aria-label="Toggle menu"
               style={{
-                width: "24px",
-                height: "2px",
-                backgroundColor: "var(--fg)",
-                transition: "transform 0.3s, opacity 0.3s",
-                transform: isMenuOpen
-                  ? "rotate(45deg) translateY(4px)"
-                  : "none",
+                display: "none",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "48px",
+                height: "48px",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                gap: "6px",
+                marginLeft: "1rem",
               }}
-            />
-            <span
-              style={{
-                width: "24px",
-                height: "2px",
-                backgroundColor: "var(--fg)",
-                transition: "transform 0.3s, opacity 0.3s",
-                opacity: isMenuOpen ? 0 : 1,
-              }}
-            />
-            <span
-              style={{
-                width: "24px",
-                height: "2px",
-                backgroundColor: "var(--fg)",
-                transition: "transform 0.3s, opacity 0.3s",
-                transform: isMenuOpen
-                  ? "rotate(-45deg) translateY(-4px)"
-                  : "none",
-              }}
-            />
-          </button>
+            >
+              <span
+                style={{
+                  width: "24px",
+                  height: "2px",
+                  backgroundColor: "var(--fg)",
+                  transition: "transform 0.3s, opacity 0.3s",
+                  transform: isMenuOpen
+                    ? "rotate(45deg) translateY(4px)"
+                    : "none",
+                }}
+              />
+              <span
+                style={{
+                  width: "24px",
+                  height: "2px",
+                  backgroundColor: "var(--fg)",
+                  transition: "transform 0.3s, opacity 0.3s",
+                  opacity: isMenuOpen ? 0 : 1,
+                }}
+              />
+              <span
+                style={{
+                  width: "24px",
+                  height: "2px",
+                  backgroundColor: "var(--fg)",
+                  transition: "transform 0.3s, opacity 0.3s",
+                  transform: isMenuOpen
+                    ? "rotate(-45deg) translateY(-4px)"
+                    : "none",
+                }}
+              />
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -490,9 +514,9 @@ const Navigation = ({ user, logout }) => {
           ...(user
             ? []
             : [
-                { to: "/login", label: "Login" },
-                { to: "/register", label: "Register" },
-              ]),
+              { to: "/login", label: "Login" },
+              { to: "/register", label: "Register" },
+            ]),
         ].map((link, index) => (
           <Link
             key={link.to}
@@ -547,12 +571,13 @@ const Navigation = ({ user, logout }) => {
         }
 
         /* Logic for Register (Inverted) */
+        /* Logic for Register */
         .nav__link--register:hover .nav__link-bubble {
           transform: translateY(0) !important;
         }
         
         .nav__link--register:hover > span:last-child {
-          color: var(--fg) !important;
+          color: var(--bg) !important;
         }
 
         @media (max-width: 968px) {

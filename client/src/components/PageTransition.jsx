@@ -4,8 +4,9 @@
  * Wraps route components for consistent enter/exit animations
  */
 
-import { useRef, useLayoutEffect, useState } from "react";
+import { useRef, useLayoutEffect, useState, useEffect } from "react";
 import gsap from "gsap";
+import { useLenis } from "../context/LenisContext";
 
 // Check for reduced motion preference
 const prefersReducedMotion = () => {
@@ -188,51 +189,68 @@ export const Preloader = ({ isLoading, onComplete }) => {
   const preloaderRef = useRef(null);
   const textRef = useRef(null);
   const progressRef = useRef(null);
+  const [isExited, setIsExited] = useState(false);
+  const { stop, start } = useLenis();
+
+  // Handle scroll lock
+  useEffect(() => {
+    if (!isExited) {
+      stop();
+    } else {
+      start();
+    }
+    return () => start();
+  }, [isExited, stop, start]);
 
   useLayoutEffect(() => {
-    if (prefersReducedMotion() || isLoading) {
-      if (!isLoading) onComplete?.();
+    if (prefersReducedMotion()) {
+      if (!isLoading) {
+        setIsExited(true);
+        onComplete?.();
+      }
       return;
     }
 
-    // Ensure refs exist before animating
-    if (!textRef.current || !progressRef.current || !preloaderRef.current) {
-      if (!isLoading) onComplete?.();
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ onComplete });
-
-      // Animate text out
-      tl.to(textRef.current, {
-        y: -50,
-        opacity: 0,
-        duration: 0.4,
-        ease: "power2.in",
-      })
-        // Animate progress bar
-        .to(
-          progressRef.current,
-          {
-            scaleX: 0,
-            duration: 0.3,
-            ease: "power2.in",
-          },
-          "-=0.2"
-        )
-        // Slide preloader up
-        .to(preloaderRef.current, {
-          yPercent: -100,
-          duration: 0.8,
-          ease: "power3.inOut",
+    if (!isLoading && preloaderRef.current) {
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          delay: 0.1, // Small buffer
+          onComplete: () => {
+            setIsExited(true);
+            onComplete?.();
+          }
         });
-    });
 
-    return () => ctx.revert();
+        // Animate text out
+        tl.to(textRef.current, {
+          y: -50,
+          opacity: 0,
+          duration: 0.5,
+          ease: "power2.in",
+        })
+          // Animate progress bar
+          .to(
+            progressRef.current,
+            {
+              scaleX: 0,
+              duration: 0.4,
+              ease: "power2.in",
+            },
+            "-=0.3"
+          )
+          // Slide preloader up
+          .to(preloaderRef.current, {
+            yPercent: -100,
+            duration: 1.2, // Expert-smooth slide
+            ease: "power4.inOut",
+          }, "-=0.1");
+      });
+
+      return () => ctx.revert();
+    }
   }, [isLoading, onComplete]);
 
-  if (!isLoading) return null;
+  if (isExited) return null;
 
   return (
     <div
@@ -244,7 +262,7 @@ export const Preloader = ({ isLoading, onComplete }) => {
         left: 0,
         width: "100%",
         height: "100%",
-        backgroundColor: "#0a0a0a",
+        backgroundColor: "#000000", // pure black as requested
         zIndex: 10000,
         display: "flex",
         flexDirection: "column",
@@ -257,16 +275,17 @@ export const Preloader = ({ isLoading, onComplete }) => {
         ref={textRef}
         style={{
           color: "#fff",
-          fontSize: "1.5rem",
-          fontWeight: 600,
-          letterSpacing: "-0.02em",
+          fontSize: "2rem",
+          fontWeight: 700,
+          letterSpacing: "0.2em",
+          textTransform: "uppercase"
         }}
       >
         MALL_PROTO
       </div>
       <div
         style={{
-          width: "200px",
+          width: "240px",
           height: "2px",
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           overflow: "hidden",

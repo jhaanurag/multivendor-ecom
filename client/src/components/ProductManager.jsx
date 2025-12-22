@@ -98,52 +98,67 @@ const ProductManager = ({ user, refreshAnalytics }) => {
     };
 
     return (
-        <div style={{ marginTop: '60px' }}>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '20px' }}>
-                Manage Products
-            </h3>
+        <div style={{ marginTop: '10rem', borderTop: '1px solid var(--border)', paddingTop: '10rem' }}>
+            <div className="section-header" style={{ marginBottom: '4rem' }}>
+                <p className="section-label">Inventory</p>
+                <h2 style={{ fontSize: '2.5rem', margin: 0 }}>Product Management</h2>
+            </div>
 
             {/* Add Product Form */}
-            <div ref={formRef} style={{ 
-                background: 'var(--bg)', 
-                border: '1px solid var(--border)', 
-                padding: '30px', 
-                borderRadius: '4px', 
-                marginBottom: '40px',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+            <div ref={formRef} style={{
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                padding: '4rem',
+                marginBottom: '8rem'
             }}>
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '20px' }}>Add New Product</h4>
-                <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
-                    
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        <input name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required 
-                            style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
-                        <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} required 
-                            style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+                <h4 style={{ fontSize: '1.25rem', marginBottom: '3rem', marginTop: 0 }}>Create Manifest</h4>
+                <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '3rem' }}>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', marginBottom: '0.5rem' }}>Item Nomenclature</label>
+                            <input name="name" placeholder="E.g. Lunar Module" value={formData.name} onChange={handleInputChange} required
+                                style={{ border: 'none', borderBottom: '1px solid var(--border)', padding: '1rem 0', background: 'transparent', outline: 'none', fontSize: '1rem' }} />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', marginBottom: '0.5rem' }}>Valuation (USD)</label>
+                            <input type="number" name="price" placeholder="0.00" value={formData.price} onChange={handleInputChange} required
+                                style={{ border: 'none', borderBottom: '1px solid var(--border)', padding: '1rem 0', background: 'transparent', outline: 'none', fontSize: '1rem' }} />
+                        </div>
                     </div>
 
-                    <textarea name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} required 
-                        style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)', minHeight: '100px' }} />
-                    
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        <input type="number" name="stock" placeholder="Stock" value={formData.stock} onChange={handleInputChange} required 
-                            style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
-                         <input name="tags" placeholder="Tags (comma separated)" value={formData.tags} onChange={handleInputChange} 
-                            style={{ padding: '15px', background: 'var(--bg-alt)', border: '1px solid var(--border)', color: 'var(--fg)' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', marginBottom: '0.5rem' }}>Manifest Specification</label>
+                        <textarea name="description" placeholder="Technical specifications and narrative..." value={formData.description} onChange={handleInputChange} required
+                            style={{ border: 'none', borderBottom: '1px solid var(--border)', padding: '1rem 0', background: 'transparent', outline: 'none', minHeight: '80px', fontSize: '1rem', resize: 'vertical' }} />
                     </div>
 
-                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                         <input type="file" onChange={handleFileChange} accept="image/*" 
-                            style={{ flex: 1, padding: '10px', background: 'var(--bg-alt)', border: '1px solid var(--border)' }} />
-                        <button type="submit" className="btn" style={{ 
-                            padding: '15px 30px', 
-                            background: 'var(--fg)', 
-                            color: 'var(--bg)', 
-                            fontWeight: 600, 
-                            border: '1px solid var(--fg)',
-                            cursor: 'pointer'
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', marginBottom: '0.5rem' }}>Strategic Stock</label>
+                            <input type="number" name="stock" placeholder="Units available" value={formData.stock} onChange={handleInputChange} required
+                                style={{ border: 'none', borderBottom: '1px solid var(--border)', padding: '1rem 0', background: 'transparent', outline: 'none', fontSize: '1rem' }} />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', marginBottom: '0.5rem' }}>Classification Tags</label>
+                            <input name="tags" placeholder="Space, Tech, Minimal" value={formData.tags} onChange={handleInputChange}
+                                style={{ border: 'none', borderBottom: '1px solid var(--border)', padding: '1rem 0', background: 'transparent', outline: 'none', fontSize: '1rem' }} />
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '3rem', alignItems: 'flex-end', marginTop: '1rem' }}>
+                        <div style={{ flex: 1 }}>
+                            <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', marginBottom: '1rem', display: 'block' }}>Visual Documentation</label>
+                            <input type="file" onChange={handleFileChange} accept="image/*"
+                                style={{ width: '100%', fontSize: '0.8rem', opacity: 0.6 }} />
+                        </div>
+                        <button type="submit" className="hero-btn" style={{
+                            padding: '1.2rem 3rem',
+                            background: 'var(--fg)',
+                            color: 'var(--bg)',
+                            width: '250px'
                         }}>
-                            Add Product
+                            <span className="hero-btn-text">Archive Item</span>
                         </button>
                     </div>
                 </form>
@@ -151,29 +166,27 @@ const ProductManager = ({ user, refreshAnalytics }) => {
 
             {/* Product List */}
             <div ref={listRef}>
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '20px' }}>Your Products</h4>
-                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
+                    <h4 style={{ fontSize: '1.5rem', margin: 0 }}>Active Archive</h4>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--muted)' }}>{products.length} registered assets</p>
+                </div>
+
                 {loading ? (
-                    <p style={{ color: 'var(--muted)' }}>Loading items...</p>
+                    <p className="text-muted">Synchronizing local data...</p>
                 ) : (
-                    <div style={{ 
-                        overflowX: 'auto', 
-                        border: '1px solid var(--border)', 
-                        borderRadius: '4px',
-                        background: 'var(--bg)'
-                    }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-                            <thead style={{ background: 'var(--bg-alt)', borderBottom: '1px solid var(--border)' }}>
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <thead style={{ borderBottom: '2px solid var(--fg)' }}>
                                 <tr>
-                                    {['Name', 'Price', 'Stock', 'Action'].map(head => (
-                                        <th key={head} style={{ 
-                                            padding: '20px', 
-                                            textAlign: 'left', 
-                                            fontWeight: 600, 
-                                            color: 'var(--muted)', 
-                                            textTransform: 'uppercase', 
-                                            fontSize: '0.75rem',
-                                            letterSpacing: '0.05em' 
+                                    {['Identifier', 'Valuation', 'Status', 'Actions'].map(head => (
+                                        <th key={head} style={{
+                                            padding: '1.5rem 1rem',
+                                            textAlign: 'left',
+                                            fontWeight: 700,
+                                            color: 'var(--fg)',
+                                            textTransform: 'uppercase',
+                                            fontSize: '0.7rem',
+                                            letterSpacing: '0.15em'
                                         }}>
                                             {head}
                                         </th>
@@ -183,22 +196,30 @@ const ProductManager = ({ user, refreshAnalytics }) => {
                             <tbody>
                                 {products.map((p, i) => (
                                     <tr key={p._id} className="product-row" style={{ borderBottom: '1px solid var(--border)' }}>
-                                        <td style={{ padding: '20px', fontWeight: 500 }}>{p.name}</td>
-                                        <td style={{ padding: '20px' }}>${p.price}</td>
-                                        <td style={{ padding: '20px' }}>{p.stock}</td>
-                                        <td style={{ padding: '20px' }}>
-                                            <button onClick={() => handleDelete(p._id)} style={{ 
-                                                color: 'var(--error)', 
-                                                background: 'transparent', 
-                                                border: 'none', 
-                                                cursor: 'pointer',
-                                                fontSize: '0.9rem',
-                                                fontWeight: 600,
-                                                padding: '5px 10px',
-                                                border: '1px solid var(--error)',
-                                                borderRadius: '50px'
+                                        <td style={{ padding: '2rem 1rem', fontWeight: 600 }}>{p.name}</td>
+                                        <td style={{ padding: '2rem 1rem' }}>${p.price}</td>
+                                        <td style={{ padding: '2rem 1rem' }}>
+                                            <span style={{
+                                                fontSize: '0.8rem',
+                                                color: p.stock > 0 ? 'var(--fg)' : 'var(--error)',
+                                                fontWeight: p.stock > 0 ? 400 : 700
                                             }}>
-                                                Delete
+                                                {p.stock} units available
+                                            </span>
+                                        </td>
+                                        <td style={{ padding: '2rem 1rem' }}>
+                                            <button onClick={() => handleDelete(p._id)} style={{
+                                                color: 'var(--error)',
+                                                background: 'transparent',
+                                                border: '1px solid var(--error)',
+                                                padding: '0.5rem 1rem',
+                                                fontSize: '0.65rem',
+                                                fontWeight: 800,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.1em',
+                                                cursor: 'pointer'
+                                            }}>
+                                                Decommission
                                             </button>
                                         </td>
                                     </tr>

@@ -36,7 +36,7 @@ gsap.registerPlugin(ScrollTrigger);
 /**
  * Main content wrapper with page transitions
  */
-const AppContent = ({ user, setUser, logout }) => {
+const AppContent = ({ user, setUser, logout, isPreloaderFinished }) => {
   const location = useLocation();
   const mainRef = useRef(null);
 
@@ -76,10 +76,17 @@ const AppContent = ({ user, setUser, logout }) => {
 
   return (
     <>
-      <Navigation user={user} logout={logout} />
+      <Navigation
+        user={user}
+        logout={logout}
+        isPreloaderFinished={isPreloaderFinished}
+      />
       <main ref={mainRef} style={{ flex: 1, paddingTop: "80px" }}>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/"
+            element={<LandingPage isPreloaderFinished={isPreloaderFinished} />}
+          />
           <Route path="/shop" element={<ProductCatalog user={user} />} />
           <Route path="/cart" element={<Cart user={user} />} />
           <Route path="/orders" element={<OrderHistory user={user} />} />
@@ -98,12 +105,13 @@ const AppContent = ({ user, setUser, logout }) => {
 function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [isLoading, setIsLoading] = useState(true);
+  const [isPreloaderFinished, setIsPreloaderFinished] = useState(false);
 
-  // Simulate initial loading
+  // Simulate initial loading (data fetching, etc.)
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1200); // reduced slightly for better feel
 
     return () => clearTimeout(timer);
   }, []);
@@ -120,15 +128,18 @@ function App() {
         {/* Preloader */}
         <Preloader
           isLoading={isLoading}
-          onComplete={() => setIsLoading(false)}
+          onComplete={() => setIsPreloaderFinished(true)}
         />
 
-        {/* Main App */}
-        {!isLoading && (
-          <div className="app">
-            <AppContent user={user} setUser={setUser} logout={logout} />
-          </div>
-        )}
+        {/* Main App - Rendered behind preloader */}
+        <div className="app">
+          <AppContent
+            user={user}
+            setUser={setUser}
+            logout={logout}
+            isPreloaderFinished={isPreloaderFinished}
+          />
+        </div>
       </LenisProvider>
     </Router>
   );

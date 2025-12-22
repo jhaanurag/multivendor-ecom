@@ -17,7 +17,8 @@
   --primary-fg: #ffffff;
   --error: #dc2626;
   --success: #16a34a;
-  --radius: 0; /* Sharp edges - no rounded corners */
+  --radius: 0;
+  /* Sharp edges - no rounded corners */
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
@@ -48,8 +49,7 @@
 body {
   background-color: var(--bg);
   color: var(--fg);
-  font-family: "Helvetica Neue", Arial, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.6;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
@@ -308,12 +308,14 @@ section {
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .grid-3 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 640px) {
+
   .grid-2,
   .grid-3,
   .grid-4 {
@@ -497,12 +499,10 @@ section {
    Loading States
    ======================================== */
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--accent) 25%,
-    var(--border) 50%,
-    var(--accent) 75%
-  );
+  background: linear-gradient(90deg,
+      var(--accent) 25%,
+      var(--border) 50%,
+      var(--accent) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -511,6 +511,7 @@ section {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
@@ -740,6 +741,7 @@ tr:hover td {
    Accessibility
    ======================================== */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

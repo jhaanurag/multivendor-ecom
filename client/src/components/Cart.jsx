@@ -99,13 +99,24 @@ const Cart = ({ user }) => {
         }
     };
 
-    if (isLoading) return <p style={{ padding: '20px' }}>Loading cart...</p>;
+    if (isLoading) return (
+        <div className="container" style={{ paddingTop: '12rem' }}>
+            <p className="tracking-wider uppercase text-sm">Synchronizing your selection...</p>
+        </div>
+    );
 
     if (!cart || cart.items.length === 0) {
         return (
-            <div style={{ maxWidth: '800px', margin: '40px auto', textAlign: 'center' }}>
-                <p>Your cart is empty.</p>
-                <button onClick={() => window.location.href = '/'}>Go Shopping</button>
+            <div className="container" style={{ paddingTop: '12rem', textAlign: 'center' }}>
+                <h1 style={{ marginBottom: '2rem' }}>Empty.</h1>
+                <p style={{ marginBottom: '4rem' }}>Your shopping bag is waiting for its first item.</p>
+                <button
+                    onClick={() => window.location.href = '/'}
+                    className="hero-btn"
+                    style={{ border: '1px solid var(--fg)' }}
+                >
+                    <span className="hero-btn-text">Browse Collection</span>
+                </button>
             </div>
         );
     }
@@ -113,30 +124,90 @@ const Cart = ({ user }) => {
     const total = cart.items.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
 
     return (
-        <div style={{ maxWidth: '800px', margin: '40px auto', padding: '20px' }}>
-            <h2>Shopping Cart</h2>
-            <div style={{ marginTop: '20px' }}>
-                {cart.items.map(item => (
-                    <div key={item.product._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee' }}>
-                        <div>
-                            <span style={{ fontWeight: 'bold' }}>{item.product.name}</span>
-                            <div style={{ fontSize: '13px', color: '#666' }}>Qty: {item.quantity} x ${item.product.price}</div>
-                        </div>
-                        <div>
-                            <span style={{ fontWeight: 'bold', marginRight: '20px' }}>${(item.product.price * item.quantity).toFixed(2)}</span>
-                            <button onClick={() => removeFromCart(item.product._id)} style={{ color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}>Remove</button>
-                        </div>
-                    </div>
-                ))}
+        <div className="container" style={{ paddingTop: '10rem', paddingBottom: '10rem' }}>
+            <div className="section-header" style={{ marginBottom: '6rem' }}>
+                <p className="section-label">Your Selection</p>
+                <h1 style={{ margin: 0 }}>Shopping Bag</h1>
             </div>
 
-            <div style={{ marginTop: '30px', borderTop: '2px solid #333', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <span style={{ fontSize: '18px', fontWeight: 'bold' }}>Total: ${total.toFixed(2)}</span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '6rem', alignItems: 'start' }}>
+                {/* Cart Items List */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    {cart.items.map(item => (
+                        <div key={item.product._id} style={{ display: 'flex', gap: '2rem', paddingBottom: '2rem', borderBottom: '1px solid var(--border)' }}>
+                            <div style={{ width: '120px', height: '150px', background: 'var(--accent)', overflow: 'hidden' }}>
+                                {item.product.images?.[0] ? (
+                                    <img
+                                        src={`http://localhost:5000${item.product.images[0]}`}
+                                        alt={item.product.name}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                ) : (
+                                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>🛍️</div>
+                                )}
+                            </div>
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: '1.5rem' }}>{item.product.name}</h3>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.5rem' }}>
+                                        Vendor: {item.product.shop?.name || 'Independent'}
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                                    <div>
+                                        <p style={{ margin: 0, fontSize: '0.9rem' }}>Quantity: {item.quantity}</p>
+                                        <p style={{ margin: '0.5rem 0 0', fontWeight: 700 }}>${item.product.price}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => removeFromCart(item.product._id)}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            color: 'var(--error)',
+                                            fontSize: '0.75rem',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.1em',
+                                            cursor: 'pointer',
+                                            padding: 0
+                                        }}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                    <button
+                        onClick={clearCart}
+                        style={{ alignSelf: 'flex-start', background: 'none', border: 'none', color: 'var(--muted)', fontSize: '0.75rem', textTransform: 'uppercase', cursor: 'pointer', marginTop: '1rem' }}
+                    >
+                        Clear Shopping Bag
+                    </button>
                 </div>
-                <div>
-                    <button onClick={clearCart} style={{ marginRight: '10px' }}>Clear Cart</button>
-                    <button onClick={handleCheckout} style={{ padding: '10px 20px', background: '#333', color: '#fff', border: 'none', borderRadius: '4px' }}>Checkout</button>
+
+                {/* Summary Sidebar */}
+                <div style={{ border: '1px solid var(--fg)', padding: '2.5rem', position: 'sticky', top: '8rem' }}>
+                    <h2 style={{ fontSize: '1.5rem', marginBottom: '2rem', marginTop: 0 }}>Summary</h2>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <span>Subtotal</span>
+                        <span>${total.toFixed(2)}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <span>Shipping</span>
+                        <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>Calculated at next step</span>
+                    </div>
+                    <div style={{ margin: '2rem 0', borderTop: '1px solid var(--border)', paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: '1.25rem' }}>
+                        <span>Total</span>
+                        <span>${total.toFixed(2)}</span>
+                    </div>
+                    <button
+                        onClick={handleCheckout}
+                        className="hero-btn"
+                        style={{ width: '100%', background: 'var(--fg)', color: 'var(--bg)' }}
+                    >
+                        <span className="hero-btn-text">Proceed to Checkout</span>
+                    </button>
                 </div>
             </div>
 

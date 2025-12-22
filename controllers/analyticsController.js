@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const SubOrder = require('../models/SubOrder');
 const Product = require('../models/Product');
 const Shop = require('../models/Shop');
 const ErrorResponse = require('../utils/errorResponse');
@@ -14,38 +15,28 @@ exports.getVendorAnalytics = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Shop not found', 404));
     }
 
-    const products = await Product.find({ shop: shop._id }).select('_id');
-    const productIds = products.map(p => p._id);
-
-    const orders = await Order.find({
-        'products.product': { $in: productIds }
-    });
+    const subOrders = await SubOrder.find({ shop: shop._id });
+    const productsCount = await Product.countDocuments({ shop: shop._id });
 
     let totalRevenue = 0;
-    let totalSales = 0;
-    const productStats = {};
+    let totalItemsSold = 0;
 
-    orders.forEach(order => {
-        order.products.forEach(item => {
-            if (productIds.some(id => id.toString() === item.product.toString())) {
-                // Find product price (approximate from order total or specific item context)
-                // In a perfect system we'd use the snapshot price in order item
-                // For now, let's assume we can calculate it or we add price to order item
-                // Let's use the current product price for the dashboard estimate
-                totalSales += item.quantity;
-            }
-        });
+    subOrders.forEach(order => {
+        if (order.status !== 'cancelled') {
+            totalRevenue += order.totalAmount;
+            order.items.forEach(item => {
+                totalItemsSold += item.quantity;
+            });
+        }
     });
-
-    // To get accurate revenue, we'd need item prices in the Order model. 
-    // Let's just return counts and basic stats for now.
 
     res.status(200).json({
         success: true,
         data: {
-            totalProducts: products.length,
-            totalOrders: orders.length,
-            totalItemsSold: totalSales
+            totalProducts: productsCount,
+            totalOrders: subOrders.length,
+            totalItemsSold,
+            totalRevenue
         }
     });
 });

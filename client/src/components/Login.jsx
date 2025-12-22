@@ -48,22 +48,75 @@ const Login = ({ setUser }) => {
     };
 
     return (
-        <div className="centered-box">
-            <div className="card" style={{ width: '100%', maxWidth: '400px' }}>
-                <h3>Sign In</h3>
-                <form onSubmit={handleSubmit} style={{ marginTop: '1.5rem' }}>
-                    <div className="form-group">
-                        <label>Email Address</label>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="name@example.com" disabled={isLoading} />
+        <div className="container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '450px', padding: '4rem', border: '1px solid var(--border)' }}>
+                <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
+                    <p className="section-label" style={{ justifyContent: 'center' }}>Vault Access</p>
+                    <h1 style={{ margin: 0, fontSize: '3rem' }}>Login.</h1>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: '2.5rem' }}>
+                        <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>Identity / Email</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            placeholder="your@email.com"
+                            disabled={isLoading}
+                            style={{
+                                width: '100%',
+                                border: 'none',
+                                borderBottom: '1px solid var(--border)',
+                                padding: '1rem 0',
+                                fontSize: '1rem',
+                                background: 'transparent',
+                                outline: 'none'
+                            }}
+                        />
                     </div>
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" disabled={isLoading} />
+                    <div style={{ marginBottom: '3rem' }}>
+                        <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>Secret / Password</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            placeholder="••••••••"
+                            disabled={isLoading}
+                            style={{
+                                width: '100%',
+                                border: 'none',
+                                borderBottom: '1px solid var(--border)',
+                                padding: '1rem 0',
+                                fontSize: '1rem',
+                                background: 'transparent',
+                                outline: 'none'
+                            }}
+                        />
                     </div>
-                    <button type="submit" style={{ width: '100%', marginTop: '1rem' }} disabled={isLoading}>
-                        {isLoading ? 'Signing in...' : 'Sign In'}
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="hero-btn"
+                        style={{
+                            width: '100%',
+                            background: 'var(--fg)',
+                            color: 'var(--bg)',
+                            padding: '1.2rem'
+                        }}
+                    >
+                        <span className="hero-btn-text">
+                            {isLoading ? 'Authenticating...' : 'Enter Platform'}
+                        </span>
                     </button>
-                    {isLoading && <div className="loading-indicator" style={{ marginTop: '1rem' }}></div>}
+
+                    <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                        <p style={{ fontSize: '0.8rem' }}>
+                            New here? <a href="/register" style={{ textDecoration: 'underline', fontWeight: 600 }}>Create an account</a>
+                        </p>
+                    </div>
                 </form>
             </div>
 

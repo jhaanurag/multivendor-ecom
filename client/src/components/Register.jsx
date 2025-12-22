@@ -56,33 +56,119 @@ const Register = ({ setUser }) => {
     };
 
     return (
-        <div className="centered-box">
-            <div className="card" style={{ width: '100%', maxWidth: '400px' }}>
-                <h3>Create Account</h3>
-                <form onSubmit={handleSubmit} style={{ marginTop: '1.5rem' }}>
-                    <div className="form-group">
-                        <label>Full Name</label>
-                        <input name="name" value={formData.name} onChange={handleChange} required placeholder="John Doe" disabled={isLoading} />
+        <div className="container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '4rem', paddingBottom: '4rem' }}>
+            <div style={{ width: '100%', maxWidth: '500px', padding: '4rem', border: '1px solid var(--border)' }}>
+                <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
+                    <p className="section-label" style={{ justifyContent: 'center' }}>Join Platform</p>
+                    <h1 style={{ margin: 0, fontSize: '3rem' }}>Register.</h1>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: '2rem' }}>
+                        <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>Full Name</label>
+                        <input
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            placeholder="Full Name"
+                            disabled={isLoading}
+                            style={{
+                                width: '100%',
+                                border: 'none',
+                                borderBottom: '1px solid var(--border)',
+                                padding: '1rem 0',
+                                fontSize: '1rem',
+                                background: 'transparent',
+                                outline: 'none'
+                            }}
+                        />
                     </div>
-                    <div className="form-group">
-                        <label>Email Address</label>
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="name@example.com" disabled={isLoading} />
+                    <div style={{ marginBottom: '2rem' }}>
+                        <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            placeholder="your@email.com"
+                            disabled={isLoading}
+                            style={{
+                                width: '100%',
+                                border: 'none',
+                                borderBottom: '1px solid var(--border)',
+                                padding: '1rem 0',
+                                fontSize: '1rem',
+                                background: 'transparent',
+                                outline: 'none'
+                            }}
+                        />
                     </div>
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input type="password" name="password" value={formData.password} onChange={handleChange} required placeholder="••••••••" disabled={isLoading} />
+                    <div style={{ marginBottom: '2rem' }}>
+                        <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                            placeholder="••••••••"
+                            disabled={isLoading}
+                            style={{
+                                width: '100%',
+                                border: 'none',
+                                borderBottom: '1px solid var(--border)',
+                                padding: '1rem 0',
+                                fontSize: '1rem',
+                                background: 'transparent',
+                                outline: 'none'
+                            }}
+                        />
                     </div>
-                    <div className="form-group">
-                        <label>Account Type</label>
-                        <select name="role" value={formData.role} onChange={handleChange} disabled={isLoading}>
+                    <div style={{ marginBottom: '3rem' }}>
+                        <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>Account Type</label>
+                        <select
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            disabled={isLoading}
+                            style={{
+                                width: '100%',
+                                border: 'none',
+                                borderBottom: '1px solid var(--border)',
+                                padding: '1rem 0',
+                                fontSize: '1rem',
+                                background: 'transparent',
+                                outline: 'none',
+                                cursor: 'pointer'
+                            }}
+                        >
                             <option value="user">Customer</option>
                             <option value="vendor">Vendor</option>
                         </select>
                     </div>
-                    <button type="submit" style={{ width: '100%', marginTop: '1rem' }} disabled={isLoading}>
-                        {isLoading ? 'Creating account...' : 'Create Account'}
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="hero-btn"
+                        style={{
+                            width: '100%',
+                            background: 'var(--fg)',
+                            color: 'var(--bg)',
+                            padding: '1.2rem'
+                        }}
+                    >
+                        <span className="hero-btn-text">
+                            {isLoading ? 'Creating Account...' : 'Initialize Profile'}
+                        </span>
                     </button>
-                    {isLoading && <div className="loading-indicator" style={{ marginTop: '1rem' }}></div>}
+
+                    <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                        <p style={{ fontSize: '0.8rem' }}>
+                            Already a member? <a href="/login" style={{ textDecoration: 'underline', fontWeight: 600 }}>Sign in</a>
+                        </p>
+                    </div>
                 </form>
             </div>
 

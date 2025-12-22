@@ -71,67 +71,112 @@ const ProductCatalog = ({ user }) => {
     };
 
     return (
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2>Product Catalog</h2>
-                <input
-                    type="text"
-                    placeholder="Search by name or tags..."
-                    value={search}
-                    onChange={handleSearch}
-                    style={{ padding: '8px', width: '300px' }}
-                />
+        <div className="container" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
+            {/* Page Header */}
+            <div className="section-header" style={{ marginBottom: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem' }}>
+                <div>
+                    <p className="section-label">Curated Collection</p>
+                    <h1 style={{ margin: 0, fontSize: 'clamp(3rem, 6vw, 5rem)' }}>Catalog</h1>
+                </div>
+                <div style={{ minWidth: '300px' }}>
+                    <input
+                        type="text"
+                        placeholder="Search products..."
+                        value={search}
+                        onChange={handleSearch}
+                        className="search-input"
+                        style={{
+                            border: 'none',
+                            borderBottom: '1px solid var(--border)',
+                            padding: '1rem 0',
+                            fontSize: '1.25rem',
+                            letterSpacing: '-0.02em',
+                            background: 'transparent'
+                        }}
+                    />
+                </div>
             </div>
 
             {loading ? (
-                <p>Loading products...</p>
+                <div className="centered-box">
+                    <p className="tracking-wider uppercase text-sm">Loading curation...</p>
+                </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+                <div className="grid grid-4" style={{ gap: '2rem' }}>
                     {products.length === 0 ? (
-                        <p style={{ gridColumn: '1 / -1', textAlign: 'center' }}>No products found.</p>
+                        <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
+                            <p>No matches found for your search.</p>
+                        </div>
                     ) : (
                         products.map(product => (
-                            <div key={product._id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
-                                {product.images && product.images[0] && (
-                                    <img
-                                        src={`http://localhost:5000${product.images[0]}`}
-                                        alt={product.name}
-                                        style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '4px' }}
-                                    />
-                                )}
-                                <div style={{ marginTop: '10px' }}>
-                                    <span style={{ fontSize: '12px', color: '#666' }}>{product.shop?.name}</span>
-                                    <h3>{product.name}</h3>
-                                    <p style={{ fontSize: '14px', color: '#444' }}>{product.description}</p>
+                            <div key={product._id} className="product-card">
+                                {/* Wishlist Button - Top Right Floating */}
+                                <button
+                                    onClick={() => toggleWishlist(product._id)}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '1rem',
+                                        right: '1rem',
+                                        zIndex: 10,
+                                        background: 'rgba(255,255,255,0.8)',
+                                        backdropFilter: 'blur(4px)',
+                                        border: 'none',
+                                        width: '40px',
+                                        height: '40px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        fontSize: '1.2rem'
+                                    }}
+                                >
+                                    {wishlist.some(w => (w._id || w) === product._id) ? '❤️' : '🤍'}
+                                </button>
 
-                                    <div style={{ marginTop: '10px' }}>
-                                        {product.tags.map(tag => (
-                                            <span key={tag} style={{ background: '#eee', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', marginRight: '5px' }}>
-                                                #{tag}
+                                <div className="product-card__image-container">
+                                    {product.images && product.images[0] ? (
+                                        <img
+                                            src={`http://localhost:5000${product.images[0]}`}
+                                            alt={product.name}
+                                            className="product-card__image"
+                                        />
+                                    ) : (
+                                        <div className="product-card__image" style={{ background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <span style={{ opacity: 0.2, fontSize: '3rem' }}>🛍️</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="product-card__content">
+                                    <div className="product-card__brand">
+                                        {product.shop?.name || 'Independent Vendor'}
+                                    </div>
+                                    <h3 className="product-card__name">
+                                        {product.name}
+                                    </h3>
+
+                                    <div className="product-card__tags">
+                                        {product.tags.slice(0, 3).map(tag => (
+                                            <span key={tag} className="product-card__tag">
+                                                {tag}
                                             </span>
                                         ))}
                                     </div>
 
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
-                                        <span style={{ fontWeight: 'bold' }}>${product.price}</span>
-                                        <div>
-                                            <button
-                                                onClick={() => toggleWishlist(product._id)}
-                                                style={{ marginRight: '5px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' }}
-                                            >
-                                                {wishlist.some(w => (w._id || w) === product._id) ? '❤️' : '🤍'}
-                                            </button>
-                                            <button
-                                                onClick={() => addToCart(product)}
-                                                disabled={product.stock <= 0}
-                                                style={{ padding: '5px 10px' }}
-                                            >
-                                                {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div style={{ fontSize: '11px', marginTop: '5px', color: '#888' }}>
-                                        Rating: {product.averageRating.toFixed(1)} ({product.numReviews} reviews)
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem' }}>
+                                        <span className="product-card__price">${product.price}</span>
+                                        <button
+                                            onClick={() => addToCart(product)}
+                                            disabled={product.stock <= 0}
+                                            className="btn--ghost"
+                                            style={{
+                                                border: '1px solid var(--fg)',
+                                                padding: '0.6rem 1rem',
+                                                fontSize: '0.7rem'
+                                            }}
+                                        >
+                                            {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
