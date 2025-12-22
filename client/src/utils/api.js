@@ -45,7 +45,7 @@ api.interceptors.response.use(
 export const authAPI = {
     login: (credentials) => api.post('/auth/login', credentials),
     register: (userData) => api.post('/auth/register', userData),
-    getMe: () => api.get('/auth/me'),
+    getProfile: () => api.get('/auth/profile'),
 };
 
 // Products API
@@ -55,21 +55,30 @@ export const productsAPI = {
     create: (productData) => api.post('/products', productData),
     update: (id, productData) => api.put(`/products/${id}`, productData),
     delete: (id) => api.delete(`/products/${id}`),
+    getVendorProducts: () => api.get('/products/vendor'),
+    addReview: (id, reviewData) => api.post(`/products/${id}/review`, reviewData),
+    // File upload versions
+    createWithImage: (formData) => api.post('/products', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    updateWithImage: (id, formData) => api.put(`/products/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
 };
 
 // Cart API
 export const cartAPI = {
     get: () => api.get('/cart'),
-    addItem: (productId, quantity) => api.post('/cart/add', { productId, quantity }),
-    updateItem: (productId, quantity) => api.put('/cart/update', { productId, quantity }),
-    removeItem: (productId) => api.delete(`/cart/remove/${productId}`),
-    clear: () => api.delete('/cart/clear'),
+    addItem: (productId, quantity, variant) => api.post('/cart', { productId, quantity, variant }),
+    removeItem: (itemId) => api.delete(`/cart/${itemId}`),
+    clear: () => api.delete('/cart'),
 };
 
 // Orders API
 export const ordersAPI = {
     getAll: () => api.get('/orders'),
-    getById: (id) => api.get(`/orders/${id}`),
+    getMyOrders: () => api.get('/orders/myorders'),
+    getVendorOrders: () => api.get('/orders/vendor'),
     create: (orderData) => api.post('/orders', orderData),
     updateStatus: (id, status) => api.put(`/orders/${id}/status`, { status }),
 };
@@ -80,6 +89,12 @@ export const shopsAPI = {
     getById: (id) => api.get(`/shops/${id}`),
     create: (shopData) => api.post('/shops', shopData),
     update: (id, shopData) => api.put(`/shops/${id}`, shopData),
+};
+
+// Analytics API
+export const analyticsAPI = {
+    getAdmin: () => api.get('/analytics/admin'),
+    getVendor: () => api.get('/analytics/vendor'),
 };
 
 export default api;

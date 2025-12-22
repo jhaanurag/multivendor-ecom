@@ -14,6 +14,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { gsap } from "gsap";
 import { useScrollDirection } from "../context/LenisContext";
+import { useAuth } from "../context/AuthContext";
 
 // Check for reduced motion preference
 const prefersReducedMotion = () => {
@@ -21,7 +22,7 @@ const prefersReducedMotion = () => {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 };
 
-const Navigation = ({ user, logout, isPreloaderFinished }) => {
+const Navigation = ({ isPreloaderFinished }) => {
   const navRef = useRef(null);
   const logoRef = useRef(null);
   const linksRef = useRef([]);
@@ -33,21 +34,21 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
   const location = useLocation();
   const prevLocation = useRef(location.pathname);
 
+  const { user, isAuthenticated, isVendor, logout } = useAuth();
+
   // Initial navigation animation on mount
   useLayoutEffect(() => {
     if (prefersReducedMotion() || !isPreloaderFinished) return;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.1 }); // Minimal delay after preloader clears
+      const tl = gsap.timeline({ delay: 0.1 });
 
-      // Animate logo
       tl.fromTo(
         logoRef.current,
         { y: -40, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
       );
 
-      // Animate nav links
       tl.fromTo(
         linksRef.current,
         { y: -30, opacity: 0 },
@@ -59,11 +60,10 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
     return () => ctx.revert();
   }, [isPreloaderFinished]);
 
-  // Sticky Nav Logic (Simplified - No Hiding)
+  // Sticky Nav Logic
   useEffect(() => {
     if (!navRef.current) return;
 
-    // Always transparent throughout
     gsap.to(navRef.current, {
       y: 0,
       backgroundColor: "transparent",
@@ -80,7 +80,6 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
 
     const ctx = gsap.context(() => {
       if (isMenuOpen) {
-        // Open menu
         gsap.set(menuOverlayRef.current, { display: "flex" });
 
         const tl = gsap.timeline();
@@ -102,7 +101,6 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
           "-=0.3"
         );
       } else {
-        // Close menu
         const tl = gsap.timeline({
           onComplete: () => {
             gsap.set(menuOverlayRef.current, { display: "none" });
@@ -132,7 +130,7 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
     return () => ctx.revert();
   }, [isMenuOpen]);
 
-  // Close menu on route change - using callback to handle state update safely
+  // Close menu on route change
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
   }, []);
@@ -140,7 +138,6 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
   useEffect(() => {
     if (prevLocation.current !== location.pathname) {
       prevLocation.current = location.pathname;
-      // Schedule the state update outside the effect
       if (isMenuOpen) {
         requestAnimationFrame(closeMenu);
       }
@@ -177,8 +174,26 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
     });
   };
 
-  // Navigation links configuration
-  const filteredLinks = [];
+  // Navigation links - built dynamically
+  const getNavLinks = () => {
+    const links = [
+      { to: "/products", label: "Products" },
+    ];
+
+    if (isAuthenticated) {
+      links.push({ to: "/cart", label: "Cart" });
+
+      if (isVendor) {
+        links.push({ to: "/vendor/dashboard", label: "Dashboard" });
+      } else {
+        links.push({ to: "/orders", label: "Orders" });
+      }
+    }
+
+    return links;
+  };
+
+  const navLinks = getNavLinks();
 
   return (
     <>
@@ -199,7 +214,7 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
         }}
       >
         <div style={{
-          maxWidth: "1400px",
+          maxWidth: "1260px",
           margin: "0 auto",
           width: "100%",
           padding: "1.5rem var(--space-lg)",
@@ -240,7 +255,7 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
               gap: "0.5rem",
             }}
           >
-            {filteredLinks.map((link, index) => (
+            {navLinks.map((link, index) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -261,7 +276,6 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
                   borderRadius: "0",
                 }}
               >
-                {/* Rectangular Hover Bubble - No Shadow */}
                 <span
                   className="nav__link-bubble"
                   style={{
@@ -271,8 +285,8 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
                     width: "100%",
                     height: "100%",
                     backgroundColor: "var(--fg)",
-                    transform: "translateY(100%)", // Start from bottom
-                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)", // Expert-like snappy easing
+                    transform: "translateY(100%)",
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                     zIndex: 0,
                     pointerEvents: "none",
                   }}
@@ -290,7 +304,103 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
               </Link>
             ))}
 
-            {/* Removed Auth Links */}
+            {/* Auth Links */}
+            {!isAuthenticated ? (
+              <>
+                <Link
+                  to="/login"
+                  ref={(el) => (linksRef.current[navLinks.length] = el)}
+                  onMouseMove={(e) => handleLinkMouseMove(e, navLinks.length)}
+                  onMouseLeave={() => handleLinkMouseLeave(navLinks.length)}
+                  className="nav__link"
+                  style={{
+                    textDecoration: "none",
+                    color: "var(--fg)",
+                    padding: "1rem 1.75rem",
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  <span className="nav__link-bubble" style={{
+                    position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+                    backgroundColor: "var(--fg)", transform: "translateY(100%)",
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)", zIndex: 0,
+                  }} />
+                  <span className="nav__link-text" style={{ position: "relative", zIndex: 1, transition: "color 0.4s" }}>
+                    Login
+                  </span>
+                </Link>
+                <Link
+                  to="/register"
+                  ref={(el) => (linksRef.current[navLinks.length + 1] = el)}
+                  onMouseMove={(e) => handleLinkMouseMove(e, navLinks.length + 1)}
+                  onMouseLeave={() => handleLinkMouseLeave(navLinks.length + 1)}
+                  className="nav__link nav__link--register"
+                  style={{
+                    textDecoration: "none",
+                    color: "var(--fg)",
+                    background: "transparent",
+                    padding: "1rem 1.75rem",
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  <span className="nav__link-bubble" style={{
+                    position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+                    backgroundColor: "var(--fg)", transform: "translateY(100%)",
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)", zIndex: 0,
+                  }} />
+                  <span className="nav__link-text" style={{ position: "relative", zIndex: 1, transition: "color 0.4s" }}>
+                    Register
+                  </span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <span style={{
+                  padding: "0.5rem 1rem",
+                  fontSize: "0.85rem",
+                  color: "var(--muted)",
+                  fontWeight: 500,
+                }}>
+                  {user?.name}
+                </span>
+                <button
+                  onClick={logout}
+                  style={{
+                    textDecoration: "none",
+                    color: "var(--fg)",
+                    padding: "1rem 1.75rem",
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    background: "transparent",
+                    border: "1px solid var(--fg)",
+                    cursor: "pointer",
+                    transition: "all 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = "var(--fg)";
+                    e.target.style.color = "var(--bg)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = "transparent";
+                    e.target.style.color = "var(--fg)";
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -312,37 +422,21 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
                 marginLeft: "1rem",
               }}
             >
-              <span
-                style={{
-                  width: "24px",
-                  height: "2px",
-                  backgroundColor: "var(--fg)",
-                  transition: "transform 0.3s, opacity 0.3s",
-                  transform: isMenuOpen
-                    ? "rotate(45deg) translateY(4px)"
-                    : "none",
-                }}
-              />
-              <span
-                style={{
-                  width: "24px",
-                  height: "2px",
-                  backgroundColor: "var(--fg)",
-                  transition: "transform 0.3s, opacity 0.3s",
-                  opacity: isMenuOpen ? 0 : 1,
-                }}
-              />
-              <span
-                style={{
-                  width: "24px",
-                  height: "2px",
-                  backgroundColor: "var(--fg)",
-                  transition: "transform 0.3s, opacity 0.3s",
-                  transform: isMenuOpen
-                    ? "rotate(-45deg) translateY(-4px)"
-                    : "none",
-                }}
-              />
+              <span style={{
+                width: "24px", height: "2px", backgroundColor: "var(--fg)",
+                transition: "transform 0.3s, opacity 0.3s",
+                transform: isMenuOpen ? "rotate(45deg) translateY(4px)" : "none",
+              }} />
+              <span style={{
+                width: "24px", height: "2px", backgroundColor: "var(--fg)",
+                transition: "transform 0.3s, opacity 0.3s",
+                opacity: isMenuOpen ? 0 : 1,
+              }} />
+              <span style={{
+                width: "24px", height: "2px", backgroundColor: "var(--fg)",
+                transition: "transform 0.3s, opacity 0.3s",
+                transform: isMenuOpen ? "rotate(-45deg) translateY(-4px)" : "none",
+              }} />
             </button>
           </div>
         </div>
@@ -367,33 +461,56 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
           gap: "2rem",
         }}
       >
-        {/* Mobile menu items removed */}
+        {navLinks.map((link, index) => (
+          <Link
+            key={link.to}
+            to={link.to}
+            ref={(el) => (menuItemsRef.current[index] = el)}
+            onClick={closeMenu}
+            style={{
+              textDecoration: "none",
+              color: "var(--fg)",
+              fontSize: "2rem",
+              fontWeight: 700,
+              fontFamily: "var(--font-display)",
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+            }}
+          >
+            {link.label}
+          </Link>
+        ))}
+        {!isAuthenticated ? (
+          <>
+            <Link to="/login" onClick={closeMenu} ref={(el) => (menuItemsRef.current[navLinks.length] = el)}
+              style={{ textDecoration: "none", color: "var(--fg)", fontSize: "2rem", fontWeight: 700, fontFamily: "var(--font-display)", textTransform: "uppercase" }}>
+              Login
+            </Link>
+            <Link to="/register" onClick={closeMenu} ref={(el) => (menuItemsRef.current[navLinks.length + 1] = el)}
+              style={{ textDecoration: "none", color: "var(--fg)", fontSize: "2rem", fontWeight: 700, fontFamily: "var(--font-display)", textTransform: "uppercase" }}>
+              Register
+            </Link>
+          </>
+        ) : (
+          <button onClick={() => { logout(); closeMenu(); }} ref={(el) => (menuItemsRef.current[navLinks.length] = el)}
+            style={{ background: "transparent", border: "none", color: "var(--fg)", fontSize: "2rem", fontWeight: 700, fontFamily: "var(--font-display)", textTransform: "uppercase", cursor: "pointer" }}>
+            Logout
+          </button>
+        )}
       </div>
 
       <style>{`
-        /* Nav Link Hover Effects */
         .nav__link:hover .nav__link-bubble {
           transform: translateY(0) !important;
         }
-
-        .nav__link:hover .nav__link-text,
-        .nav__link:hover > span:last-child {
-          color: var(--bg) !important;
-        }
-
-        /* Logic for Register (Inverted) */
-        /* Logic for Register */
-        .nav__link--register:hover .nav__link-bubble {
-          transform: translateY(0) !important;
-        }
-        
-        .nav__link--register:hover > span:last-child {
+        .nav__link:hover .nav__link-text {
           color: var(--bg) !important;
         }
 
         @media (max-width: 968px) {
           .nav__links > a,
-          .nav__links > div:not(:last-child) {
+          .nav__links > span,
+          .nav__links > button:not(.nav__menu-btn) {
             display: none !important;
           }
           .nav__menu-btn {
@@ -406,3 +523,4 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
 };
 
 export default Navigation;
+

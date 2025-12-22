@@ -8,6 +8,7 @@ import {
   Routes,
   Route,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
@@ -15,11 +16,24 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Context Providers
 import { LenisProvider } from "./context/LenisContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 // Components
 import Navigation from "./components/Navigation";
 import PageTransition, { Preloader } from "./components/PageTransition";
+
+// Pages
 import LandingPage from "./components/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ProductsPage from "./pages/ProductsPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import OrdersPage from "./pages/OrdersPage";
+import VendorDashboard from "./pages/VendorDashboard";
+import VendorProducts from "./pages/VendorProducts";
+import VendorOrders from "./pages/VendorOrders";
 
 // Styles
 import "./App.css";
@@ -28,17 +42,55 @@ import "./App.css";
 gsap.registerPlugin(ScrollTrigger);
 
 /**
+ * Protected Route Wrapper
+ */
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+};
+
+/**
+ * Vendor Route Wrapper
+ */
+const VendorRoute = ({ children }) => {
+  const { isAuthenticated, isVendor, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (!isVendor) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+/**
  * Main content wrapper with page transitions
  */
-const AppContent = ({ user, setUser, logout, isPreloaderFinished }) => {
+const AppContent = ({ isPreloaderFinished }) => {
   const location = useLocation();
   const mainRef = useRef(null);
 
   // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    // Refresh ScrollTrigger on route change
     ScrollTrigger.refresh();
   }, [location.pathname]);
 
@@ -70,17 +122,73 @@ const AppContent = ({ user, setUser, logout, isPreloaderFinished }) => {
 
   return (
     <>
-      <Navigation
-        user={user}
-        logout={logout}
-        isPreloaderFinished={isPreloaderFinished}
-      />
-      <main ref={mainRef} style={{ flex: 1, paddingTop: "80px" }}>
+      <Navigation isPreloaderFinished={isPreloaderFinished} />
+      <main ref={mainRef} style={{ flex: 1, paddingTop: location.pathname === "/" ? "0" : "80px" }}>
         <Routes>
+          {/* Public Routes */}
           <Route
             path="/"
             element={<LandingPage isPreloaderFinished={isPreloaderFinished} />}
           />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
+
+          {/* Protected Routes (Any authenticated user) */}
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <CartPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Vendor Routes */}
+          <Route
+            path="/vendor/dashboard"
+            element={
+              <VendorRoute>
+                <VendorDashboard />
+              </VendorRoute>
+            }
+          />
+          <Route
+            path="/vendor/products"
+            element={
+              <VendorRoute>
+                <VendorProducts />
+              </VendorRoute>
+            }
+          />
+          <Route
+            path="/vendor/orders"
+            element={
+              <VendorRoute>
+                <VendorOrders />
+              </VendorRoute>
+            }
+          />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </>
@@ -91,44 +199,34 @@ const AppContent = ({ user, setUser, logout, isPreloaderFinished }) => {
  * Root App Component
  */
 function App() {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [isLoading, setIsLoading] = useState(true);
   const [isPreloaderFinished, setIsPreloaderFinished] = useState(false);
 
-  // Simulate initial loading (data fetching, etc.)
+  // Simulate initial loading
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1200); // reduced slightly for better feel
+    }, 1200);
 
     return () => clearTimeout(timer);
   }, []);
 
-  const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    setUser(null);
-  };
-
   return (
     <Router>
-      <LenisProvider>
-        {/* Preloader */}
-        <Preloader
-          isLoading={isLoading}
-          onComplete={() => setIsPreloaderFinished(true)}
-        />
-
-        {/* Main App - Rendered behind preloader */}
-        <div className="app">
-          <AppContent
-            user={user}
-            setUser={setUser}
-            logout={logout}
-            isPreloaderFinished={isPreloaderFinished}
+      <AuthProvider>
+        <LenisProvider>
+          {/* Preloader */}
+          <Preloader
+            isLoading={isLoading}
+            onComplete={() => setIsPreloaderFinished(true)}
           />
-        </div>
-      </LenisProvider>
+
+          {/* Main App */}
+          <div className="app">
+            <AppContent isPreloaderFinished={isPreloaderFinished} />
+          </div>
+        </LenisProvider>
+      </AuthProvider>
     </Router>
   );
 }

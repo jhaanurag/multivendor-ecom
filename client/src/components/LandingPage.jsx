@@ -255,26 +255,35 @@ const LandingPage = ({ isPreloaderFinished }) => {
 
       {/* ================= HERO SECTION ================= */}
       <section style={{
-        minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center", // Horizontal centering
-        textAlign: "center",   // Ensure text within is centered
+        alignItems: "center",
         padding: "0 var(--space-lg)",
         position: "relative"
       }}>
+        {/* Top Spacer to push text to center */}
+        <div style={{ flex: 1 }} />
 
-        <div className="hero-content" style={{ zIndex: 10, maxWidth: "1400px", margin: "0 auto", width: "100%", visibility: isPreloaderFinished ? 'visible' : 'hidden' }}>
+        <div className="hero-content" style={{
+          zIndex: 10,
+          maxWidth: "1260px",
+          margin: "0 auto",
+          width: "100%",
+          visibility: isPreloaderFinished ? 'visible' : 'hidden',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
+        }}>
           {/* Main Headline - Broken into lines for animation */}
           <div style={{ overflow: "hidden", lineHeight: 0.9, textAlign: "center" }}>
             <h1 ref={el => heroTextRef.current[0] = el} style={{
               fontFamily: 'var(--font-display)',
-              fontSize: "clamp(4rem, 15vw, 12rem)",
+              fontSize: "clamp(4rem, 13.5vw, 12rem)",
               letterSpacing: "-0.04em",
               color: "var(--fg)",
               margin: 0,
-              textShadow: "0 10px 30px rgba(0,0,0,0.15)" // Better visibility
+              textShadow: "0 10px 30px rgba(0,0,0,0.15)"
             }}>
               COMMERCE
             </h1>
@@ -282,20 +291,30 @@ const LandingPage = ({ isPreloaderFinished }) => {
 
           <div style={{ overflow: "hidden", lineHeight: 0.9, textAlign: "center" }}>
             <h1 ref={el => heroTextRef.current[1] = el} style={{
-              fontFamily: 'var(--font-display)', // Reverted
-              fontSize: "clamp(4rem, 15vw, 12rem)",
+              fontFamily: 'var(--font-display)',
+              fontSize: "clamp(4rem, 13.5vw, 12rem)",
               letterSpacing: "-0.04em",
               color: "var(--fg)",
               margin: 0,
-              fontStyle: "italic", // Stylistic choice
-              textShadow: "0 10px 30px rgba(0,0,0,0.15)"
+              fontStyle: "italic",
+              textShadow: "0 10px 30px rgba(0,0,0,0.15)",
+              paddingRight: "0.1em" // Prevent clipping of italic characters
             }}>
               REIMAGINED
             </h1>
           </div>
+        </div>
 
-          {/* Bottom Row: Buttons (Left) & Text (Right) */}
-          {/* Bottom Buttons - Centered */}
+        {/* Bottom Spacer with Buttons - This ensures the text above remains centered */}
+        <div style={{
+          flex: 1,
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          visibility: isPreloaderFinished ? 'visible' : 'hidden'
+        }}>
           <div ref={el => heroTextRef.current[3] = el} style={{
             marginTop: "3rem",
             display: "flex",
@@ -336,7 +355,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
         }}>
           {[...Array(8)].map((_, i) => (
             <span key={i} style={{
-              fontSize: "clamp(6rem, 20vw, 20rem)",
+              fontSize: "clamp(6rem, 18vw, 20rem)",
               fontFamily: "var(--font-display)",
               fontWeight: 800,
               lineHeight: 0.8,
@@ -358,7 +377,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
         }}>
           {[...Array(8)].map((_, i) => (
             <span key={i} style={{
-              fontSize: "clamp(6rem, 20vw, 20rem)",
+              fontSize: "clamp(6rem, 18vw, 20rem)",
               fontFamily: "var(--font-display)",
               fontWeight: 800,
               fontStyle: "italic",
@@ -383,7 +402,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
             letterSpacing: "0.2em",
             textTransform: "uppercase",
             color: "var(--fg)",
-            textShadow: "0 0 20px var(--bg)"
+            textShadow: "0 0 18px var(--bg)"
           }}>
             Unlock Global Potential
           </span>
@@ -406,7 +425,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
           ].map((line, i) => (
             <div key={i} style={{ overflow: "hidden" }}>
               <p className="moved-hero-text" style={{
-                fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+                fontSize: "clamp(1.5rem, 2.7vw, 2.5rem)",
                 color: "var(--fg)",
                 margin: 0,
                 lineHeight: 1.3,
@@ -467,21 +486,21 @@ const LandingPage = ({ isPreloaderFinished }) => {
         contentVisibility: "auto",
         containIntrinsicSize: "1px 1000px"
       }}>
-        <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+        <div style={{ maxWidth: "1260px", margin: "0 auto" }}>
 
-          <div style={{ marginBottom: "6rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <div style={{ marginBottom: "5.4rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
             <div>
-              <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", marginBottom: "1rem", color: "var(--muted)", fontSize: "1.5rem" }}>Everything you need.</p>
-              <h2 style={{ fontSize: "clamp(2rem, 5vw, 4rem)", fontFamily: "var(--font-display)", marginBottom: "1rem", lineHeight: 1 }}>
+              <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", marginBottom: "0.9rem", color: "var(--muted)", fontSize: "1.35rem" }}>Everything you need.</p>
+              <h2 style={{ fontSize: "clamp(2rem, 4.5vw, 4rem)", fontFamily: "var(--font-display)", marginBottom: "0.9rem", lineHeight: 1 }}>
                 Built for the <br /><span style={{ fontStyle: "italic", color: "var(--muted)" }}>Modern</span> Web.
               </h2>
             </div>
-            <div style={{ maxWidth: "400px", textAlign: "right" }}>
+            <div style={{ maxWidth: "360px", textAlign: "right" }}>
               <p>We provide the ultimate toolkit for vendors and shoppers who demand excellence in every interaction.</p>
             </div>
           </div>
 
-          <div className="bento-grid" style={{ gridAutoRows: "250px", gap: "2rem" }}>
+          <div className="bento-grid" style={{ gridAutoRows: "225px", gap: "1.8rem" }}>
 
             {/* ======= GLOBAL PAYMENTS (Large - 2x2) ======= */}
             <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "row", padding: 0 }}>
@@ -492,7 +511,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
               </div>
               {/* SVG Zone */}
               <div ref={el => iconRefs.current[0] = el} style={{ flex: "1 1 50%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem" }}>
-                <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "200px", height: "auto" }}>
+                <svg viewBox="0 0 108 72" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "180px", height: "auto" }}>
                   {/* Credit Card */}
                   <g className="svg-card-body">
                     <rect x="10" y="15" width="80" height="50" rx="6" fill="var(--fg)" />
@@ -510,7 +529,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
             <div className="bento-item feature-card" style={{ display: "flex", flexDirection: "column", padding: 0 }}>
               {/* SVG Zone */}
               <div ref={el => iconRefs.current[1] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "1.5rem" }}>
-                <svg viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "120px", height: "auto" }}>
+                <svg viewBox="0 0 90 63" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "108px", height: "auto" }}>
                   {/* Bars */}
                   <rect className="svg-bar" x="10" y="45" width="15" height="20" fill="var(--fg)" />
                   <rect className="svg-bar" x="32" y="30" width="15" height="35" fill="var(--fg)" />
@@ -531,7 +550,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
             <div className="bento-item feature-card" style={{ display: "flex", flexDirection: "column", padding: 0 }}>
               {/* SVG Zone */}
               <div ref={el => iconRefs.current[2] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "1.5rem" }}>
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "100px", height: "auto" }}>
+                <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "90px", height: "auto" }}>
                   {/* Pulse Rings */}
                   <circle className="svg-ring" cx="50" cy="50" r="15" stroke="var(--muted)" strokeWidth="1" fill="none" opacity="0.5" />
                   <circle className="svg-ring" cx="50" cy="50" r="15" stroke="var(--muted)" strokeWidth="1" fill="none" opacity="0.5" />
@@ -565,7 +584,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
               </div>
               {/* SVG Zone */}
               <div ref={el => iconRefs.current[3] = el} style={{ flex: "1 1 45%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem" }}>
-                <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "80px", height: "auto" }}>
+                <svg viewBox="0 0 72 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "72px", height: "auto" }}>
                   {/* Shield */}
                   <path className="svg-shield" d="M40 95 C40 95 75 75 75 40 L75 15 L40 5 L5 15 L5 40 C5 75 40 95 40 95 Z" fill="var(--fg)" />
                   {/* Scan Line */}
@@ -585,7 +604,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
               </div>
               {/* SVG Zone */}
               <div ref={el => iconRefs.current[4] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem" }}>
-                <svg viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "350px", height: "auto" }}>
+                <svg viewBox="0 0 180 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "315px", height: "auto" }}>
                   {/* Dashboard Frame */}
                   <rect x="0" y="0" width="200" height="100" rx="6" fill="var(--bg)" stroke="var(--border)" strokeWidth="1" />
                   {/* Header */}
@@ -616,7 +635,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
               </div>
               {/* SVG Zone */}
               <div ref={el => iconRefs.current[5] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem" }}>
-                <svg viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "200px", height: "auto" }}>
+                <svg viewBox="0 0 126 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "180px", height: "auto" }}>
                   {/* Bubble 1 (Left - User) */}
                   <g className="svg-bubble">
                     <rect x="5" y="50" width="60" height="40" rx="8" fill="var(--muted)" opacity="0.25" />
@@ -663,7 +682,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
         containIntrinsicSize: "1px 400px"
       }}>
         <div style={{
-          maxWidth: "1400px",
+          maxWidth: "1260px",
           margin: "0 auto",
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
@@ -673,26 +692,27 @@ const LandingPage = ({ isPreloaderFinished }) => {
             { number: 49632, suffix: "+", label: "Active Users" },
             { number: 1191, suffix: "+", label: "Vendors" },
             { number: 99, suffix: "%", label: "Uptime" },
-            { number: 4.9, suffix: "", label: "Rating" }
+            { number: 4.9, suffix: "", label: "on landing" }
           ].map((stat, i) => (
             <div key={i} style={{
               textAlign: "center",
-              borderRight: i !== 3 ? "1px solid var(--border)" : "none",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              padding: "2rem 1rem",
-              transition: "transform 0.3s ease, background 0.3s ease",
-              cursor: "default"
+              padding: "2.7rem 1.8rem",
+              transition: "all 0.4s cubic-bezier(0.23, 1, 0.32, 1)",
+              cursor: "default",
+              borderRight: i !== 3 ? "1px solid var(--border)" : "none",
+              position: "relative"
             }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "var(--bg-alt)";
-                e.currentTarget.style.transform = "scale(1.02)";
+                e.currentTarget.style.transform = "translateY(-5px)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
               <h3
@@ -700,24 +720,24 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 data-target={stat.number}
                 data-suffix={stat.suffix}
                 style={{
-                  fontSize: "clamp(2.5rem, 4.5vw, 4rem)",
+                  fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
                   fontFamily: "var(--font-display)",
-                  fontWeight: 600,
+                  fontWeight: 800,
                   margin: 0,
                   color: "var(--fg)",
                   lineHeight: 1,
-                  letterSpacing: "-0.04em",
+                  letterSpacing: "-0.05em",
                   fontVariantNumeric: "tabular-nums"
                 }}>
                 0{stat.suffix}
               </h3>
               <p style={{
-                fontSize: "0.8rem",
-                fontWeight: 600,
+                fontSize: "0.75rem",
+                fontWeight: 700,
                 textTransform: "uppercase",
-                letterSpacing: "0.15em",
+                letterSpacing: "0.2em",
                 color: "var(--muted)",
-                marginTop: "0.75rem"
+                marginTop: "1rem"
               }}>
                 {stat.label}
               </p>
@@ -737,16 +757,16 @@ const LandingPage = ({ isPreloaderFinished }) => {
         {/* Decorative Blur - Subtler gradient */}
         <div style={{
           position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-          width: "800px", height: "800px",
+          width: "720px", height: "720px",
           background: "radial-gradient(circle, var(--bg-alt) 0%, transparent 60%)",
           opacity: 0.8, pointerEvents: "none"
         }} />
 
-        <div style={{ position: "relative", zIndex: 2, maxWidth: "1400px", margin: "0 auto" }}>
+        <div style={{ position: "relative", zIndex: 2, maxWidth: "1260px", margin: "0 auto" }}>
 
           <div style={{ marginBottom: "1rem", overflow: "hidden" }}>
             <p className="join-word" style={{
-              fontSize: "clamp(1rem, 2vw, 1.2rem)",
+              fontSize: "clamp(1rem, 1.8vw, 1.2rem)",
               fontWeight: 500,
               letterSpacing: "0.05em",
               textTransform: "uppercase",
@@ -761,7 +781,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
           {/* Main Headline - Split for Animation */}
           <h2 style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(2.5rem, 8vw, 6rem)", // Decreased size as requested
+            fontSize: "clamp(2.5rem, 7.2vw, 6rem)", // Decreased size as requested
             lineHeight: 0.9,
             marginBottom: "4rem",
             color: "var(--fg)",
@@ -823,7 +843,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
         color: "var(--bg)",
         overflow: "hidden"
       }}>
-        <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+        <div style={{ maxWidth: "1260px", margin: "0 auto" }}>
 
           {/* Huge Vertical Links */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "8rem" }}>
@@ -831,7 +851,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
               <div key={text} className="footer-link-wrapper" style={{ overflow: "hidden", lineHeight: 0.85 }}>
                 <a href="#" className="footer-huge-link" style={{
                   display: "block",
-                  fontSize: "clamp(4rem, 12vw, 10rem)",
+                  fontSize: "clamp(4rem, 10.8vw, 10rem)",
                   fontFamily: "var(--font-display)",
                   fontWeight: 700,
                   color: "var(--bg)", // Default filled
