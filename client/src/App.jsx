@@ -18,6 +18,7 @@ function App() {
 
   return (
     <Router>
+      {/* theek hai done  */}
       <div className="container">
         <header className="navbar">
           <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
