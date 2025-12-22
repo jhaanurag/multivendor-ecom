@@ -164,7 +164,7 @@ exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
     }
 
     // Make sure user is shop owner
-    if (subOrder.vendor.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (subOrder.vendor.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
         return next(new ErrorResponse(`Not authorized to update this order`, 403));
     }
 
