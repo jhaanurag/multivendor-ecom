@@ -54,20 +54,22 @@ const LandingPage = ({ isPreloaderFinished }) => {
       // ===================================
       // 2. SCALE / THRIVE (Parallax Marquee)
       // ===================================
-      const scaleTrack = scaleThriveRef.current.querySelector('.scale-track');
-      const thriveTrack = scaleThriveRef.current.querySelector('.thrive-track');
+      const scaleTrack = scaleThriveRef.current?.querySelector('.scale-track');
+      const thriveTrack = scaleThriveRef.current?.querySelector('.thrive-track');
 
-      ScrollTrigger.create({
-        trigger: scaleThriveRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1,
-        onUpdate: (self) => {
-          // Move Scale Left, Thrive Right
-          gsap.set(scaleTrack, { xPercent: -20 + (self.progress * -30) }); // Moves left
-          gsap.set(thriveTrack, { xPercent: -50 + (self.progress * 30) }); // Moves right
-        }
-      });
+      if (scaleThriveRef.current) {
+        ScrollTrigger.create({
+          trigger: scaleThriveRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+          onUpdate: (self) => {
+            // Move Scale Left, Thrive Right
+            if (scaleTrack) gsap.set(scaleTrack, { xPercent: -20 + (self.progress * -30) });
+            if (thriveTrack) gsap.set(thriveTrack, { xPercent: -50 + (self.progress * 30) });
+          }
+        });
+      }
 
       // ===================================
       // 3. FEATURE CARDS (Batched ScrollTrigger)
@@ -92,22 +94,26 @@ const LandingPage = ({ isPreloaderFinished }) => {
       // ===================================
       // 4. JOIN TEXT SPLIT REVEAL
       // ===================================
-      const joinWords = joinSectionRef.current.querySelectorAll('.join-word span');
-      gsap.fromTo(joinWords,
-        { y: 100, opacity: 0, rotateX: -45 },
-        {
-          y: 0,
-          opacity: 1,
-          rotateX: 0,
-          duration: 1,
-          stagger: 0.05,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: joinSectionRef.current,
-            start: "top 75%",
-          }
+      if (joinSectionRef.current) {
+        const joinWords = joinSectionRef.current.querySelectorAll('.join-word span');
+        if (joinWords.length > 0) {
+          gsap.fromTo(joinWords,
+            { y: 100, opacity: 0, rotateX: -45 },
+            {
+              y: 0,
+              opacity: 1,
+              rotateX: 0,
+              duration: 1,
+              stagger: 0.05,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: joinSectionRef.current,
+                start: "top 75%",
+              }
+            }
+          );
         }
-      );
+      }
 
       // ===================================
       // 5. STATS COUNTER ANIMATION
