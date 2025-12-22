@@ -35,6 +35,7 @@ const SubOrderSchema = new mongoose.Schema({
     totalAmount: {
         type: Number,
         required: true,
+        min: 0,
     },
     status: {
         type: String,
