@@ -204,14 +204,14 @@ void main() {
   // Time-based animation (slow, elegant)
   float time = u_time * u_flowSpeed;
   
-  // Mouse interaction - subtle distortion
+  // Mouse interaction - stronger distortion for follow effect
   vec2 mousePos = u_mouse;
   float mouseDist = length(uv - mousePos);
-  float mouseInfluence = smoothstep(0.5, 0.0, mouseDist) * 0.15;
+  float mouseInfluence = smoothstep(0.6, 0.0, mouseDist) * 0.25; // Increased range and intensity
   
   // UV distortion for fluid motion + mouse
   vec2 distortedUV = uv * aspect;
-  distortedUV += (mousePos - 0.5) * mouseInfluence * 0.3;
+  distortedUV += (mousePos - 0.5) * mouseInfluence * 0.5; // Stronger push
   
   // Multiple layers of noise for depth
   float noise1 = fbm(vec3(distortedUV * u_noiseScale, time * 0.3), 4);
@@ -228,7 +228,7 @@ void main() {
   flowValue += u_scrollProgress * 0.15;
   
   // Add subtle mouse-based color shift
-  flowValue += mouseInfluence * 0.2;
+  flowValue += mouseInfluence * 0.3;
   
   // Get gradient color
   vec3 color = getGradientColor(flowValue, u_colorShift);
@@ -237,8 +237,8 @@ void main() {
   float glow = fbm(vec3(distortedUV * 3.0, time * 0.5), 2) * 0.5 + 0.5;
   color += glow * 0.08;
   
-  // Mouse glow effect - subtle highlight near cursor
-  color += mouseInfluence * 0.15;
+  // Mouse glow effect - stronger highlight near cursor
+  color += mouseInfluence * 0.25;
   
   // Add light diffusion (soft highlights)
   float highlight = pow(noise2 * 0.5 + 0.5, 2.0);
@@ -248,8 +248,8 @@ void main() {
   color = (color - 0.5) * u_contrast + 0.5;
   color *= u_brightness;
   
-  // Film grain effect
-  float grain = snoise(vec3(uv * 500.0, time * 10.0)) * 0.03;
+  // Film grain effect - doubled intensity for cinematic feel
+  float grain = snoise(vec3(uv * 800.0, time * 12.0)) * 0.06;
   color += grain;
   
   // Soft vignette for depth

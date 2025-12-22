@@ -253,6 +253,8 @@ const LandingPage = ({ isPreloaderFinished }) => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
+        alignItems: "center", // Horizontal centering
+        textAlign: "center",   // Ensure text within is centered
         padding: "0 var(--space-lg)",
         position: "relative"
       }}>
