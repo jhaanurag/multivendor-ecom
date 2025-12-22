@@ -1,0 +1,568 @@
+/**
+ * Editorial Navigation Component
+ * Award-winning, sharp-edged design with GSAP animations
+ * Features: Magnetic hover, text reveal, hamburger menu transformation
+ */
+
+import {
+  useRef,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+} from "react";
+import { Link, useLocation } from "react-router-dom";
+import gsap from "gsap";
+import { useScrollDirection } from "../context/LenisContext";
+
+// Check for reduced motion preference
+const prefersReducedMotion = () => {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+};
+
+const Navigation = ({ user, logout }) => {
+  const navRef = useRef(null);
+  const logoRef = useRef(null);
+  const linksRef = useRef([]);
+  const menuRef = useRef(null);
+  const menuOverlayRef = useRef(null);
+  const menuItemsRef = useRef([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { direction, isScrolled } = useScrollDirection();
+  const location = useLocation();
+  const prevLocation = useRef(location.pathname);
+
+  // Initial navigation animation on mount
+  useLayoutEffect(() => {
+    if (prefersReducedMotion()) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ delay: 0.5 });
+
+      // Animate logo
+      tl.fromTo(
+        logoRef.current,
+        { y: -40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
+      );
+
+      // Animate nav links
+      tl.fromTo(
+        linksRef.current,
+        { y: -30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: "power3.out" },
+        "-=0.4"
+      );
+    }, navRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Hide/show nav based on scroll direction
+  useEffect(() => {
+    if (prefersReducedMotion() || !navRef.current) return;
+
+    gsap.to(navRef.current, {
+      y: direction === "down" && isScrolled ? -100 : 0,
+      duration: 0.4,
+      ease: "power3.out",
+    });
+  }, [direction, isScrolled]);
+
+  // Menu open/close animation
+  useLayoutEffect(() => {
+    if (!menuOverlayRef.current) return;
+
+    const ctx = gsap.context(() => {
+      if (isMenuOpen) {
+        // Open menu
+        gsap.set(menuOverlayRef.current, { display: "flex" });
+
+        const tl = gsap.timeline();
+
+        tl.fromTo(
+          menuOverlayRef.current,
+          { clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" },
+          {
+            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+            duration: 0.8,
+            ease: "power4.inOut",
+          }
+        );
+
+        tl.fromTo(
+          menuItemsRef.current,
+          { y: 80, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out" },
+          "-=0.3"
+        );
+      } else {
+        // Close menu
+        const tl = gsap.timeline({
+          onComplete: () => {
+            gsap.set(menuOverlayRef.current, { display: "none" });
+          },
+        });
+
+        tl.to(menuItemsRef.current, {
+          y: -40,
+          opacity: 0,
+          duration: 0.3,
+          stagger: 0.05,
+          ease: "power2.in",
+        });
+
+        tl.to(
+          menuOverlayRef.current,
+          {
+            clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)",
+            duration: 0.6,
+            ease: "power4.inOut",
+          },
+          "-=0.1"
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, [isMenuOpen]);
+
+  // Close menu on route change - using callback to handle state update safely
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (prevLocation.current !== location.pathname) {
+      prevLocation.current = location.pathname;
+      // Schedule the state update outside the effect
+      if (isMenuOpen) {
+        requestAnimationFrame(closeMenu);
+      }
+    }
+  }, [location.pathname, isMenuOpen, closeMenu]);
+
+  // Magnetic link effect
+  const handleLinkMouseMove = (e, index) => {
+    if (prefersReducedMotion()) return;
+
+    const link = linksRef.current[index];
+    if (!link) return;
+
+    const rect = link.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    gsap.to(link, {
+      x: x * 0.3,
+      y: y * 0.3,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+  };
+
+  const handleLinkMouseLeave = (index) => {
+    if (prefersReducedMotion()) return;
+
+    gsap.to(linksRef.current[index], {
+      x: 0,
+      y: 0,
+      duration: 0.5,
+      ease: "elastic.out(1, 0.3)",
+    });
+  };
+
+  // Navigation links configuration
+  const navLinks = [
+    { to: "/", label: "Shop", public: true },
+    { to: "/cart", label: "Cart", public: true },
+    { to: "/orders", label: "Orders", auth: true },
+    { to: "/vendor", label: "Dashboard", role: "vendor" },
+  ];
+
+  const filteredLinks = navLinks.filter((link) => {
+    if (link.public) return true;
+    if (link.auth && user) return true;
+    if (link.role && user?.role === link.role) return true;
+    return false;
+  });
+
+  return (
+    <>
+      <nav
+        ref={navRef}
+        className={`nav ${isScrolled ? "nav--scrolled" : ""}`}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          zIndex: 1000,
+          padding: "1.5rem 3rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          backgroundColor: isScrolled
+            ? "rgba(255, 255, 255, 0.95)"
+            : "transparent",
+          backdropFilter: isScrolled ? "blur(10px)" : "none",
+          borderBottom: isScrolled ? "1px solid rgba(0, 0, 0, 0.1)" : "none",
+          transition: "background-color 0.3s, backdrop-filter 0.3s",
+        }}
+      >
+        {/* Logo */}
+        <Link
+          to="/"
+          ref={logoRef}
+          className="nav__logo"
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: 800,
+              letterSpacing: "-0.04em",
+              fontFamily: '"Helvetica Neue", Arial, sans-serif',
+              textTransform: "uppercase",
+            }}
+          >
+            MALL
+            <span style={{ fontWeight: 300 }}>_PROTO</span>
+          </span>
+        </Link>
+
+        {/* Desktop Navigation Links */}
+        <div
+          className="nav__links"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+          }}
+        >
+          {filteredLinks.map((link, index) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              ref={(el) => (linksRef.current[index] = el)}
+              onMouseMove={(e) => handleLinkMouseMove(e, index)}
+              onMouseLeave={() => handleLinkMouseLeave(index)}
+              className="nav__link"
+              style={{
+                textDecoration: "none",
+                color: "var(--fg)",
+                padding: "1rem 1.75rem",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                position: "relative",
+                overflow: "hidden", // Changed to hidden for crisp edges
+                borderRadius: "2px", // Sharp but slightly softened
+              }}
+            >
+              {/* Rectangular Hover Bubble - No Shadow */}
+              <span
+                className="nav__link-bubble"
+                style={{
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "var(--fg)",
+                  transform: "translateY(100%)", // Start from bottom
+                  transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)", // Expert-like snappy easing
+                  zIndex: 0,
+                  pointerEvents: "none",
+                }}
+              />
+              <span
+                className="nav__link-text"
+                style={{
+                  position: "relative",
+                  zIndex: 1,
+                  transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                }}
+              >
+                {link.label}
+              </span>
+            </Link>
+          ))}
+
+          {/* Auth Links */}
+          {user ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                marginLeft: "1rem",
+                paddingLeft: "1.5rem",
+                borderLeft: "1px solid var(--border)",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "var(--muted)",
+                }}
+              >
+                {user.name}
+              </span>
+              <button
+                onClick={logout}
+                style={{
+                  background: "transparent",
+                  border: "1px solid var(--fg)",
+                  color: "var(--fg)",
+                  padding: "0.5rem 1rem",
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--fg)";
+                  e.currentTarget.style.color = "var(--bg)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "var(--fg)";
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                marginLeft: "1rem",
+              }}
+            >
+              {[
+                { to: "/login", label: "Login" },
+                { to: "/register", label: "Register" }
+              ].map((link, idx) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  ref={(el) => (linksRef.current[filteredLinks.length + idx] = el)}
+                  onMouseMove={(e) => handleLinkMouseMove(e, filteredLinks.length + idx)}
+                  onMouseLeave={() => handleLinkMouseLeave(filteredLinks.length + idx)}
+                  className="nav__link"
+                  style={{
+                    textDecoration: "none",
+                    color: link.to === "/register" ? "var(--bg)" : "var(--fg)",
+                    backgroundColor: link.to === "/register" ? "var(--fg)" : "transparent",
+                    padding: "0.6rem 1.25rem",
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    position: "relative",
+                    overflow: "hidden",
+                    borderRadius: "2px",
+                    border: link.to === "/register" ? "none" : "1px solid transparent", // Alignment helper
+                  }}
+                >
+                  <span
+                    className="nav__link-bubble"
+                    style={{
+                      position: "absolute",
+                      top: "0",
+                      left: "0",
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: link.to === "/register" ? "var(--bg)" : "var(--fg)",
+                      transform: "translateY(100%)",
+                      transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                      zIndex: 0,
+                    }}
+                  />
+                  <span
+                    style={{
+                      position: "relative",
+                      zIndex: 1,
+                      transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                      color: "inherit"
+                    }}
+                  >
+                    {link.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Mobile Menu Button */}
+          <button
+            ref={menuRef}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="nav__menu-btn"
+            aria-label="Toggle menu"
+            style={{
+              display: "none",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "48px",
+              height: "48px",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              gap: "6px",
+              marginLeft: "1rem",
+            }}
+          >
+            <span
+              style={{
+                width: "24px",
+                height: "2px",
+                backgroundColor: "var(--fg)",
+                transition: "transform 0.3s, opacity 0.3s",
+                transform: isMenuOpen
+                  ? "rotate(45deg) translateY(4px)"
+                  : "none",
+              }}
+            />
+            <span
+              style={{
+                width: "24px",
+                height: "2px",
+                backgroundColor: "var(--fg)",
+                transition: "transform 0.3s, opacity 0.3s",
+                opacity: isMenuOpen ? 0 : 1,
+              }}
+            />
+            <span
+              style={{
+                width: "24px",
+                height: "2px",
+                backgroundColor: "var(--fg)",
+                transition: "transform 0.3s, opacity 0.3s",
+                transform: isMenuOpen
+                  ? "rotate(-45deg) translateY(-4px)"
+                  : "none",
+              }}
+            />
+          </button>
+        </div>
+      </nav>
+
+      {/* Full Screen Mobile Menu Overlay */}
+      <div
+        ref={menuOverlayRef}
+        className="nav__overlay"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100vh",
+          backgroundColor: "var(--bg)",
+          zIndex: 999,
+          display: "none",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "2rem",
+        }}
+      >
+        {[
+          ...filteredLinks,
+          ...(user
+            ? []
+            : [
+                { to: "/login", label: "Login" },
+                { to: "/register", label: "Register" },
+              ]),
+        ].map((link, index) => (
+          <Link
+            key={link.to}
+            to={link.to}
+            ref={(el) => (menuItemsRef.current[index] = el)}
+            onClick={() => setIsMenuOpen(false)}
+            style={{
+              textDecoration: "none",
+              color: "var(--fg)",
+              fontSize: "clamp(2rem, 8vw, 5rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.04em",
+              textTransform: "uppercase",
+              lineHeight: 1.1,
+            }}
+          >
+            {link.label}
+          </Link>
+        ))}
+        {user && (
+          <button
+            ref={(el) => (menuItemsRef.current[filteredLinks.length] = el)}
+            onClick={() => {
+              logout();
+              setIsMenuOpen(false);
+            }}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "var(--fg)",
+              fontSize: "clamp(2rem, 8vw, 5rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.04em",
+              textTransform: "uppercase",
+              cursor: "pointer",
+            }}
+          >
+            Logout
+          </button>
+        )}
+      </div>
+
+      <style>{`
+        /* Nav Link Hover Effects */
+        .nav__link:hover .nav__link-bubble {
+          transform: translateY(0) !important;
+        }
+
+        .nav__link:hover .nav__link-text,
+        .nav__link:hover > span:last-child {
+          color: var(--bg) !important;
+        }
+
+        /* Logic for Register (Inverted) */
+        .nav__link--register:hover .nav__link-bubble {
+          transform: translateY(0) !important;
+        }
+        
+        .nav__link--register:hover > span:last-child {
+          color: var(--fg) !important;
+        }
+
+        @media (max-width: 968px) {
+          .nav__links > a,
+          .nav__links > div:not(:last-child) {
+            display: none !important;
+          }
+          .nav__menu-btn {
+            display: flex !important;
+          }
+        }
+      `}</style>
+    </>
+  );
+};
+
+export default Navigation;
