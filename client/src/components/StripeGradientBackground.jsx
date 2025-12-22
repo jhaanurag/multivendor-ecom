@@ -474,11 +474,9 @@ const StripeGradientBackground = ({
         end: "bottom bottom",
         scrub: 1,
         onUpdate: (self) => {
-          gsap.to(shaderValues.current, {
-            scrollProgress: self.progress,
-            duration: 0.5,
-            ease: "power1.out",
-          });
+          if (shaderValues.current) {
+            shaderValues.current.scrollProgress = self.progress;
+          }
         },
       });
     });
