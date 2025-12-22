@@ -15,6 +15,7 @@
 
   /* Colors - Light Mode (Premium) */
   --bg: #ffffff;
+  --bg-rgb: 255, 255, 255;
   --bg-alt: #f4f4f5;
   --fg: #09090b;
   --fg-alt: #27272a;
@@ -80,6 +81,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #000000;
+    --bg-rgb: 0, 0, 0;
     --bg-alt: #0a0a0a;
     --fg: #ffffff;
     --fg-alt: #e5e5e5;

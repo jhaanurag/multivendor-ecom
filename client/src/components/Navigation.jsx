@@ -207,12 +207,32 @@ const Navigation = ({ isPreloaderFinished }) => {
           width: "100%",
           zIndex: 1000,
           backgroundColor: "transparent",
-          backdropFilter: "none",
           borderBottom: "none",
-          transition: "background-color 0.3s, backdrop-filter 0.3s",
+          transition: "background-color 0.8s, border-color 0.8s",
           visibility: isPreloaderFinished ? "visible" : "hidden",
         }}
       >
+        {/* Progressive Blur Layers */}
+        {/* New Progressive Blur Structure */}
+        <div className="gradient-blur" style={{
+          position: "absolute",
+          zIndex: -1,
+          inset: "0 0 auto 0",
+          height: "100%",
+          pointerEvents: "none",
+          opacity: 1,
+        }}>
+          {/* Top-heavy fade: 64px at top -> 0.5px at bottom */}
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(64px)", zIndex: 8, mask: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,0) 25%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,0) 25%)" }} />
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(32px)", zIndex: 7, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 37.5%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 37.5%)" }} />
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(16px)", zIndex: 6, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,0) 50%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,0) 50%)" }} />
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(8px)", zIndex: 5, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 25%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 62.5%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 25%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 62.5%)" }} />
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(4px)", zIndex: 4, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,0) 75%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,0) 75%)" }} />
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(2px)", zIndex: 3, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 87.5%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 87.5%)" }} />
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(1px)", zIndex: 2, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,0) 100%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,0) 100%)" }} />
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(0.5px)", zIndex: 1, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,1) 100%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,1) 100%)" }} />
+        </div>
+
         <div style={{
           maxWidth: "1260px",
           margin: "0 auto",
@@ -241,8 +261,7 @@ const Navigation = ({ isPreloaderFinished }) => {
                 textTransform: "uppercase",
               }}
             >
-              MALL
-              <span style={{ fontWeight: 300 }}>_PROTO</span>
+              KSHV
             </span>
           </Link>
 
