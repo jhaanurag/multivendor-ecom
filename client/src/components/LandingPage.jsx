@@ -507,7 +507,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 </svg>
               </div>
               {/* Text Zone */}
-              <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid var(--border)" }}>
+              <div style={{ padding: "1rem 1.5rem" }}>
                 <h3 style={{ fontSize: "1.1rem", marginBottom: "0.25rem", fontFamily: "var(--font-display)" }}>Analytics</h3>
                 <p style={{ color: "var(--muted)", fontSize: "0.8rem", margin: 0 }}>Real-time insights.</p>
               </div>
@@ -536,7 +536,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 </svg>
               </div>
               {/* Text Zone */}
-              <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid var(--border)" }}>
+              <div style={{ padding: "1rem 1.5rem" }}>
                 <h3 style={{ fontSize: "1.1rem", marginBottom: "0.25rem", fontFamily: "var(--font-display)" }}>Edge Scale</h3>
                 <p style={{ color: "var(--muted)", fontSize: "0.8rem", margin: 0 }}>Global distribution.</p>
               </div>
@@ -565,7 +565,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
             {/* ======= VENDOR DASHBOARD (Large - 2x2) ======= */}
             <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: 0 }}>
               {/* Text Zone */}
-              <div style={{ padding: "2rem", borderBottom: "1px solid var(--border)" }}>
+              <div style={{ padding: "2rem" }}>
                 <h3 style={{ fontSize: "2rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Vendor Dashboard</h3>
                 <p style={{ color: "var(--muted)", margin: 0 }}>Manage your entire empire from a single interface.</p>
               </div>
@@ -596,7 +596,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
             {/* ======= SUPPORT (Large - 2x2) ======= */}
             <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: 0 }}>
               {/* Text Zone */}
-              <div style={{ padding: "2rem", borderBottom: "1px solid var(--border)" }}>
+              <div style={{ padding: "2rem" }}>
                 <h3 style={{ fontSize: "2rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Support</h3>
                 <p style={{ color: "var(--muted)", margin: 0 }}>Dedicated enterprise support available 24/7.</p>
               </div>
@@ -669,15 +669,27 @@ const LandingPage = ({ isPreloaderFinished }) => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center"
-            }}>
+              justifyContent: "center",
+              padding: "2rem 1rem",
+              transition: "transform 0.3s ease, background 0.3s ease",
+              cursor: "default"
+            }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "var(--bg-alt)";
+                e.currentTarget.style.transform = "scale(1.02)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
               <h3
                 ref={el => statsRef.current[i] = el}
                 data-target={stat.number}
                 data-suffix={stat.suffix}
                 style={{
                   fontSize: "clamp(2.5rem, 4.5vw, 4rem)",
-                  fontFamily: "var(--font-display)", // Reverted to premium Sans-Serif
+                  fontFamily: "var(--font-display)",
                   fontWeight: 600,
                   margin: 0,
                   color: "var(--fg)",
@@ -693,7 +705,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 textTransform: "uppercase",
                 letterSpacing: "0.15em",
                 color: "var(--muted)",
-                marginTop: "0.5rem"
+                marginTop: "0.75rem"
               }}>
                 {stat.label}
               </p>
@@ -710,11 +722,12 @@ const LandingPage = ({ isPreloaderFinished }) => {
         position: "relative",
         overflow: "hidden"
       }}>
-        {/* Decorative Blur */}
+        {/* Decorative Blur - Subtler gradient */}
         <div style={{
           position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-          width: "600px", height: "600px", background: "radial-gradient(circle, var(--accent) 0%, transparent 70%)",
-          opacity: 0.5, pointerEvents: "none"
+          width: "800px", height: "800px",
+          background: "radial-gradient(circle, var(--bg-alt) 0%, transparent 60%)",
+          opacity: 0.8, pointerEvents: "none"
         }} />
 
         <div style={{ position: "relative", zIndex: 2, maxWidth: "1400px", margin: "0 auto" }}>
@@ -868,7 +881,8 @@ const LandingPage = ({ isPreloaderFinished }) => {
         }
 
         .hero-btn-primary {
-            border: none; /* No border for primary either */
+            background: var(--bg-alt); /* Subtle background */
+            border: 1px solid var(--border); /* Subtle border */
         }
 
         .hero-btn-bubble {
