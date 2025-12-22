@@ -361,13 +361,6 @@ const LandingPage = () => {
              </div>
           </div>
         </div>
-        
-        {/* Footer Animation Script */}
-        <script dangerouslySetInnerHTML={{__html: `
-          // This would ideally be in the useEffect but for simplicity in this structure:
-          // The hover effects are handled inline for immediate visual feedback.
-          // Entrance animations for footer links would be handled by ScrollTrigger in main useEffect.
-        `}} />
       </footer>
 
     </div>
