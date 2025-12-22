@@ -224,7 +224,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 <span className="hero-btn-bubble"></span>
                 <span className="hero-btn-text">Start Selling</span>
               </Link>
-              <Link to="/shop" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
+              <Link to="/shop" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-secondary">
                 <span className="hero-btn-bubble"></span>
                 <span className="hero-btn-text">Explore Shop</span>
               </Link>
