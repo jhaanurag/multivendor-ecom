@@ -12,7 +12,7 @@ import {
   useCallback,
 } from "react";
 import { Link, useLocation } from "react-router-dom";
-import gsap from "gsap";
+import { gsap } from "gsap";
 import { useScrollDirection } from "../context/LenisContext";
 
 // Check for reduced motion preference

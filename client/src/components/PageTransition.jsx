@@ -5,7 +5,7 @@
  */
 
 import { useRef, useLayoutEffect, useState, useEffect } from "react";
-import gsap from "gsap";
+import { gsap } from "gsap";
 import { useLenis } from "../context/LenisContext";
 
 // Check for reduced motion preference

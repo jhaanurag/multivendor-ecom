@@ -11,6 +11,21 @@
       rel="stylesheet"
     />
     <title>Mall_Proto | Multi-Vendor E-Commerce</title>
+
+    <!-- Resource Hints -->
+    <link rel="preload" href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap" as="style" />
+    
+    <!-- Critical CSS: Preloader & Layout -->
+    <style>
+      :root { --bg: #000000; --fg: #ffffff; }
+      body { margin: 0; background: var(--bg); }
+      .preloader { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: #000; z-index: 10000; display: flex; 
+        flex-direction: column; items: center; justify-content: center; 
+      }
+      .hero-content { visibility: hidden; } /* Hidden until preloader finishes */
+    </style>
   </head>
   <body>
     <div id="root"></div>

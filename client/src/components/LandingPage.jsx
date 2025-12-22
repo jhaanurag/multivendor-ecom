@@ -6,7 +6,7 @@
 
 import { useRef, useLayoutEffect, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import gsap from "gsap";
+import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import StripeGradientBackground from "./StripeGradientBackground";
 
@@ -455,7 +455,12 @@ const LandingPage = ({ isPreloaderFinished }) => {
       </section>
 
       {/* ================= BENTO FEATURES GRID ================= */}
-      <section style={{ padding: "12rem var(--space-lg)", background: "var(--bg)" }}>
+      <section className="bento-section" style={{
+        padding: "12rem var(--space-lg)",
+        background: "var(--bg)",
+        contentVisibility: "auto",
+        containIntrinsicSize: "1px 1000px"
+      }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
           <div style={{ marginBottom: "6rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
@@ -647,7 +652,9 @@ const LandingPage = ({ isPreloaderFinished }) => {
         padding: "12rem var(--space-lg)",
         borderTop: "1px solid var(--border)",
         borderBottom: "1px solid var(--border)",
-        background: "var(--bg)"
+        background: "var(--bg)",
+        contentVisibility: "auto",
+        containIntrinsicSize: "1px 400px"
       }}>
         <div style={{
           maxWidth: "1400px",
