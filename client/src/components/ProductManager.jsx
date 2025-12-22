@@ -117,7 +117,7 @@ const ProductManager = ({ user, refreshAnalytics }) => {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem' }}>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <label className="text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)', marginBottom: '0.5rem' }}>Item Nomenclature</label>
-                            <input name="name" placeholder="E.g. Lunar Module" value={formData.name} onChange={handleInputChange} required
+                            <input name="name" placeholder="E.g. Premium Leather Wallet" value={formData.name} onChange={handleInputChange} required
                                 style={{ border: 'none', borderBottom: '1px solid var(--border)', padding: '1rem 0', background: 'transparent', outline: 'none', fontSize: '1rem' }} />
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
