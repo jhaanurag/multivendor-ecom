@@ -295,11 +295,11 @@ const LandingPage = ({ isPreloaderFinished }) => {
             gap: "2rem",
             width: "100%"
           }}>
-            <Link to="/register" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
+            <Link to="#" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
               <span className="hero-btn-bubble"></span>
               <span className="hero-btn-text">Start Selling</span>
             </Link>
-            <Link to="/shop" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
+            <Link to="#" onMouseMove={handleBtnHover} onMouseLeave={handleBtnLeave} className="hero-btn hero-btn-primary">
               <span className="hero-btn-bubble"></span>
               <span className="hero-btn-text">Explore Shop</span>
             </Link>
@@ -788,7 +788,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
           </div>
 
           <Link
-            to="/register"
+            to="#"
             onMouseMove={handleBtnHover}
             onMouseLeave={handleBtnLeave}
             className="hero-btn hero-btn-primary"

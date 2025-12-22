@@ -20,12 +20,6 @@ import { LenisProvider } from "./context/LenisContext";
 import Navigation from "./components/Navigation";
 import PageTransition, { Preloader } from "./components/PageTransition";
 import LandingPage from "./components/LandingPage";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import VendorDashboard from "./components/VendorDashboard";
-import ProductCatalog from "./components/ProductCatalog";
-import Cart from "./components/Cart";
-import OrderHistory from "./components/OrderHistory";
 
 // Styles
 import "./App.css";
@@ -87,12 +81,6 @@ const AppContent = ({ user, setUser, logout, isPreloaderFinished }) => {
             path="/"
             element={<LandingPage isPreloaderFinished={isPreloaderFinished} />}
           />
-          <Route path="/shop" element={<ProductCatalog user={user} />} />
-          <Route path="/cart" element={<Cart user={user} />} />
-          <Route path="/orders" element={<OrderHistory user={user} />} />
-          <Route path="/login" element={<Login setUser={setUser} />} />
-          <Route path="/register" element={<Register setUser={setUser} />} />
-          <Route path="/vendor" element={<VendorDashboard user={user} />} />
         </Routes>
       </main>
     </>

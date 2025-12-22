@@ -178,19 +178,7 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
   };
 
   // Navigation links configuration
-  const navLinks = [
-    { to: "/", label: "Shop", public: true },
-    { to: "/cart", label: "Cart", public: true },
-    { to: "/orders", label: "Orders", auth: true },
-    { to: "/vendor", label: "Dashboard", role: "vendor" },
-  ];
-
-  const filteredLinks = navLinks.filter((link) => {
-    if (link.public) return true;
-    if (link.auth && user) return true;
-    if (link.role && user?.role === link.role) return true;
-    return false;
-  });
+  const filteredLinks = [];
 
   return (
     <>
@@ -302,137 +290,7 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
               </Link>
             ))}
 
-            {/* Auth Links */}
-            {user ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "1rem",
-                  marginLeft: "1rem",
-                  paddingLeft: "1.5rem",
-                  borderLeft: "1px solid var(--border)",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "0.7rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "var(--muted)",
-                  }}
-                >
-                  {user.name}
-                </span>
-                <button
-                  onClick={logout}
-                  className="nav__link"
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: "var(--fg)",
-                    padding: "1rem 1.75rem",
-                    fontSize: "0.85rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                    borderRadius: "0",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                >
-                  <span
-                    className="nav__link-bubble"
-                    style={{
-                      position: "absolute",
-                      top: "0",
-                      left: "0",
-                      width: "100%",
-                      height: "100%",
-                      backgroundColor: "var(--fg)",
-                      transform: "translateY(100%)",
-                      transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                      zIndex: 0,
-                    }}
-                  />
-                  <span
-                    className="nav__link-text"
-                    style={{
-                      position: "relative",
-                      zIndex: 1,
-                      transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                    }}
-                  >
-                    Logout
-                  </span>
-                </button>
-              </div>
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  marginLeft: "1rem",
-                }}
-              >
-                {[
-                  { to: "/login", label: "Login" },
-                  { to: "/register", label: "Register" }
-                ].map((link, idx) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    ref={(el) => (linksRef.current[filteredLinks.length + idx] = el)}
-                    onMouseMove={(e) => handleLinkMouseMove(e, filteredLinks.length + idx)}
-                    onMouseLeave={() => handleLinkMouseLeave(filteredLinks.length + idx)}
-                    className={`nav__link ${link.to === "/register" ? "nav__link--register" : ""}`}
-                    style={{
-                      textDecoration: "none",
-                      color: "var(--fg)",
-                      backgroundColor: "transparent",
-                      padding: "1rem 1.75rem",
-                      fontSize: "0.85rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      position: "relative",
-                      overflow: "hidden",
-                      borderRadius: "0",
-                      border: "none",
-                    }}
-                  >
-                    <span
-                      className="nav__link-bubble"
-                      style={{
-                        position: "absolute",
-                        top: "0",
-                        left: "0",
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor: "var(--fg)",
-                        transform: "translateY(100%)",
-                        transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                        zIndex: 0,
-                      }}
-                    />
-                    <span
-                      style={{
-                        position: "relative",
-                        zIndex: 1,
-                        transition: "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                        color: "inherit"
-                      }}
-                    >
-                      {link.label}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            )}
+            {/* Removed Auth Links */}
 
             {/* Mobile Menu Button */}
             <button
@@ -509,54 +367,7 @@ const Navigation = ({ user, logout, isPreloaderFinished }) => {
           gap: "2rem",
         }}
       >
-        {[
-          ...filteredLinks,
-          ...(user
-            ? []
-            : [
-              { to: "/login", label: "Login" },
-              { to: "/register", label: "Register" },
-            ]),
-        ].map((link, index) => (
-          <Link
-            key={link.to}
-            to={link.to}
-            ref={(el) => (menuItemsRef.current[index] = el)}
-            onClick={() => setIsMenuOpen(false)}
-            style={{
-              textDecoration: "none",
-              color: "var(--fg)",
-              fontSize: "clamp(2rem, 8vw, 5rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.04em",
-              textTransform: "uppercase",
-              lineHeight: 1.1,
-            }}
-          >
-            {link.label}
-          </Link>
-        ))}
-        {user && (
-          <button
-            ref={(el) => (menuItemsRef.current[filteredLinks.length] = el)}
-            onClick={() => {
-              logout();
-              setIsMenuOpen(false);
-            }}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "var(--fg)",
-              fontSize: "clamp(2rem, 8vw, 5rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.04em",
-              textTransform: "uppercase",
-              cursor: "pointer",
-            }}
-          >
-            Logout
-          </button>
-        )}
+        {/* Mobile menu items removed */}
       </div>
 
       <style>{`
