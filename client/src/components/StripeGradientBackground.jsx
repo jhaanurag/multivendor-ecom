@@ -247,14 +247,9 @@ void main() {
   float highlight = pow(noise2 * 0.5 + 0.5, 1.5);
   color += highlight * 0.2;
   
-  // Apply brightness and contrast - slightly more contrast for grain visibility
-  color = (color - 0.5) * (u_contrast + 0.2) + 0.5;
+  // Apply brightness and contrast
+  color = (color - 0.5) * (u_contrast + 0.1) + 0.5;
   color *= u_brightness;
-  
-  // HEAVY Film grain effect - much higher frequency and amplitude
-  float grain1 = snoise(vec3(uv * 1200.0, time * 15.0)) * 0.15;
-  float grain2 = snoise(vec3(uv * 2400.0, time * 20.0)) * 0.08; // High frequency micro-grain
-  color += (grain1 + grain2) * (1.0 - mouseInfluence * 0.5); // Slightly reduce grain in cursor ripple for "focus"
   
   // Soft vignette for edge depth
   float vignette = 1.0 - length((uv - 0.5) * 1.1);
@@ -599,20 +594,7 @@ const StripeGradientBackground = ({
         />
       )}
 
-      {/* Noise overlay for texture - aggressively enhanced grain */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          opacity: 0.15, // Bumped from 0.06
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          pointerEvents: "none",
-          mixBlendMode: "overlay",
-        }}
-      />
+      {/* Removed noise overlay per request */}
 
       {/* Optional overlay for content readability */}
       {overlay && (
