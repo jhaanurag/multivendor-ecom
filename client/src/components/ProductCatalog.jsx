@@ -99,7 +99,7 @@ const ProductCatalog = ({ user }) => {
 
             {loading ? (
                 <div className="centered-box">
-                    <p className="tracking-wider uppercase text-sm">Loading curation...</p>
+                    <p className="tracking-wider uppercase text-sm">Loading products...</p>
                 </div>
             ) : (
                 <div className="grid grid-4" style={{ gap: '2rem' }}>
