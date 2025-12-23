@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); // restart trigger
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -9,7 +9,11 @@ const connectDB = require('./config/db');
 dotenv.config();
 
 // Connect to database
-connectDB();
+// Connect to database
+const { importData } = require('./seeder');
+connectDB().then(() => {
+    importData();
+});
 
 
 

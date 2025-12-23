@@ -204,7 +204,9 @@ const VendorProducts = () => {
             fetchProducts();
             showNotification(editingProduct ? 'Product updated successfully' : 'Product created successfully');
         } catch (err) {
-            setFormError(err.response?.data?.error || 'Failed to save product');
+            console.error('Product save error:', err);
+            const errorMessage = err.response?.data?.message || err.response?.data?.error || 'Failed to save product';
+            setFormError(Array.isArray(errorMessage) ? errorMessage.join(', ') : errorMessage);
             // Keep form open on error
         } finally {
             setFormLoading(false);
@@ -355,7 +357,9 @@ const VendorProducts = () => {
                         zIndex: 1000,
                         padding: '2rem',
                     }}>
-                        <div style={{
+                        <div 
+                            data-lenis-prevent
+                            style={{
                             background: 'var(--bg)',
                             padding: '2rem',
                             maxWidth: '500px',

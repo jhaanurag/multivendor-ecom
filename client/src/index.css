@@ -110,13 +110,14 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
   font-size: 90%;
+  /* Lenis needs auto to manage scroll */
+  scroll-behavior: auto !important;
 }
 
 /* Override scroll-behavior when Lenis is active */
 html.lenis {
-  scroll-behavior: auto;
+  height: auto;
 }
 
 html.lenis,
