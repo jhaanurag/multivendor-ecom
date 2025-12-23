@@ -718,7 +718,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
       {/* ================= STATS SECTION ================= */}
       <section style={{
         padding: "4rem var(--space-lg)", // Reduced vertical padding
-        background: "linear-gradient(to bottom, var(--bg) 0%, #000 40%)", // Seamless fade from light to dark
+        background: "linear-gradient(to bottom, var(--bg) 0%, #0a0a0a 40%)", // Seamless fade from light to dark grey
         contentVisibility: "auto",
         containIntrinsicSize: "1px 400px"
       }}>
@@ -782,7 +782,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
       {/* ================= JOIN SELLERS SECTION ================= */}
       <section ref={el => joinSectionRef.current = el} style={{
         padding: "12rem var(--space-lg)",
-        background: "#000",
+        background: "#0a0a0a",
         textAlign: "center",
         position: "relative",
         overflow: "hidden"

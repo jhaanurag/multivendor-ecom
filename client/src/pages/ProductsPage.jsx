@@ -91,27 +91,39 @@ const ProductsPage = () => {
             display: 'flex',
             flexDirection: 'column',
         }}>
+            {/* Main Content Area */}
             <div style={{
                 flex: 1,
-                padding: 'var(--space-lg)',
-                paddingTop: '0',
+                paddingTop: '0', // Keep top padding 0 to pull up
             }}>
-                <div style={{ maxWidth: '1260px', margin: '0 auto' }}>
-
+                <div style={{
+                    maxWidth: '1260px',
+                    margin: '0 auto',
+                    padding: '0 var(--space-lg)', // Moved padding here to match Navigation alignment
+                    width: '100%',
+                }}>
                     {/* Header */}
-                    <div style={{ marginBottom: '3.6rem' }}>
+                    <div style={{ marginBottom: '3.6rem', padding: 'var(--space-lg) 0' }}>
                         <h1 style={{
+                            fontSize: 'clamp(3rem, 6vw, 5rem)',
                             fontFamily: 'var(--font-display)',
-                            fontSize: 'clamp(2.25rem, 5.4vw, 4.5rem)',
-                            fontWeight: 700,
-                            letterSpacing: '-0.04em',
-                            marginBottom: '0.9rem',
+                            fontWeight: 900,
+                            letterSpacing: '-0.03em',
+                            margin: 0,
+                            lineHeight: 1,
+                            textTransform: 'uppercase',
                             color: 'var(--fg)',
                         }}>
                             Products
                         </h1>
-                        <p style={{ color: 'var(--muted)', fontSize: '0.99rem', maxWidth: '540px' }}>
-                            Discover products from the world's most innovative vendors.
+                        <p style={{
+                            fontSize: '1.2rem',
+                            color: 'var(--muted)',
+                            marginTop: '1rem',
+                            maxWidth: '600px',
+                            lineHeight: 1.5,
+                        }}>
+                            Discover products from the world's most innovative brands.
                         </p>
                     </div>
 
