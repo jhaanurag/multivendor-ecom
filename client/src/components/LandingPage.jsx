@@ -974,6 +974,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
             position: relative;
             padding: 1.1rem 2.2rem; /* Slightly more padding to compensate for no border */
             font-size: 0.9rem;
+            font-family: var(--font-sans);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.1em;

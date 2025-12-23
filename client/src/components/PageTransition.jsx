@@ -315,7 +315,7 @@ export const Preloader = ({ isLoading, onComplete }) => {
           fontWeight: 700,
           letterSpacing: "0.2em",
           textTransform: "uppercase",
-          fontFamily: "monospace", // Monospace for ASCII effect
+          fontFamily: "var(--font-display)", // Improved premium font
         }}
       >
         {displayText}
@@ -334,7 +334,7 @@ export const Preloader = ({ isLoading, onComplete }) => {
             width: "100%",
             height: "100%",
             backgroundColor: "#fff",
-            transformOrigin: "left",
+            transformOrigin: "center",
           }}
         />
       </div>

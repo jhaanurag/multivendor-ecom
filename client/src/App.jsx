@@ -123,7 +123,7 @@ const AppContent = ({ isPreloaderFinished }) => {
   return (
     <>
       <Navigation isPreloaderFinished={isPreloaderFinished} />
-      <main ref={mainRef} style={{ flex: 1, paddingTop: location.pathname === "/" ? "0" : "80px" }}>
+      <main ref={mainRef} style={{ flex: 1, paddingTop: location.pathname === "/" ? "0" : "120px" }}>
         <Routes>
           {/* Public Routes */}
           <Route

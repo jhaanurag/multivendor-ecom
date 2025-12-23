@@ -3,8 +3,9 @@
  * Premium, minimalist design matching the site aesthetic
  */
 
-import { useState } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { gsap } from 'gsap';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
@@ -16,6 +17,25 @@ const LoginPage = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const containerRef = useRef(null);
+
+    useLayoutEffect(() => {
+        const from = location.state?.from;
+        const ctx = gsap.context(() => {
+            if (from === 'register') {
+                gsap.fromTo(containerRef.current,
+                    { x: -50, opacity: 0 },
+                    { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }
+                );
+            } else {
+                gsap.fromTo(containerRef.current,
+                    { y: 20, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }
+                );
+            }
+        }, containerRef);
+        return () => ctx.revert();
+    }, [location.state]);
 
     const from = location.state?.from?.pathname || '/';
 
@@ -49,7 +69,7 @@ const LoginPage = () => {
             padding: 'var(--space-lg)',
             background: 'var(--bg)'
         }}>
-            <div style={{
+            <div ref={containerRef} style={{
                 width: '100%',
                 maxWidth: '460px'
             }}>
@@ -189,7 +209,7 @@ const LoginPage = () => {
                         textDecoration: 'none',
                         fontWeight: 600,
                         borderBottom: '1px solid var(--fg)'
-                    }}>
+                    }} state={{ from: 'login' }}>
                         Create one
                     </Link>
                 </p>

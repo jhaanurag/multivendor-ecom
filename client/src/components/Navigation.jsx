@@ -237,7 +237,7 @@ const Navigation = ({ isPreloaderFinished }) => {
           maxWidth: "1260px",
           margin: "0 auto",
           width: "100%",
-          padding: "1.5rem var(--space-lg)",
+          padding: "2.5rem var(--space-lg)", // Increased height for more blur area
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -293,6 +293,7 @@ const Navigation = ({ isPreloaderFinished }) => {
                   position: "relative",
                   overflow: "hidden",
                   borderRadius: "0",
+                  fontFamily: "var(--font-sans)",
                 }}
               >
                 <span
@@ -342,6 +343,7 @@ const Navigation = ({ isPreloaderFinished }) => {
                     textTransform: "uppercase",
                     position: "relative",
                     overflow: "hidden",
+                    fontFamily: "var(--font-sans)",
                   }}
                 >
                   <span className="nav__link-bubble" style={{
@@ -370,6 +372,7 @@ const Navigation = ({ isPreloaderFinished }) => {
                     textTransform: "uppercase",
                     position: "relative",
                     overflow: "hidden",
+                    fontFamily: "var(--font-sans)",
                   }}
                 >
                   <span className="nav__link-bubble" style={{
@@ -406,6 +409,7 @@ const Navigation = ({ isPreloaderFinished }) => {
                     border: "1px solid var(--fg)",
                     cursor: "pointer",
                     transition: "all 0.3s",
+                    fontFamily: "var(--font-sans)",
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.background = "var(--fg)";

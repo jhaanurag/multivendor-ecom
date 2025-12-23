@@ -418,7 +418,8 @@ const StripeGradientBackground = ({
     const gl = glRef.current;
     if (!canvas || !gl) return;
 
-    const dpr = Math.min(window.devicePixelRatio, 2);
+    const isMobile = window.innerWidth < 768;
+    const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
     const width = window.innerWidth;
     const height = window.innerHeight;
 
@@ -437,6 +438,7 @@ const StripeGradientBackground = ({
     if (!gl || !uniforms.time) return;
 
     const canvas = canvasRef.current;
+    if (!canvas) return; // Fix for "canvas is null" error on page switch
 
     // Update time uniform
     if (!prefersReducedMotion) {
