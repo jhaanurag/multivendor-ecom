@@ -211,6 +211,7 @@ const Navigation = ({ isPreloaderFinished }) => {
           backgroundColor: "transparent",
           borderBottom: "none",
           transition: "background-color 0.8s, border-color 0.8s",
+          pointerEvents: "none",
           visibility: isPreloaderFinished ? "visible" : "hidden",
         }}
       >
@@ -245,6 +246,7 @@ const Navigation = ({ isPreloaderFinished }) => {
           justifyContent: "space-between",
           alignItems: "center",
           borderBottom: "none",
+          pointerEvents: "auto",
         }}>
 
           {/* Logo */}

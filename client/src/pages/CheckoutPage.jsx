@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { cartAPI, ordersAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer';
 
 const CheckoutPage = () => {
     const navigate = useNavigate();
@@ -110,19 +111,23 @@ const CheckoutPage = () => {
             <div style={{
                 minHeight: '100vh',
                 display: 'flex',
+                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
                 background: 'var(--bg)',
             }}>
-                <div style={{
-                    width: '40px',
-                    height: '40px',
-                    border: '2px solid var(--border)',
-                    borderTopColor: 'var(--fg)',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite',
-                }} />
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{
+                        width: '40px',
+                        height: '40px',
+                        border: '2px solid var(--border)',
+                        borderTopColor: 'var(--fg)',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                    }} />
+                </div>
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                <Footer />
             </div>
         );
     }
@@ -151,223 +156,229 @@ const CheckoutPage = () => {
     return (
         <div style={{
             minHeight: '100vh',
-            padding: 'var(--space-lg)',
-            paddingTop: '108px',
+            display: 'flex',
+            flexDirection: 'column',
             background: 'var(--bg)',
         }}>
-            <div style={{ maxWidth: '1260px', margin: '0 auto' }}>
-                {/* Breadcrumb */}
-                <div style={{ marginBottom: '2rem' }}>
-                    <Link to="/cart" style={{
-                        color: 'var(--muted)',
-                        textDecoration: 'none',
-                        fontSize: '0.9rem',
-                    }}>
-                        ← Back to Cart
-                    </Link>
-                </div>
-
-                {/* Header */}
-                <h1 style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: 'clamp(2.5rem, 6vw, 4rem)',
-                    fontWeight: 700,
-                    letterSpacing: '-0.04em',
-                    marginBottom: '3rem',
-                    color: 'var(--fg)',
-                }}>
-                    Checkout
-                </h1>
-
-                {error && (
-                    <div style={{
-                        padding: '1rem',
-                        marginBottom: '2rem',
-                        background: 'rgba(220, 38, 38, 0.1)',
-                        border: '1px solid rgba(220, 38, 38, 0.3)',
-                        color: '#dc2626',
-                        fontSize: '0.9rem',
-                    }}>
-                        {error}
+            <div style={{
+                flex: 1,
+                padding: 'var(--space-lg)',
+                paddingTop: '108px',
+            }}>
+                <div style={{ maxWidth: '1260px', margin: '0 auto' }}>
+                    {/* Breadcrumb */}
+                    <div style={{ marginBottom: '2rem' }}>
+                        <Link to="/cart" style={{
+                            color: 'var(--muted)',
+                            textDecoration: 'none',
+                            fontSize: '0.9rem',
+                        }}>
+                            ← Back to Cart
+                        </Link>
                     </div>
-                )}
 
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 350px',
-                    gap: '4rem',
-                    alignItems: 'start',
-                }}>
-                    {/* Shipping Form */}
-                    <form onSubmit={handleSubmit}>
-                        <h2 style={{
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '1.25rem',
-                            fontWeight: 600,
-                            marginBottom: '2rem',
-                        }}>
-                            Shipping Address
-                        </h2>
-
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label style={labelStyle}>Street Address</label>
-                            <input
-                                type="text"
-                                name="street"
-                                value={shippingAddress.street}
-                                onChange={handleInputChange}
-                                style={inputStyle}
-                                onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
-                                onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
-                                placeholder="123 Main Street"
-                                required
-                            />
-                        </div>
-
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr',
-                            gap: '1.5rem',
-                            marginBottom: '1.5rem',
-                        }}>
-                            <div>
-                                <label style={labelStyle}>City</label>
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={shippingAddress.city}
-                                    onChange={handleInputChange}
-                                    style={inputStyle}
-                                    onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
-                                    onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
-                                    placeholder="New York"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label style={labelStyle}>State / Province</label>
-                                <input
-                                    type="text"
-                                    name="state"
-                                    value={shippingAddress.state}
-                                    onChange={handleInputChange}
-                                    style={inputStyle}
-                                    onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
-                                    onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
-                                    placeholder="NY"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr',
-                            gap: '1.5rem',
-                            marginBottom: '2rem',
-                        }}>
-                            <div>
-                                <label style={labelStyle}>ZIP / Postal Code</label>
-                                <input
-                                    type="text"
-                                    name="zipCode"
-                                    value={shippingAddress.zipCode}
-                                    onChange={handleInputChange}
-                                    style={inputStyle}
-                                    onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
-                                    onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
-                                    placeholder="10001"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label style={labelStyle}>Country</label>
-                                <input
-                                    type="text"
-                                    name="country"
-                                    value={shippingAddress.country}
-                                    onChange={handleInputChange}
-                                    style={inputStyle}
-                                    onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
-                                    onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
-                                    placeholder="United States"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={submitting}
-                            style={{
-                                width: '100%',
-                                padding: '1.1rem',
-                                fontSize: '0.9rem',
-                                fontWeight: 600,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.1em',
-                                background: 'var(--fg)',
-                                color: 'var(--bg)',
-                                border: 'none',
-                                cursor: submitting ? 'not-allowed' : 'pointer',
-                                opacity: submitting ? 0.7 : 1,
-                                transition: 'opacity 0.3s, transform 0.3s',
-                            }}
-                            onMouseEnter={(e) => !submitting && (e.target.style.transform = 'translateY(-2px)')}
-                            onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                        >
-                            {submitting ? 'Placing Order...' : 'Place Order'}
-                        </button>
-                    </form>
-
-                    {/* Order Summary */}
-                    <div style={{
-                        position: 'sticky',
-                        top: '108px',
-                        padding: '2rem',
-                        background: 'var(--bg-alt)',
+                    {/* Header */}
+                    <h1 style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+                        fontWeight: 700,
+                        letterSpacing: '-0.04em',
+                        marginBottom: '3rem',
+                        color: 'var(--fg)',
                     }}>
-                        <h2 style={{
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '1.25rem',
-                            fontWeight: 600,
-                            marginBottom: '1.5rem',
-                        }}>
-                            Order Summary
-                        </h2>
+                        Checkout
+                    </h1>
 
-                        {/* Items */}
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            {cart?.items?.map((item) => (
-                                <div
-                                    key={item._id}
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        marginBottom: '0.75rem',
-                                        fontSize: '0.9rem',
-                                    }}
-                                >
-                                    <span style={{ color: 'var(--muted)' }}>
-                                        {item.product?.name} × {item.quantity}
-                                    </span>
-                                    <span>
-                                        ${((item.product?.price || item.price || 0) * item.quantity).toFixed(2)}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-
+                    {error && (
                         <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            paddingTop: '1.5rem',
-                            borderTop: '1px solid var(--border)',
-                            fontSize: '1.1rem',
-                            fontWeight: 700,
+                            padding: '1rem',
+                            marginBottom: '2rem',
+                            background: 'rgba(220, 38, 38, 0.1)',
+                            border: '1px solid rgba(220, 38, 38, 0.3)',
+                            color: '#dc2626',
+                            fontSize: '0.9rem',
                         }}>
-                            <span>Total</span>
-                            <span>${getTotal().toFixed(2)}</span>
+                            {error}
+                        </div>
+                    )}
+
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 350px',
+                        gap: '4rem',
+                        alignItems: 'start',
+                    }}>
+                        {/* Shipping Form */}
+                        <form onSubmit={handleSubmit}>
+                            <h2 style={{
+                                fontFamily: 'var(--font-display)',
+                                fontSize: '1.25rem',
+                                fontWeight: 600,
+                                marginBottom: '2rem',
+                            }}>
+                                Shipping Address
+                            </h2>
+
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={labelStyle}>Street Address</label>
+                                <input
+                                    type="text"
+                                    name="street"
+                                    value={shippingAddress.street}
+                                    onChange={handleInputChange}
+                                    style={inputStyle}
+                                    onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
+                                    onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+                                    placeholder="123 Main Street"
+                                    required
+                                />
+                            </div>
+
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '1.5rem',
+                                marginBottom: '1.5rem',
+                            }}>
+                                <div>
+                                    <label style={labelStyle}>City</label>
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        value={shippingAddress.city}
+                                        onChange={handleInputChange}
+                                        style={inputStyle}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+                                        placeholder="New York"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label style={labelStyle}>State / Province</label>
+                                    <input
+                                        type="text"
+                                        name="state"
+                                        value={shippingAddress.state}
+                                        onChange={handleInputChange}
+                                        style={inputStyle}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+                                        placeholder="NY"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '1.5rem',
+                                marginBottom: '2rem',
+                            }}>
+                                <div>
+                                    <label style={labelStyle}>ZIP / Postal Code</label>
+                                    <input
+                                        type="text"
+                                        name="zipCode"
+                                        value={shippingAddress.zipCode}
+                                        onChange={handleInputChange}
+                                        style={inputStyle}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+                                        placeholder="10001"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label style={labelStyle}>Country</label>
+                                    <input
+                                        type="text"
+                                        name="country"
+                                        value={shippingAddress.country}
+                                        onChange={handleInputChange}
+                                        style={inputStyle}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--fg)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+                                        placeholder="United States"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={submitting}
+                                style={{
+                                    width: '100%',
+                                    padding: '1.1rem',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 600,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.1em',
+                                    background: 'var(--fg)',
+                                    color: 'var(--bg)',
+                                    border: 'none',
+                                    cursor: submitting ? 'not-allowed' : 'pointer',
+                                    opacity: submitting ? 0.7 : 1,
+                                    transition: 'opacity 0.3s, transform 0.3s',
+                                }}
+                                onMouseEnter={(e) => !submitting && (e.target.style.transform = 'translateY(-2px)')}
+                                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                            >
+                                {submitting ? 'Placing Order...' : 'Place Order'}
+                            </button>
+                        </form>
+
+                        {/* Order Summary */}
+                        <div style={{
+                            position: 'sticky',
+                            top: '108px',
+                            padding: '2rem',
+                            background: 'var(--bg-alt)',
+                        }}>
+                            <h2 style={{
+                                fontFamily: 'var(--font-display)',
+                                fontSize: '1.25rem',
+                                fontWeight: 600,
+                                marginBottom: '1.5rem',
+                            }}>
+                                Order Summary
+                            </h2>
+
+                            {/* Items */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                {cart?.items?.map((item) => (
+                                    <div
+                                        key={item._id}
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            marginBottom: '0.75rem',
+                                            fontSize: '0.9rem',
+                                        }}
+                                    >
+                                        <span style={{ color: 'var(--muted)' }}>
+                                            {item.product?.name} × {item.quantity}
+                                        </span>
+                                        <span>
+                                            ${((item.product?.price || item.price || 0) * item.quantity).toFixed(2)}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                paddingTop: '1.5rem',
+                                borderTop: '1px solid var(--border)',
+                                fontSize: '1.1rem',
+                                fontWeight: 700,
+                            }}>
+                                <span>Total</span>
+                                <span>${getTotal().toFixed(2)}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -380,6 +391,7 @@ const CheckoutPage = () => {
           }
         }
       `}</style>
+            <Footer />
         </div>
     );
 };

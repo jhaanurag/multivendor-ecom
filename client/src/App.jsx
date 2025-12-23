@@ -17,6 +17,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 // Context Providers
 import { LenisProvider } from "./context/LenisContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
 
 // Components
 import Navigation from "./components/Navigation";
@@ -35,12 +36,14 @@ import OrdersPage from "./pages/OrdersPage";
 import VendorDashboard from "./pages/VendorDashboard";
 import VendorProducts from "./pages/VendorProducts";
 import VendorOrders from "./pages/VendorOrders";
+import VendorProductForm from "./pages/VendorProductForm";
 
 // Styles
 import "./App.css";
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
+
 
 /**
  * Protected Route Wrapper
@@ -124,7 +127,10 @@ const AppContent = ({ isPreloaderFinished }) => {
   return (
     <>
       <Navigation isPreloaderFinished={isPreloaderFinished} />
-      <main ref={mainRef} style={{ flex: 1, paddingTop: location.pathname === "/" ? "0" : "120px" }}>
+      <main ref={mainRef} style={{
+        flex: 1,
+        paddingTop: location.pathname === "/" ? "0" : (location.pathname === "/login" || location.pathname === "/register" ? "40px" : "120px")
+      }}>
         <Routes>
           {/* Public Routes */}
           <Route
@@ -187,6 +193,22 @@ const AppContent = ({ isPreloaderFinished }) => {
               </VendorRoute>
             }
           />
+          <Route
+            path="/vendor/products/new"
+            element={
+              <VendorRoute>
+                <VendorProductForm />
+              </VendorRoute>
+            }
+          />
+          <Route
+            path="/vendor/products/:id/edit"
+            element={
+              <VendorRoute>
+                <VendorProductForm />
+              </VendorRoute>
+            }
+          />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -217,16 +239,18 @@ function App() {
     <Router>
       <AuthProvider>
         <LenisProvider>
-          {/* Preloader */}
-          <Preloader
-            isLoading={isLoading}
-            onComplete={() => setIsPreloaderFinished(true)}
-          />
+          <ToastProvider>
+            {/* Preloader */}
+            <Preloader
+              isLoading={isLoading}
+              onComplete={() => setIsPreloaderFinished(true)}
+            />
 
-          {/* Main App */}
-          <div className="app">
-            <AppContent isPreloaderFinished={isPreloaderFinished} />
-          </div>
+            {/* Main App */}
+            <div className="app">
+              <AppContent isPreloaderFinished={isPreloaderFinished} />
+            </div>
+          </ToastProvider>
         </LenisProvider>
       </AuthProvider>
     </Router>

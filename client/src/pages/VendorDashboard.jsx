@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { analyticsAPI, productsAPI, ordersAPI } from '../utils/api';
 import { DollarSign, Package, Tag, Clock, ArrowRight } from 'lucide-react';
+import Footer from '../components/Footer';
 
 const VendorDashboard = () => {
     const { user, isVendor, isAuthenticated } = useAuth();
@@ -80,223 +81,231 @@ const VendorDashboard = () => {
     return (
         <div style={{
             minHeight: '100vh',
-            padding: 'var(--space-lg)',
-            paddingTop: '108px',
             background: 'var(--bg)',
+            display: 'flex',
+            flexDirection: 'column',
         }}>
-            <div style={{ maxWidth: '1260px', margin: '0 auto' }}>
-                {/* Header */}
-                <div style={{ marginBottom: '3rem' }}>
-                    <p style={{
-                        fontSize: '0.85rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.15em',
-                        textTransform: 'uppercase',
-                        color: 'var(--muted)',
-                        marginBottom: '0.5rem',
-                    }}>
-                        Vendor Dashboard
-                    </p>
-                    <h1 style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-                        fontWeight: 700,
-                        letterSpacing: '-0.04em',
-                        color: 'var(--fg)',
-                    }}>
-                        Welcome back, <span style={{ fontStyle: 'italic', fontFamily: 'var(--font-serif)' }}>{user?.name}</span>
-                    </h1>
-                </div>
+            <div style={{
+                flex: 1,
+                padding: 'var(--space-lg)',
+                paddingTop: '0',
+            }}>
+                <div style={{ maxWidth: '1260px', margin: '0 auto' }}>
+                    {/* Header */}
+                    <div style={{ marginBottom: '3rem' }}>
+                        <p style={{
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            letterSpacing: '0.15em',
+                            textTransform: 'uppercase',
+                            color: 'var(--muted)',
+                            marginBottom: '0.5rem',
+                        }}>
+                            Vendor Dashboard
+                        </p>
+                        <h1 style={{
+                            fontFamily: 'var(--font-display)',
+                            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                            fontWeight: 700,
+                            letterSpacing: '-0.04em',
+                            color: 'var(--fg)',
+                        }}>
+                            Welcome back, <span style={{ fontStyle: 'italic', fontFamily: 'var(--font-serif)' }}>{user?.name}</span>
+                        </h1>
+                    </div>
 
-                {/* Stats Grid */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                    gap: '1.5rem',
-                    marginBottom: '4rem',
-                }}>
-                    {statCards.map((stat, i) => (
-                        <div
-                            key={i}
+                    {/* Stats Grid */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                        gap: '1.5rem',
+                        marginBottom: '4rem',
+                    }}>
+                        {statCards.map((stat, i) => (
+                            <div
+                                key={i}
+                                style={{
+                                    padding: '2rem',
+                                    background: 'var(--bg-alt)',
+                                    transition: 'transform 0.3s',
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                            >
+                                <span style={{ fontSize: '1.5rem', marginBottom: '1rem', display: 'block' }}>{stat.icon}</span>
+                                <p style={{
+                                    fontSize: '2rem',
+                                    fontWeight: 700,
+                                    fontFamily: 'var(--font-display)',
+                                    marginBottom: '0.5rem',
+                                }}>
+                                    {stat.value}
+                                </p>
+                                <p style={{
+                                    fontSize: '0.85rem',
+                                    color: 'var(--muted)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.1em',
+                                }}>
+                                    {stat.label}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Quick Links */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
+                        gap: '2rem',
+                        marginBottom: '4rem',
+                    }}>
+                        <Link
+                            to="/vendor/products"
                             style={{
                                 padding: '2rem',
-                                background: 'var(--bg-alt)',
+                                background: '#ffffff',
+                                color: '#000000',
+                                textDecoration: 'none',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
                                 transition: 'transform 0.3s',
                             }}
                             onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                             onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                         >
-                            <span style={{ fontSize: '1.5rem', marginBottom: '1rem', display: 'block' }}>{stat.icon}</span>
-                            <p style={{
-                                fontSize: '2rem',
-                                fontWeight: 700,
-                                fontFamily: 'var(--font-display)',
-                                marginBottom: '0.5rem',
-                            }}>
-                                {stat.value}
-                            </p>
-                            <p style={{
-                                fontSize: '0.85rem',
-                                color: 'var(--muted)',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.1em',
-                            }}>
-                                {stat.label}
-                            </p>
-                        </div>
-                    ))}
-                </div>
+                            <div>
+                                <h3 style={{
+                                    fontFamily: 'var(--font-display)',
+                                    fontSize: '1.25rem',
+                                    fontWeight: 600,
+                                    marginBottom: '0.5rem',
+                                    color: '#000000',
+                                }}>
+                                    Manage Products
+                                </h3>
+                                <p style={{ fontSize: '0.9rem', color: '#333333' }}>
+                                    Add, edit, or remove your products
+                                </p>
+                            </div>
+                            <ArrowRight size={24} color="#000000" />
+                        </Link>
 
-                {/* Quick Links */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
-                    gap: '2rem',
-                    marginBottom: '4rem',
-                }}>
-                    <Link
-                        to="/vendor/products"
-                        style={{
-                            padding: '2rem',
-                            background: '#ffffff',
-                            color: '#000000',
-                            textDecoration: 'none',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            transition: 'transform 0.3s',
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                    >
-                        <div>
-                            <h3 style={{
-                                fontFamily: 'var(--font-display)',
-                                fontSize: '1.25rem',
-                                fontWeight: 600,
-                                marginBottom: '0.5rem',
-                                color: '#000000',
-                            }}>
-                                Manage Products
-                            </h3>
-                            <p style={{ fontSize: '0.9rem', color: '#333333' }}>
-                                Add, edit, or remove your products
-                            </p>
-                        </div>
-                        <ArrowRight size={24} color="#000000" />
-                    </Link>
-
-                    <Link
-                        to="/vendor/orders"
-                        style={{
-                            padding: '2rem',
-                            background: 'var(--bg-alt)',
-                            color: 'var(--fg)',
-                            textDecoration: 'none',
-                            border: '1px solid var(--border)',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            transition: 'transform 0.3s',
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                    >
-                        <div>
-                            <h3 style={{
-                                fontFamily: 'var(--font-display)',
-                                fontSize: '1.25rem',
-                                fontWeight: 600,
-                                marginBottom: '0.5rem',
-                            }}>
-                                View Orders
-                            </h3>
-                            <p style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-                                Track and manage customer orders
-                            </p>
-                        </div>
-                        <ArrowRight size={24} />
-                    </Link>
-                </div>
-
-                {/* Recent Orders */}
-                <div>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '1.5rem',
-                    }}>
-                        <h2 style={{
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '1.5rem',
-                            fontWeight: 600,
-                        }}>
-                            Recent Orders
-                        </h2>
-                        <Link to="/vendor/orders" style={{
-                            color: 'var(--muted)',
-                            fontSize: '0.9rem',
-                        }}>
-                            View all →
+                        <Link
+                            to="/vendor/orders"
+                            style={{
+                                padding: '2rem',
+                                background: 'var(--bg-alt)',
+                                color: 'var(--fg)',
+                                textDecoration: 'none',
+                                border: '1px solid var(--border)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                transition: 'transform 0.3s',
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                        >
+                            <div>
+                                <h3 style={{
+                                    fontFamily: 'var(--font-display)',
+                                    fontSize: '1.25rem',
+                                    fontWeight: 600,
+                                    marginBottom: '0.5rem',
+                                }}>
+                                    View Orders
+                                </h3>
+                                <p style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
+                                    Track and manage customer orders
+                                </p>
+                            </div>
+                            <ArrowRight size={24} />
                         </Link>
                     </div>
 
-                    {recentOrders.length === 0 ? (
-                        <p style={{ color: 'var(--muted)', padding: '2rem', background: 'var(--bg-alt)', textAlign: 'center' }}>
-                            No orders yet. Products you sell will appear here.
-                        </p>
-                    ) : (
-                        <div style={{ overflowX: 'auto' }}>
-                            <table style={{
-                                width: '100%',
-                                borderCollapse: 'collapse',
+                    {/* Recent Orders */}
+                    <div>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '1.5rem',
+                        }}>
+                            <h2 style={{
+                                fontFamily: 'var(--font-display)',
+                                fontSize: '1.5rem',
+                                fontWeight: 600,
+                            }}>
+                                Recent Orders
+                            </h2>
+                            <Link to="/vendor/orders" style={{
+                                color: 'var(--muted)',
                                 fontSize: '0.9rem',
                             }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                                        <th style={{ textAlign: 'left', padding: '1rem', fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.75rem' }}>Order ID</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.75rem' }}>Customer</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.75rem' }}>Total</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.75rem' }}>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {recentOrders.map((order) => (
-                                        <tr key={order._id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                            <td style={{ padding: '1rem' }}>
-                                                {order._id.slice(-8).toUpperCase()}
-                                            </td>
-                                            <td style={{ padding: '1rem' }}>
-                                                {order.parentOrder?.user?.name || 'Customer'}
-                                            </td>
-                                            <td style={{ padding: '1rem', fontWeight: 600 }}>
-                                                ${order.totalAmount?.toFixed(2)}
-                                            </td>
-                                            <td style={{ padding: '1rem' }}>
-                                                <span style={{
-                                                    padding: '0.25rem 0.75rem',
-                                                    background: order.status === 'delivered' ? '#10b981' :
-                                                        order.status === 'shipped' ? '#3b82f6' :
-                                                            order.status === 'cancelled' ? '#ef4444' : '#f59e0b',
-                                                    color: '#fff',
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: 600,
-                                                    textTransform: 'uppercase',
-                                                }}>
-                                                    {order.status}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                View all →
+                            </Link>
                         </div>
-                    )}
+
+                        {recentOrders.length === 0 ? (
+                            <p style={{ color: 'var(--muted)', padding: '2rem', background: 'var(--bg-alt)', textAlign: 'center' }}>
+                                No orders yet. Products you sell will appear here.
+                            </p>
+                        ) : (
+                            <div style={{ overflowX: 'auto' }}>
+                                <table style={{
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    fontSize: '0.9rem',
+                                }}>
+                                    <thead>
+                                        <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                                            <th style={{ textAlign: 'left', padding: '1rem', fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.75rem' }}>Order ID</th>
+                                            <th style={{ textAlign: 'left', padding: '1rem', fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.75rem' }}>Customer</th>
+                                            <th style={{ textAlign: 'left', padding: '1rem', fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.75rem' }}>Total</th>
+                                            <th style={{ textAlign: 'left', padding: '1rem', fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.75rem' }}>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {recentOrders.map((order) => (
+                                            <tr key={order._id} style={{ borderBottom: '1px solid var(--border)' }}>
+                                                <td style={{ padding: '1rem' }}>
+                                                    {order._id.slice(-8).toUpperCase()}
+                                                </td>
+                                                <td style={{ padding: '1rem' }}>
+                                                    {order.parentOrder?.user?.name || 'Customer'}
+                                                </td>
+                                                <td style={{ padding: '1rem', fontWeight: 600 }}>
+                                                    ${order.totalAmount?.toFixed(2)}
+                                                </td>
+                                                <td style={{ padding: '1rem' }}>
+                                                    <span style={{
+                                                        padding: '0.25rem 0.75rem',
+                                                        background: order.status === 'delivered' ? '#10b981' :
+                                                            order.status === 'shipped' ? '#3b82f6' :
+                                                                order.status === 'cancelled' ? '#ef4444' : '#f59e0b',
+                                                        color: '#fff',
+                                                        fontSize: '0.75rem',
+                                                        fontWeight: 600,
+                                                        textTransform: 'uppercase',
+                                                    }}>
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };
 
 export default VendorDashboard;
+

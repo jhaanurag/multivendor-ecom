@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import StripeGradientBackground from "./StripeGradientBackground";
+import Footer from "./Footer";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -538,15 +539,15 @@ const LandingPage = ({ isPreloaderFinished }) => {
           <div className="bento-grid" style={{ gap: "1.8rem" }}>
 
             {/* ======= GLOBAL PAYMENTS (Large - 2x2) ======= */}
-            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "row", padding: 0, overflow: "visible" }}>
+            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: "2.5rem", justifyContent: "space-between", overflow: "visible" }}>
               {/* Text Zone */}
-              <div style={{ flex: "1 1 50%", padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+              <div style={{ marginBottom: "2rem" }}>
                 <h3 style={{ fontSize: "2rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Global Payments</h3>
-                <p style={{ color: "var(--muted)" }}>Accept payments from anywhere in the world with automated tax handling.</p>
+                <p style={{ color: "var(--muted)", maxWidth: "80%" }}>Accept payments from anywhere in the world with automated tax handling.</p>
               </div>
               {/* SVG Zone */}
-              <div ref={el => iconRefs.current[0] = el} style={{ flex: "1 1 50%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem", overflow: "visible" }}>
-                <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "180px", height: "auto", overflow: "visible" }}>
+              <div ref={el => iconRefs.current[0] = el} style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", overflow: "visible" }}>
+                <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "220px", height: "auto", overflow: "visible" }}>
                   {/* Credit Card */}
                   <g className="svg-card-body">
                     <rect x="10" y="15" width="80" height="50" rx="6" fill="var(--fg)" />
@@ -561,10 +562,10 @@ const LandingPage = ({ isPreloaderFinished }) => {
             </div>
 
             {/* ======= ANALYTICS (Small) ======= */}
-            <div className="bento-item feature-card" style={{ display: "flex", flexDirection: "column", padding: 0, overflow: "visible" }}>
+            <div className="bento-item feature-card" style={{ display: "flex", flexDirection: "column", padding: "2rem", justifyContent: "space-between", overflow: "visible" }}>
               {/* SVG Zone */}
-              <div ref={el => iconRefs.current[1] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "1.5rem", overflow: "visible" }}>
-                <svg viewBox="0 0 95 70" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "108px", height: "auto", overflow: "visible" }}>
+              <div ref={el => iconRefs.current[1] = el} style={{ display: "flex", alignItems: "flex-start", marginBottom: "1.5rem", overflow: "visible" }}>
+                <svg viewBox="0 0 95 70" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "60px", height: "auto", overflow: "visible" }}>
                   {/* Bars */}
                   <rect className="svg-bar" x="10" y="45" width="15" height="20" fill="var(--fg)" />
                   <rect className="svg-bar" x="32" y="30" width="15" height="35" fill="var(--fg)" />
@@ -575,17 +576,17 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 </svg>
               </div>
               {/* Text Zone */}
-              <div style={{ padding: "1rem 1.5rem" }}>
-                <h3 style={{ fontSize: "1.1rem", marginBottom: "0.25rem", fontFamily: "var(--font-display)" }}>Analytics</h3>
-                <p style={{ color: "var(--muted)", fontSize: "0.8rem", margin: 0 }}>Real-time insights.</p>
+              <div>
+                <h3 style={{ fontSize: "1.25rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Analytics</h3>
+                <p style={{ color: "var(--muted)", fontSize: "0.9rem", margin: 0, lineHeight: 1.4 }}>Real-time insights on your dashboard.</p>
               </div>
             </div>
 
             {/* ======= EDGE SCALE (Small) ======= */}
-            <div className="bento-item feature-card" style={{ display: "flex", flexDirection: "column", padding: 0, overflow: "visible" }}>
+            <div className="bento-item feature-card" style={{ display: "flex", flexDirection: "column", padding: "2rem", justifyContent: "space-between", overflow: "visible" }}>
               {/* SVG Zone */}
-              <div ref={el => iconRefs.current[2] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "1.5rem", overflow: "visible" }}>
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "90px", height: "auto", overflow: "visible" }}>
+              <div ref={el => iconRefs.current[2] = el} style={{ display: "flex", alignItems: "flex-start", marginBottom: "1.5rem", overflow: "visible" }}>
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "60px", height: "auto", overflow: "visible" }}>
                   {/* Pulse Rings */}
                   <circle className="svg-ring" cx="50" cy="50" r="15" stroke="var(--muted)" strokeWidth="1" fill="none" opacity="0.5" />
                   <circle className="svg-ring" cx="50" cy="50" r="15" stroke="var(--muted)" strokeWidth="1" fill="none" opacity="0.5" />
@@ -604,22 +605,22 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 </svg>
               </div>
               {/* Text Zone */}
-              <div style={{ padding: "1rem 1.5rem" }}>
-                <h3 style={{ fontSize: "1.1rem", marginBottom: "0.25rem", fontFamily: "var(--font-display)" }}>Edge Scale</h3>
-                <p style={{ color: "var(--muted)", fontSize: "0.8rem", margin: 0 }}>Global distribution.</p>
+              <div>
+                <h3 style={{ fontSize: "1.25rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Edge Scale</h3>
+                <p style={{ color: "var(--muted)", fontSize: "0.9rem", margin: 0, lineHeight: 1.4 }}>Instant global distribution.</p>
               </div>
             </div>
 
             {/* ======= ENTERPRISE SECURITY (Wide - 2x1) ======= */}
-            <div className="bento-item bento-item--wide feature-card" style={{ display: "flex", flexDirection: "row", padding: 0, overflow: "visible" }}>
+            <div className="bento-item bento-item--wide feature-card" style={{ display: "flex", flexDirection: "row", padding: "2.5rem", alignItems: "center", justifyContent: "space-between", overflow: "visible" }}>
               {/* Text Zone */}
-              <div style={{ flex: "1 1 55%", padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Enterprise Security</h3>
-                <p style={{ color: "var(--muted)" }}>Military-grade encryption for every transaction.</p>
+              <div style={{ flex: "0 0 55%" }}>
+                <h3 style={{ fontSize: "1.5rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Enterprise Security</h3>
+                <p style={{ color: "var(--muted)", lineHeight: 1.5 }}>Military-grade encryption for every transaction.</p>
               </div>
               {/* SVG Zone */}
-              <div ref={el => iconRefs.current[3] = el} style={{ flex: "1 1 45%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem", overflow: "visible" }}>
-                <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "72px", height: "auto", overflow: "visible" }}>
+              <div ref={el => iconRefs.current[3] = el} style={{ flex: "0 0 40%", display: "flex", justifyContent: "center", overflow: "visible" }}>
+                <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "80px", height: "auto", overflow: "visible" }}>
                   {/* Shield */}
                   <path className="svg-shield" d="M40 95 C40 95 75 75 75 40 L75 15 L40 5 L5 15 L5 40 C5 75 40 95 40 95 Z" fill="var(--fg)" />
                   {/* Scan Line */}
@@ -631,15 +632,15 @@ const LandingPage = ({ isPreloaderFinished }) => {
             </div>
 
             {/* ======= VENDOR DASHBOARD (Large - 2x2) ======= */}
-            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: 0, overflow: "visible" }}>
+            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: "2.5rem", overflow: "visible" }}>
               {/* Text Zone */}
-              <div style={{ padding: "2rem" }}>
-                <h3 style={{ fontSize: "2rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Vendor Dashboard</h3>
+              <div style={{ marginBottom: "2rem" }}>
+                <h3 style={{ fontSize: "2rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Vendor Dashboard</h3>
                 <p style={{ color: "var(--muted)", margin: 0 }}>Manage your entire empire from a single interface.</p>
               </div>
               {/* SVG Zone */}
-              <div ref={el => iconRefs.current[4] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem", overflow: "visible" }}>
-                <svg viewBox="0 0 210 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "315px", height: "auto", overflow: "visible" }}>
+              <div ref={el => iconRefs.current[4] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", width: "100%", overflow: "visible" }}>
+                <svg viewBox="0 0 210 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "340px", height: "auto", overflow: "visible" }}>
                   {/* Dashboard Frame */}
                   <rect x="0" y="0" width="200" height="100" rx="12" fill="var(--bg)" stroke="var(--border)" strokeWidth="1" />
                   {/* Header */}
@@ -665,15 +666,15 @@ const LandingPage = ({ isPreloaderFinished }) => {
             </div>
 
             {/* ======= SUPPORT (Large - 2x2) ======= */}
-            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: 0, overflow: "visible" }}>
+            <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "column", padding: "2.5rem", overflow: "visible" }}>
               {/* Text Zone */}
-              <div style={{ padding: "2rem" }}>
-                <h3 style={{ fontSize: "2rem", marginBottom: "0.5rem", fontFamily: "var(--font-display)" }}>Support</h3>
+              <div style={{ marginBottom: "2rem" }}>
+                <h3 style={{ fontSize: "2rem", marginBottom: "1rem", fontFamily: "var(--font-display)" }}>Support</h3>
                 <p style={{ color: "var(--muted)", margin: 0 }}>Dedicated enterprise support available 24/7.</p>
               </div>
               {/* SVG Zone */}
-              <div ref={el => iconRefs.current[5] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem", overflow: "visible" }}>
-                <svg viewBox="0 0 140 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "180px", height: "auto", overflow: "visible" }}>
+              <div ref={el => iconRefs.current[5] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", width: "100%", overflow: "visible" }}>
+                <svg viewBox="0 0 140 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "200px", height: "auto", overflow: "visible" }}>
                   {/* Bubble 1 (Left - User) */}
                   <g className="svg-bubble">
                     <rect x="5" y="50" width="60" height="40" rx="8" fill="var(--muted)" opacity="0.25" />
@@ -868,17 +869,15 @@ const LandingPage = ({ isPreloaderFinished }) => {
         </div>
       </section>
 
-      {/* ================= FOOTER ================= */}
-      <footer style={{
-        padding: "12rem var(--space-lg) 0", // No bottom padding to blend with sunrise
-        background: "#000",
+      {/* ================= SOCIAL LINKS SECTION ================= */}
+      <section style={{
+        padding: "12rem var(--space-lg) 4rem",
+        background: "#0a0a0a",
         color: "#fff",
         overflow: "hidden"
       }}>
         <div style={{ maxWidth: "1260px", margin: "0 auto" }}>
-
-          {/* Huge Vertical Links */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "8rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "4rem" }}>
             {['Instagram', 'Twitter', 'LinkedIn', 'Github'].map((text, i) => (
               <div key={text} className="footer-link-wrapper" style={{ overflow: "hidden", lineHeight: 0.85 }}>
                 <a href="#" className="footer-huge-link" style={{
@@ -886,7 +885,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
                   fontSize: "clamp(4rem, 10.8vw, 10rem)",
                   fontFamily: "var(--font-display)",
                   fontWeight: 700,
-                  color: "#fff", // Default filled
+                  color: "#fff",
                   textDecoration: "none",
                   textTransform: "uppercase",
                   transition: "color 0.3s ease, transform 0.3s ease",
@@ -908,74 +907,10 @@ const LandingPage = ({ isPreloaderFinished }) => {
               </div>
             ))}
           </div>
-
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "2rem", paddingTop: "2rem" }}>
-            <div>
-              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#fff", margin: 0 }}>KSHV</h2>
-              <p style={{ opacity: 0.5, marginTop: "0.5rem", fontSize: "0.9rem", color: "#fff" }}>© 2025 All Rights Reserved.</p>
-            </div>
-
-            <div style={{ display: "flex", gap: "2rem" }}>
-              {['Legal', 'Privacy', 'Terms'].map(link => (
-                <a key={link} href="#" style={{ color: "#fff", textDecoration: "none", fontSize: "0.9rem", opacity: 0.6 }}>{link}</a>
-              ))}
-            </div>
-          </div>
         </div>
-      </footer>
-
-      {/* ================= SUNRISE FOOTER (REFINED) ================= */}
-      <section className="sunrise-section" style={{
-        backgroundColor: "#000",
-        height: "50vh", // Shorter as requested
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-end",
-        alignItems: "center",
-        position: "relative",
-        overflow: "hidden", // Clipping
-        paddingBottom: "0" // Align to bottom
-      }}>
-        {/* Vibrant Gradient - Made taller and smoother blend */}
-        <div
-          className="sunrise-gradient"
-          style={{
-            position: "absolute",
-            bottom: "-40%",
-            left: "-10%",
-            width: "120%",
-            height: "200%",
-            background: "radial-gradient(ellipse 100% 80% at 50% 100%, #ff0080 0%, #ff8c00 20%, #40e0d0 45%, transparent 70%)",
-            opacity: 0,
-            pointerEvents: "none",
-            zIndex: 1,
-            filter: "blur(60px)"
-          }}
-        />
-
-        <h1
-          className="sunrise-text"
-          style={{
-            fontSize: "30vw", // Even larger for impact
-            fontFamily: "var(--font-display)",
-            fontWeight: 900,
-            color: "#fff",
-            margin: 0,
-            lineHeight: 0.7, // Tighter
-            letterSpacing: "-0.08em",
-            zIndex: 2,
-            textTransform: "uppercase",
-            transform: "translateY(100%)", // Start fully hidden
-            opacity: 0,
-            pointerEvents: "none",
-            textAlign: "center",
-            width: "100%",
-            filter: "drop-shadow(0 0 20px rgba(255, 0, 128, 0.4))"
-          }}
-        >
-          KSHV
-        </h1>
       </section>
+
+      <Footer />
       {/* Scoped Styles for Hero Buttons */}
       <style>{`
         .hero-btn {
