@@ -768,7 +768,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 </p>
               </div>
             ))}
-            ))}
+
           </div>
         </div>
       </section>

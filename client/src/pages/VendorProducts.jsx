@@ -6,10 +6,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLenis } from '../context/LenisContext';
 import { productsAPI } from '../utils/api';
+import { AlertTriangle, Check, Upload } from 'lucide-react';
 
 const VendorProducts = () => {
     const { isVendor, isAuthenticated } = useAuth();
+    const { stop, start } = useLenis();
     const navigate = useNavigate();
 
     const [products, setProducts] = useState([]);
@@ -47,6 +50,21 @@ const VendorProducts = () => {
         }
         fetchProducts();
     }, [isAuthenticated, isVendor]);
+
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (showForm) {
+            document.body.style.overflow = 'hidden';
+            stop();
+        } else {
+            document.body.style.overflow = '';
+            start();
+        }
+        return () => {
+            document.body.style.overflow = '';
+            start();
+        };
+    }, [showForm, stop, start]);
 
     const fetchProducts = async () => {
         try {
@@ -271,7 +289,8 @@ const VendorProducts = () => {
                         alignItems: 'center',
                         gap: '0.5rem',
                     }}>
-                        {notification.type === 'error' ? '⚠️' : '✅'} {notification.message}
+                        {notification.type === 'error' ? <AlertTriangle size={18} strokeWidth={2.5} /> : <Check size={18} strokeWidth={2.5} />}
+                        <span>{notification.message}</span>
                     </div>
                 )}
 
@@ -465,7 +484,7 @@ const VendorProducts = () => {
                                             e.currentTarget.style.color = 'var(--muted)';
                                         }}
                                     >
-                                        <span style={{ fontSize: '1.2rem' }}>📁</span>
+                                        <Upload size={24} strokeWidth={1.5} />
                                         <span style={{ fontSize: '0.9rem' }}>
                                             {imageFile ? imageFile.name : "Choose an image file..."}
                                         </span>

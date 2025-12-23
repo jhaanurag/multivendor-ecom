@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { productsAPI, cartAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import { Star } from 'lucide-react';
 
 const ProductDetailPage = () => {
     const { id } = useParams();
@@ -215,7 +216,7 @@ const ProductDetailPage = () => {
                                 gap: '0.5rem',
                                 marginBottom: '1.5rem',
                             }}>
-                                <span style={{ color: '#fbbf24', fontSize: '1.1rem' }}>★</span>
+                                <Star size={20} fill="#fbbf24" color="#fbbf24" />
                                 <span style={{ fontSize: '1rem', color: 'var(--muted)' }}>
                                     {product.averageRating.toFixed(1)} ({product.numReviews} reviews)
                                 </span>
@@ -406,7 +407,11 @@ const ProductDetailPage = () => {
                                         marginBottom: '0.75rem',
                                     }}>
                                         <span style={{ fontWeight: 600 }}>{review.name}</span>
-                                        <span style={{ color: '#fbbf24' }}>{'★'.repeat(review.rating)}</span>
+                                        <div style={{ display: 'flex', gap: '2px' }}>
+                                            {[...Array(review.rating)].map((_, i) => (
+                                                <Star key={i} size={14} fill="#fbbf24" color="#fbbf24" />
+                                            ))}
+                                        </div>
                                     </div>
                                     <p style={{ color: 'var(--muted)', lineHeight: 1.6 }}>{review.comment}</p>
                                 </div>

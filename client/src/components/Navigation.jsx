@@ -232,23 +232,21 @@ const Navigation = ({ isPreloaderFinished }) => {
           <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(4px)", zIndex: 4, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,0) 75%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,0) 75%)" }} />
           <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(2px)", zIndex: 3, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 87.5%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 87.5%)" }} />
           <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(1px)", zIndex: 2, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,0) 100%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,0) 100%)" }} />
-          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(0.5px)", zIndex: 1, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,1) 100%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,1) 100%)" }} />
-          {/* Noise Texture Overlay */}
-          <div style={{
-            position: "absolute", inset: 0, zIndex: 9, opacity: 0.08, pointerEvents: "none",
-            backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.65\" numOctaves=\"3\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E')"
-          }} />
+          <div style={{ position: "absolute", inset: 0, backdropFilter: "blur(0.5px)", zIndex: 1, mask: "linear-gradient(to bottom, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,0) 100%)", WebkitMask: "linear-gradient(to bottom, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,0) 100%)" }} />
+
         </div>
 
         <div style={{
           maxWidth: "1260px",
           margin: "0 auto",
           width: "100%",
-          padding: "2.5rem var(--space-lg)", // Increased height for more blur area
+          padding: "1.5rem var(--space-lg)", // Reduced height as requested
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          borderBottom: "none",
         }}>
+
           {/* Logo */}
           <Link
             to="/"
@@ -330,6 +328,7 @@ const Navigation = ({ isPreloaderFinished }) => {
                 </span>
               </Link>
             ))}
+
 
             {/* Auth Links */}
             {!isAuthenticated ? (
@@ -454,17 +453,19 @@ const Navigation = ({ isPreloaderFinished }) => {
             >
               <span style={{
                 width: "24px", height: "2px", backgroundColor: "var(--fg)",
-                transition: "transform 0.3s, opacity 0.3s",
+                transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                transformOrigin: "center",
                 transform: isMenuOpen ? "rotate(45deg) translate(5px, 6px)" : "none",
               }} />
               <span style={{
                 width: "24px", height: "2px", backgroundColor: "var(--fg)",
-                transition: "transform 0.3s, opacity 0.3s",
+                transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                 opacity: isMenuOpen ? 0 : 1,
               }} />
               <span style={{
                 width: "24px", height: "2px", backgroundColor: "var(--fg)",
-                transition: "transform 0.3s, opacity 0.3s",
+                transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                transformOrigin: "center",
                 transform: isMenuOpen ? "rotate(-45deg) translate(5px, -6px)" : "none",
               }} />
             </button>

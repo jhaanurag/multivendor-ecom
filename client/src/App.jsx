@@ -20,6 +20,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 
 // Components
 import Navigation from "./components/Navigation";
+import BottomBlur from "./components/BottomBlur";
 import PageTransition, { Preloader } from "./components/PageTransition";
 
 // Pages
@@ -191,6 +192,7 @@ const AppContent = ({ isPreloaderFinished }) => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+      <BottomBlur />
     </>
   );
 };

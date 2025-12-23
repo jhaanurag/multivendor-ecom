@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { analyticsAPI, productsAPI, ordersAPI } from '../utils/api';
+import { DollarSign, Package, Tag, Clock, ArrowRight } from 'lucide-react';
 
 const VendorDashboard = () => {
     const { user, isVendor, isAuthenticated } = useAuth();
@@ -70,10 +71,10 @@ const VendorDashboard = () => {
     }
 
     const statCards = [
-        { label: 'Total Revenue', value: `$${(stats?.totalRevenue || 0).toFixed(2)}`, icon: '💰' },
-        { label: 'Items Sold', value: stats?.totalItemsSold || 0, icon: '📦' },
-        { label: 'Products', value: products.length, icon: '🏷️' },
-        { label: 'Pending Orders', value: recentOrders.filter(o => o.status === 'pending' || o.status === 'processing').length, icon: '⏳' },
+        { label: 'Total Revenue', value: `$${(stats?.totalRevenue || 0).toFixed(2)}`, icon: <DollarSign size={24} /> },
+        { label: 'Items Sold', value: stats?.totalItemsSold || 0, icon: <Package size={24} /> },
+        { label: 'Products', value: products.length, icon: <Tag size={24} /> },
+        { label: 'Pending Orders', value: recentOrders.filter(o => o.status === 'pending' || o.status === 'processing').length, icon: <Clock size={24} /> },
     ];
 
     return (
@@ -182,7 +183,7 @@ const VendorDashboard = () => {
                                 Add, edit, or remove your products
                             </p>
                         </div>
-                        <span style={{ fontSize: '1.5rem', color: '#000000' }}>→</span>
+                        <ArrowRight size={24} color="#000000" />
                     </Link>
 
                     <Link
@@ -214,7 +215,7 @@ const VendorDashboard = () => {
                                 Track and manage customer orders
                             </p>
                         </div>
-                        <span style={{ fontSize: '1.5rem' }}>→</span>
+                        <ArrowRight size={24} />
                     </Link>
                 </div>
 
