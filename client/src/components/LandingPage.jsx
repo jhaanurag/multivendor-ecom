@@ -428,8 +428,9 @@ const LandingPage = ({ isPreloaderFinished }) => {
           zIndex: 5
         }}>
           <span style={{
-            fontSize: "1rem",
+            fontSize: "clamp(0.7rem, 2vw, 1rem)",
             fontWeight: 700,
+            whiteSpace: "nowrap",
             letterSpacing: "0.2em",
             textTransform: "uppercase",
             color: "var(--fg)",
@@ -524,15 +525,15 @@ const LandingPage = ({ isPreloaderFinished }) => {
             <div>
               <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", marginBottom: "0.9rem", color: "var(--muted)", fontSize: "1.35rem" }}>Everything you need.</p>
               <h2 style={{ fontSize: "clamp(2rem, 4.5vw, 4rem)", fontFamily: "var(--font-display)", marginBottom: "0.9rem", lineHeight: 1 }}>
-                Built for the <br /><span style={{ fontStyle: "italic", color: "var(--muted)" }}>Modern</span> Web.
+                Built for the <br /> <span style={{ fontStyle: "italic", color: "var(--muted)", whiteSpace: "nowrap" }}>Modern Web.</span>
               </h2>
             </div>
-            <div style={{ maxWidth: "360px", textAlign: "right" }}>
+            <div style={{ maxWidth: "360px", textAlign: "right", marginTop: "1rem" }}>
               <p>We provide the ultimate toolkit for vendors and shoppers who demand excellence in every interaction.</p>
             </div>
           </div>
 
-          <div className="bento-grid" style={{ gridAutoRows: "225px", gap: "1.8rem" }}>
+          <div className="bento-grid" style={{ gap: "1.8rem" }}>
 
             {/* ======= GLOBAL PAYMENTS (Large - 2x2) ======= */}
             <div className="bento-item bento-item--large feature-card" style={{ display: "flex", flexDirection: "row", padding: 0, overflow: "visible" }}>
@@ -638,7 +639,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
               <div ref={el => iconRefs.current[4] = el} style={{ flex: "1", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-alt)", padding: "2rem", overflow: "visible" }}>
                 <svg viewBox="0 0 210 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "315px", height: "auto", overflow: "visible" }}>
                   {/* Dashboard Frame */}
-                  <rect x="0" y="0" width="200" height="100" rx="6" fill="var(--bg)" stroke="var(--border)" strokeWidth="1" />
+                  <rect x="0" y="0" width="200" height="100" rx="12" fill="var(--bg)" stroke="var(--border)" strokeWidth="1" />
                   {/* Header */}
                   <rect className="svg-ui-el" x="0" y="0" width="200" height="16" fill="var(--fg)" opacity="0.08" />
                   <circle cx="10" cy="8" r="3" fill="var(--muted)" opacity="0.5" />
@@ -654,7 +655,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
                   {/* Shimmer */}
                   <defs>
                     <linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="transparent" /><stop offset="50%" stopColor="var(--fg)" stopOpacity="0.05" /><stop offset="100%" stopColor="transparent" /></linearGradient>
-                    <clipPath id="dashboardClip"><rect x="0" y="0" width="200" height="100" rx="6" /></clipPath>
+                    <clipPath id="dashboardClip"><rect x="0" y="0" width="200" height="100" rx="12" /></clipPath>
                   </defs>
                   <rect className="svg-shimmer" x="-60" y="0" width="60" height="100" fill="url(#shimmerGrad)" clipPath="url(#dashboardClip)" />
                 </svg>
@@ -717,56 +718,58 @@ const LandingPage = ({ isPreloaderFinished }) => {
         <div style={{
           maxWidth: "1260px",
           margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
+          margin: "0 auto",
           gap: "2rem"
         }}>
-          {[
-            { number: 49632, suffix: "+", label: "Active Users" },
-            { number: 1191, suffix: "+", label: "Vendors" },
-            { number: 99, suffix: "%", label: "Uptime" },
-            { number: 4.9, suffix: "", label: "on landing" }
-          ].map((stat, i) => (
-            <div key={i} style={{
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "2.7rem 1.8rem",
-              transition: "all 0.4s cubic-bezier(0.23, 1, 0.32, 1)",
-              cursor: "default",
-              borderRight: i !== 3 ? "1px solid rgba(255, 255, 255, 0.1)" : "none",
-              position: "relative"
-            }}>
-              <h3
-                ref={el => statsRef.current[i] = el}
-                data-target={stat.number}
-                data-suffix={stat.suffix}
-                style={{
-                  fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
-                  fontFamily: "var(--font-display)",
-                  fontWeight: 800,
-                  margin: 0,
-                  color: "#fff",
-                  lineHeight: 1,
-                  letterSpacing: "-0.05em",
-                  fontVariantNumeric: "tabular-nums"
-                }}>
-                0{stat.suffix}
-              </h3>
-              <p style={{
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.2em",
-                color: "rgba(255, 255, 255, 0.6)",
-                marginTop: "1rem"
+          <div className="stats-grid">
+            {[
+              { number: 49632, suffix: "+", label: "Active Users" },
+              { number: 1191, suffix: "+", label: "Vendors" },
+              { number: 99, suffix: "%", label: "Uptime" },
+              { number: 4.9, suffix: "", label: "on landing" }
+            ].map((stat, i) => (
+              <div key={i} style={{
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "2.7rem 1.8rem",
+                transition: "all 0.4s cubic-bezier(0.23, 1, 0.32, 1)",
+                cursor: "default",
+                borderRight: i !== 3 ? "1px solid rgba(255, 255, 255, 0.1)" : "none",
+                position: "relative"
               }}>
-                {stat.label}
-              </p>
-            </div>
-          ))}
+                <h3
+                  ref={el => statsRef.current[i] = el}
+                  data-target={stat.number}
+                  data-suffix={stat.suffix}
+                  style={{
+                    fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 800,
+                    margin: 0,
+                    color: "#fff",
+                    lineHeight: 1,
+                    letterSpacing: "-0.05em",
+                    fontVariantNumeric: "tabular-nums"
+                  }}>
+                  0{stat.suffix}
+                </h3>
+                <p style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.2em",
+                  color: "rgba(255, 255, 255, 0.6)",
+                  marginTop: "1rem"
+                }}>
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+            ))}
+          </div>
         </div>
       </section>
 
@@ -1018,6 +1021,26 @@ const LandingPage = ({ isPreloaderFinished }) => {
 
         .hero-btn:hover .hero-btn-text {
             color: var(--bg); /* Inverted text color on hover */
+        }
+        
+        .stats-grid {
+             display: grid;
+             grid-template-columns: repeat(4, 1fr);
+             width: 100%;
+             gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 3rem 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+             .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
       `}</style>

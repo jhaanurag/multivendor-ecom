@@ -340,6 +340,7 @@ button:disabled,
 }
 
 /* ========================================
+/* ========================================
    Bento Grid
    ======================================== */
 .bento-grid {
@@ -347,6 +348,20 @@ button:disabled,
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 200px;
   gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+
+  .bento-item--large,
+  .bento-item--wide,
+  .bento-item--tall {
+    grid-column: span 1 !important;
+    grid-row: auto !important;
+  }
 }
 
 .bento-item {
@@ -378,6 +393,7 @@ button:disabled,
 .bento-item--tall {
   grid-row: span 2;
 }
+
 
 /* ========================================
    Cards
