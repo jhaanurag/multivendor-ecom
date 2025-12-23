@@ -54,6 +54,7 @@ uniform float u_noiseScale;
 uniform float u_flowSpeed;
 uniform float u_brightness;
 uniform float u_contrast;
+uniform float u_mouseVelocity; // New uniform for velocity-based intensity
 
 // ============================================
 // SIMPLEX NOISE IMPLEMENTATION
@@ -203,59 +204,67 @@ vec3 hsb2rgb(vec3 c) {
 
 void main() {
   vec2 uv = v_uv;
+  // Aspect ratio correction for geometry and distance
   vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
   
   // Diagonal flow direction
   vec2 flowDir = normalize(vec2(1.0, 0.7));
   
-  // Time-based animation (slower, more atmospheric)
+  // Time-based animation
   float time = u_time * u_flowSpeed; 
   
-  // Mouse interaction - sophisticated lens distortion
+  // Mouse interaction
   vec2 mousePos = u_mouse;
-  float mouseDist = length(uv - mousePos);
-  float mouseInfluence = smoothstep(0.7, 0.0, mouseDist) * 0.35;
   
-  // UV distortion for fluid motion + professional mouse pull
+  // Correct distance calculation to be circular (aspect corrected)
+  float mouseDist = length((uv - mousePos) * aspect);
+  
+  // Velocity-based opacity for interaction
+  // If velocity is high, effect is visible. If 0, it fades out.
+  float velocityFactor = smoothstep(0.0, 0.02, u_mouseVelocity);
+  
+  // Bigger radius (0.5) for broader influence
+  // Smoother falloff
+  float mouseInfluence = smoothstep(0.5, 0.0, mouseDist) * velocityFactor;
+  
+  // UV distortion - Broad, subtle push
   vec2 distortedUV = uv * aspect;
-  distortedUV += (mousePos - 0.5) * mouseInfluence * 0.8;
   
-  // noise layers for extreme depth and motion
+  // Gentle push away from mouse
+  // Intensity increased to 1.8 for better visibility
+  distortedUV -= (uv - mousePos) * mouseInfluence * 1.8; 
+  
+  // noise layers
   float noise1 = fbm(vec3(distortedUV * u_noiseScale, time * 0.4), 5);
   float noise2 = fbm(vec3(distortedUV * u_noiseScale * 0.4 + 100.0, time * 0.25), 4);
   float noise3 = fbm(vec3(distortedUV * u_noiseScale * 1.8 + 200.0, time * 0.6), 3);
   
-  // Combine noise layers for broad, atmospheric shapes
+  // Combine noise
   float combinedNoise = (noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2);
   
-  // Apply diagonal flow with broad distortion
+  // Apply diagonal flow
   float flowValue = dot(uv, flowDir) + combinedNoise * 0.4;
-  
-  // Add scroll-based offset
   flowValue += u_scrollProgress * 0.25;
   
-  // Aggressive mouse-based hue shift
-  flowValue += mouseInfluence * 0.5;
+  // Subtle mouse-based hue shift
+  // Increased intensity to 0.9 for better visibility
+  flowValue += mouseInfluence * 0.9;
   
-  // Generate highly saturated color using HSB
-  // Restrict Hue to 0.5 - 0.9 (Cyan -> Blue -> Purple -> Magenta) to avoid red/green
+  // Generate colors
   float hueBase = fract(flowValue * 0.15 + u_colorShift);
   float restrictedHue = 0.5 + hueBase * 0.4; 
   vec3 hsb = vec3(restrictedHue, 1.0, 0.85);
   vec3 color = hsb2rgb(hsb);
   
-  // No additive glows or highlights to avoid "white wash"
-  
-  // Apply individual brightness and contrast
+  // Contrast/Brightness
   color = (color - 0.5) * (u_contrast + 0.4) + 0.5;
   color *= u_brightness;
   
-  // Deeper vignette for cinematic professional look
+  // Vignette
   float vignette = 1.0 - length((uv - 0.5) * 1.1);
   vignette = smoothstep(0.0, 1.0, vignette);
-  color *= 0.6 + vignette * 0.4; // Controlled edge darkening
+  color *= 0.6 + vignette * 0.4; 
   
-  // Final color output
   fragColor = vec4(color, 1.0);
 }
 `;
@@ -331,8 +340,11 @@ const StripeGradientBackground = ({
     contrast: 1.2,
     mouseX: 0.5,
     mouseY: 0.5,
+    lastMouseX: 0.5,
+    lastMouseY: 0.5,
     targetMouseX: 0.5,
     targetMouseY: 0.5,
+    velocity: 0,
   });
 
   // Check for reduced motion preference
@@ -381,6 +393,7 @@ const StripeGradientBackground = ({
       flowSpeed: gl.getUniformLocation(program, "u_flowSpeed"),
       brightness: gl.getUniformLocation(program, "u_brightness"),
       contrast: gl.getUniformLocation(program, "u_contrast"),
+      mouseVelocity: gl.getUniformLocation(program, "u_mouseVelocity"),
     };
 
     // Create fullscreen quad
@@ -431,9 +444,25 @@ const StripeGradientBackground = ({
     }
 
     // Smooth mouse lerping
-    const lerpFactor = 0.08;
+    const lerpFactor = 0.05; // Very smooth / laggy following
+    const vLerpFactor = 0.1; // Velocity smoothness
+
+    // Update Pos
     shaderValues.current.mouseX += (shaderValues.current.targetMouseX - shaderValues.current.mouseX) * lerpFactor;
     shaderValues.current.mouseY += (shaderValues.current.targetMouseY - shaderValues.current.mouseY) * lerpFactor;
+
+    // Calculate Velocity
+    const dx = shaderValues.current.mouseX - shaderValues.current.lastMouseX;
+    const dy = shaderValues.current.mouseY - shaderValues.current.lastMouseY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Smooth opacity based on movement speed (amplified so small moves register)
+    const targetVelocity = Math.min(dist * 60.0, 1.0);
+    shaderValues.current.velocity += (targetVelocity - shaderValues.current.velocity) * vLerpFactor;
+
+    // Update last pos
+    shaderValues.current.lastMouseX = shaderValues.current.mouseX;
+    shaderValues.current.lastMouseY = shaderValues.current.mouseY;
 
     // Set uniforms
     gl.uniform1f(uniforms.time, shaderValues.current.time);
@@ -448,6 +477,7 @@ const StripeGradientBackground = ({
     gl.uniform1f(uniforms.flowSpeed, shaderValues.current.flowSpeed);
     gl.uniform1f(uniforms.brightness, shaderValues.current.brightness);
     gl.uniform1f(uniforms.contrast, shaderValues.current.contrast);
+    gl.uniform1f(uniforms.mouseVelocity, shaderValues.current.velocity);
 
     // Draw
     gl.drawArrays(gl.TRIANGLES, 0, 6);

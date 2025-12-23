@@ -307,7 +307,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
           alignItems: "center"
         }}>
           {/* Main Headline - Broken into lines for animation */}
-          <div style={{ overflow: "hidden", lineHeight: 0.9, textAlign: "center" }}>
+          <div style={{ overflow: "hidden", lineHeight: 0.9, textAlign: "center", paddingBottom: "50px", marginBottom: "-50px", paddingLeft: "10px", paddingRight: "10px" }}>
             <h1 ref={el => heroTextRef.current[0] = el} style={{
               fontFamily: 'var(--font-display)',
               fontSize: "clamp(4rem, 13.5vw, 12rem)",
@@ -320,7 +320,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
             </h1>
           </div>
 
-          <div style={{ overflow: "hidden", lineHeight: 0.9, textAlign: "center" }}>
+          <div style={{ overflow: "hidden", lineHeight: 0.9, textAlign: "center", paddingBottom: "50px", marginBottom: "-50px", paddingLeft: "10px", paddingRight: "10px" }}>
             <h1 ref={el => heroTextRef.current[1] = el} style={{
               fontFamily: 'var(--font-display)',
               fontSize: "clamp(4rem, 13.5vw, 12rem)",
@@ -652,8 +652,11 @@ const LandingPage = ({ isPreloaderFinished }) => {
                   <rect className="svg-ui-el" x="50" y="56" width="100" height="6" rx="1" fill="var(--muted)" opacity="0.1" />
                   <rect className="svg-ui-el" x="50" y="72" width="60" height="16" rx="3" fill="var(--fg)" opacity="0.2" />
                   {/* Shimmer */}
-                  <defs><linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="transparent" /><stop offset="50%" stopColor="var(--fg)" stopOpacity="0.05" /><stop offset="100%" stopColor="transparent" /></linearGradient></defs>
-                  <rect className="svg-shimmer" x="-60" y="0" width="60" height="100" fill="url(#shimmerGrad)" />
+                  <defs>
+                    <linearGradient id="shimmerGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="transparent" /><stop offset="50%" stopColor="var(--fg)" stopOpacity="0.05" /><stop offset="100%" stopColor="transparent" /></linearGradient>
+                    <clipPath id="dashboardClip"><rect x="0" y="0" width="200" height="100" rx="6" /></clipPath>
+                  </defs>
+                  <rect className="svg-shimmer" x="-60" y="0" width="60" height="100" fill="url(#shimmerGrad)" clipPath="url(#dashboardClip)" />
                 </svg>
               </div>
             </div>
