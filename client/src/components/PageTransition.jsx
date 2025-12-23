@@ -7,6 +7,7 @@
 import { useRef, useLayoutEffect, useState, useEffect } from "react";
 import { gsap } from "gsap";
 import { useLenis } from "../context/LenisContext";
+import ScrambleChar from "./ScrambleChar";
 
 // Check for reduced motion preference
 const prefersReducedMotion = () => {
@@ -186,47 +187,17 @@ export const CurtainTransition = ({
  * Initial loading animation before app loads
  * Features: ASCII scramble text reveal, fast animations
  */
+/**
+ * Preloader Component
+ * Initial loading animation before app loads
+ * Features: SOKO branding with infinite scramble
+ */
 export const Preloader = ({ isLoading, onComplete }) => {
   const preloaderRef = useRef(null);
-  const textRef = useRef(null);
+  const contentRef = useRef(null);
   const progressRef = useRef(null);
   const [isExited, setIsExited] = useState(false);
-  const [displayText, setDisplayText] = useState("MALL_PROTO");
   const { stop, start } = useLenis();
-
-  const finalText = "MALL_PROTO";
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*_+-=";
-
-  // Optimized ASCII scramble effect using GSAP for timing
-  useEffect(() => {
-    if (isExited) return;
-
-    let ctx = gsap.context(() => {
-      let obj = { i: 0 };
-      gsap.to(obj, {
-        i: finalText.length + 10,
-        duration: 1.2,
-        ease: "none",
-        onUpdate: () => {
-          const iteration = Math.floor(obj.i);
-          setDisplayText(() => {
-            return finalText
-              .split("")
-              .map((char, index) => {
-                if (index < iteration / 2.5) {
-                  return finalText[index];
-                }
-                if (char === "_") return "_";
-                return chars[Math.floor(Math.random() * chars.length)];
-              })
-              .join("");
-          });
-        }
-      });
-    });
-
-    return () => ctx.revert();
-  }, [isExited]);
 
   // Handle scroll lock
   useEffect(() => {
@@ -250,36 +221,26 @@ export const Preloader = ({ isLoading, onComplete }) => {
     if (!isLoading && preloaderRef.current) {
       const ctx = gsap.context(() => {
         const tl = gsap.timeline({
-          delay: 0.05,
+          delay: 0.5, // Give it a moment to show the branding
           onComplete: () => {
             setIsExited(true);
             onComplete?.();
           }
         });
 
-        // Animate text out - FASTER
-        tl.to(textRef.current, {
+        // Animate content out
+        tl.to(contentRef.current, {
           y: -30,
           opacity: 0,
-          duration: 0.25,
+          duration: 0.4,
           ease: "power2.in",
         })
-          // Animate progress bar - FASTER
-          .to(
-            progressRef.current,
-            {
-              scaleX: 0,
-              duration: 0.2,
-              ease: "power2.in",
-            },
-            "-=0.15"
-          )
-          // Slide preloader up - FASTER
+          // Slide preloader up
           .to(preloaderRef.current, {
             yPercent: -100,
-            duration: 0.6,
+            duration: 0.8,
             ease: "power4.inOut",
-          }, "-=0.05");
+          }, "-=0.1");
       });
 
       return () => ctx.revert();
@@ -308,35 +269,60 @@ export const Preloader = ({ isLoading, onComplete }) => {
       }}
     >
       <div
-        ref={textRef}
+        ref={contentRef}
         style={{
-          color: "#fff",
-          fontSize: "2rem",
-          fontWeight: 700,
-          letterSpacing: "0.2em",
-          textTransform: "uppercase",
-          fontFamily: "var(--font-display)", // Improved premium font
-        }}
-      >
-        {displayText}
-      </div>
-      <div
-        style={{
-          width: "240px",
-          height: "2px",
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "2rem"
         }}
       >
         <div
-          ref={progressRef}
           style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "#fff",
-            transformOrigin: "center",
+            color: "#fff",
+            fontSize: "4rem",
+            fontWeight: 800,
+            letterSpacing: "-0.04em",
+            textTransform: "uppercase",
+            fontFamily: "var(--font-display)",
+            display: "flex",
+            alignItems: "center"
           }}
-        />
+        >
+          <span>SOK</span>
+          <span style={{ color: "var(--muted)", margin: "0 2px" }}>[</span>
+          <ScrambleChar frequency={15} hueSpeed={50} />
+          <span style={{ color: "var(--muted)", margin: "0 2px" }}>]</span>
+        </div>
+
+        <div
+          style={{
+            width: "240px",
+            height: "2px",
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            ref={progressRef}
+            style={{
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#22c55e", // Green accent for loading
+              transformOrigin: "left",
+              animation: "loadingProgress 2s ease-in-out infinite"
+            }}
+          />
+        </div>
+
+        <style>{`
+          @keyframes loadingProgress {
+            0% { transform: scaleX(0); transform-origin: left; }
+            50% { transform: scaleX(1); transform-origin: left; }
+            51% { transform: scaleX(1); transform-origin: right; }
+            100% { transform: scaleX(0); transform-origin: right; }
+          }
+        `}</style>
       </div>
     </div>
   );

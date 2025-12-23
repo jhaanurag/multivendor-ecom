@@ -893,7 +893,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "transparent";
-                    e.currentTarget.style.WebkitTextStroke = "1px #fff";
+                    e.currentTarget.style.WebkitTextStroke = "1px var(--muted)";
                     e.currentTarget.style.transform = "translateX(20px)";
                   }}
                   onMouseLeave={(e) => {

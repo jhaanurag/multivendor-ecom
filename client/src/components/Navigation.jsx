@@ -12,6 +12,7 @@ import {
   useCallback,
 } from "react";
 import { Link, useLocation } from "react-router-dom";
+import ScrambleChar from "./ScrambleChar";
 import { gsap } from "gsap";
 import { useScrollDirection } from "../context/LenisContext";
 import { useAuth } from "../context/AuthContext";
@@ -257,6 +258,8 @@ const Navigation = ({ isPreloaderFinished }) => {
             style={{
               textDecoration: "none",
               color: "inherit",
+              display: "flex",
+              alignItems: "center"
             }}
           >
             <span
@@ -266,9 +269,14 @@ const Navigation = ({ isPreloaderFinished }) => {
                 letterSpacing: "-0.04em",
                 fontFamily: 'var(--font-display)',
                 textTransform: "uppercase",
+                display: "flex",
+                alignItems: "center"
               }}
             >
-              KSHV
+              <span style={{ color: "var(--fg)" }}>SOK</span>
+              <span style={{ color: "var(--muted)", margin: "0 1px" }}>[</span>
+              <ScrambleChar frequency={12} hueSpeed={45} />
+              <span style={{ color: "var(--muted)", margin: "0 1px" }}>]</span>
             </span>
           </Link>
 

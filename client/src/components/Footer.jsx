@@ -77,7 +77,7 @@ const Footer = () => {
                                 margin: 0,
                                 fontWeight: 800,
                             }}>
-                                KSHV
+                                SOKO
                             </h2>
                             <p style={{
                                 opacity: 0.4,
@@ -110,10 +110,10 @@ const Footer = () => {
                         </div>
                     </div>
                 </div>
-            </footer>
+            </footer >
 
             {/* Sunrise Section */}
-            <section ref={sunriseRef} style={{
+            < section ref={sunriseRef} style={{
                 height: "50vh",
                 overflow: "hidden",
                 position: "relative",
@@ -125,7 +125,7 @@ const Footer = () => {
                 background: 'linear-gradient(to bottom, #0a0a0a 0%, #000000 30%)',
             }}>
                 {/* Gradient Mask for smoother top transition */}
-                <div style={{
+                < div style={{
                     position: "absolute",
                     top: 0,
                     left: 0,
@@ -136,7 +136,7 @@ const Footer = () => {
                     pointerEvents: "none"
                 }} />
 
-                <div
+                < div
                     ref={sunriseGradientRef}
                     style={{
                         position: "absolute",
@@ -153,7 +153,7 @@ const Footer = () => {
                     }}
                 />
 
-                <h1
+                < h1
                     ref={sunriseTextRef}
                     style={{
                         fontSize: "30vw",
@@ -171,10 +171,10 @@ const Footer = () => {
                         opacity: 0
                     }}
                 >
-                    KSHV
-                </h1>
-            </section>
-        </div>
+                    SOKO
+                </h1 >
+            </section >
+        </div >
     );
 };
 
