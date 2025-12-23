@@ -16,6 +16,12 @@ const VendorOrders = () => {
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(null);
     const [filter, setFilter] = useState('all');
+    const [notification, setNotification] = useState(null);
+
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+    };
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -49,9 +55,10 @@ const VendorOrders = () => {
             ));
         } catch (err) {
             console.error('Failed to update status:', err);
-            alert('Failed to update order status');
+            showNotification('Failed to update status', 'error');
         } finally {
             setUpdating(null);
+            showNotification('Order status updated');
         }
     };
 
@@ -101,6 +108,29 @@ const VendorOrders = () => {
             background: 'var(--bg)',
         }}>
             <div style={{ maxWidth: '1260px', margin: '0 auto' }}>
+                {/* Notification Toast */}
+                {notification && (
+                    <div style={{
+                        position: 'fixed',
+                        bottom: '2rem',
+                        right: '2rem',
+                        padding: '1rem 1.5rem',
+                        background: notification.type === 'error' ? '#ef4444' : 'var(--fg)',
+                        color: 'var(--bg)',
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        zIndex: 2000,
+                        borderRadius: '4px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        animation: 'slideIn 0.3s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                    }}>
+                        {notification.type === 'error' ? '⚠️' : '✅'} {notification.message}
+                    </div>
+                )}
+
                 {/* Header */}
                 <div style={{ marginBottom: '2rem' }}>
                     <Link to="/vendor/dashboard" style={{
@@ -219,9 +249,19 @@ const VendorOrders = () => {
                                         <p style={{ fontWeight: 500 }}>
                                             {order.parentOrder?.user?.name || 'Customer'}
                                         </p>
-                                        <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
+                                        <p style={{ fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>
                                             {order.parentOrder?.user?.email}
                                         </p>
+
+                                        {/* Shipping Address */}
+                                        {order.parentOrder?.shippingAddress && (
+                                            <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--muted)', maxWidth: '200px', lineHeight: 1.4 }}>
+                                                <p style={{ fontWeight: 600, color: 'var(--fg)', marginBottom: '0.1rem' }}>Shipping To:</p>
+                                                <p>{order.parentOrder.shippingAddress.address}</p>
+                                                <p>{order.parentOrder.shippingAddress.city}, {order.parentOrder.shippingAddress.postalCode}</p>
+                                                <p>{order.parentOrder.shippingAddress.country}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 

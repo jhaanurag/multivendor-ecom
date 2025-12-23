@@ -22,11 +22,11 @@ const errorHandler = require('./middleware/error');
 const app = express();
 
 // Middleware
+app.use(cors()); // CORS at the top
 app.use(express.json());
 app.use(mongoSanitize()); // Prevent NoSQL Injection
 app.use(xss()); // Prevent XSS
 app.use(limiter); // Rate Limiting
-app.use(cors());
 app.use(helmet({
     crossOriginResourcePolicy: false, // Allow images to be loaded from our server
 }));

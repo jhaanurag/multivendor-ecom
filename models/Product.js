@@ -15,6 +15,11 @@ const ProductSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a description'],
     },
+    category: {
+        type: String,
+        required: [true, 'Please select a category'],
+        enum: ['Electronics', 'Fashion', 'Home', 'Sports', 'Books', 'Beauty'],
+    },
     price: {
         type: Number,
         required: [true, 'Please add a price'],

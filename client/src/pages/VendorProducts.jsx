@@ -29,6 +29,12 @@ const VendorProducts = () => {
     const [formError, setFormError] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const [notification, setNotification] = useState(null);
+
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+    };
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -60,9 +66,10 @@ const VendorProducts = () => {
         try {
             await productsAPI.delete(productId);
             setProducts(products.filter(p => p._id !== productId));
+            showNotification('Product deleted successfully');
         } catch (err) {
             console.error('Failed to delete product:', err);
-            alert('Failed to delete product');
+            showNotification('Failed to delete product', 'error');
         } finally {
             setDeleting(null);
         }
@@ -70,13 +77,18 @@ const VendorProducts = () => {
 
     const handleEdit = (product) => {
         setEditingProduct(product);
+
+        // Only show URL in input if it's an external link, not a server upload
+        const existingImage = product.images?.[0] || '';
+        const isExternal = existingImage.startsWith('http');
+
         setFormData({
             name: product.name,
             description: product.description || '',
             price: product.price,
             stock: product.stock,
             category: product.category || '',
-            imageUrl: product.images?.[0] || '',
+            imageUrl: isExternal ? existingImage : '',
         });
         setImageFile(null);
         setImagePreview(product.images?.[0] ? getImageUrl(product) : null);
@@ -141,6 +153,26 @@ const VendorProducts = () => {
                     images: formData.imageUrl ? [formData.imageUrl] : [],
                 };
 
+                // If editing and no new image/url provided, keep existing images
+                if (editingProduct && !formData.imageUrl && !imageFile && editingProduct.images?.length > 0) {
+                    // Check if we wiped the URL from state but it was a server image we want to keep
+                    // Actually logic in backend usually handles "if not provided, don't update" or we send existing.
+                    // A cleaner way: send the existing image path if user didn't change it.
+                    // However, our logic above calculates data based on form inputs. 
+                    // If imageUrl is empty (because it was hidden), we might send empty array?
+                    // Let's refine: If text input empty & no file, but we have original server image, we should probably SEND that original path if purely JSON update.
+                    // But simplest is: if user cleared it, they cleared it. 
+                    // Wait, if I hide it in handleEdit, formData.imageUrl is ''. If I save, I send images: []. This deletes the image!
+                    // FIX: If formData.imageUrl is empty AND imageFile is null, we should check if we should preserve existing.
+                    // But typically, if I want to KEEP existing server image, I shouldn't send 'images' key at all or send the old one.
+                    // Let's modify the `data` construction below.
+
+                    if (!formData.imageUrl && !imageFile && editingProduct.images?.length > 0) {
+                        // Preserve existing if not touched
+                        data.images = editingProduct.images;
+                    }
+                }
+
                 if (editingProduct) {
                     await productsAPI.update(editingProduct._id, data);
                 } else {
@@ -152,8 +184,10 @@ const VendorProducts = () => {
             setImageFile(null);
             setImagePreview(null);
             fetchProducts();
+            showNotification(editingProduct ? 'Product updated successfully' : 'Product created successfully');
         } catch (err) {
             setFormError(err.response?.data?.error || 'Failed to save product');
+            // Keep form open on error
         } finally {
             setFormLoading(false);
         }
@@ -201,10 +235,13 @@ const VendorProducts = () => {
     const selectStyle = {
         ...inputStyle,
         appearance: 'none',
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+        WebkitAppearance: 'none',
+        MozAppearance: 'none',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'right 1rem center',
         paddingRight: '2.5rem',
+        cursor: 'pointer',
     };
 
     return (
@@ -215,6 +252,29 @@ const VendorProducts = () => {
             background: 'var(--bg)',
         }}>
             <div style={{ maxWidth: '1260px', margin: '0 auto' }}>
+                {/* Notification Toast */}
+                {notification && (
+                    <div style={{
+                        position: 'fixed',
+                        bottom: '2rem',
+                        right: '2rem',
+                        padding: '1rem 1.5rem',
+                        background: notification.type === 'error' ? '#ef4444' : 'var(--fg)',
+                        color: 'var(--bg)',
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        zIndex: 2000,
+                        borderRadius: '4px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        animation: 'slideIn 0.3s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                    }}>
+                        {notification.type === 'error' ? '⚠️' : '✅'} {notification.message}
+                    </div>
+                )}
+
                 {/* Header */}
                 <div style={{
                     display: 'flex',
@@ -383,18 +443,40 @@ const VendorProducts = () => {
                                         </div>
                                     )}
 
-                                    {/* File Upload */}
-                                    <input
-                                        type="file"
-                                        accept="image/jpeg,image/jpg,image/png,image/webp"
-                                        onChange={handleFileChange}
-                                        style={{
-                                            ...inputStyle,
-                                            padding: '0.7rem',
-                                            marginBottom: '0.5rem',
+                                    {/* Custom File Upload UI */}
+                                    <label style={{
+                                        ...inputStyle,
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        background: 'var(--bg-alt)',
+                                        border: '1px dashed var(--border)',
+                                        color: 'var(--muted)',
+                                        transition: 'all 0.2s'
+                                    }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.borderColor = 'var(--fg)';
+                                            e.currentTarget.style.color = 'var(--fg)';
                                         }}
-                                    />
-                                    <p style={{ fontSize: '0.75rem', color: '#666', marginBottom: '1rem' }}>
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.borderColor = 'var(--border)';
+                                            e.currentTarget.style.color = 'var(--muted)';
+                                        }}
+                                    >
+                                        <span style={{ fontSize: '1.2rem' }}>📁</span>
+                                        <span style={{ fontSize: '0.9rem' }}>
+                                            {imageFile ? imageFile.name : "Choose an image file..."}
+                                        </span>
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/jpg,image/png,image/webp"
+                                            onChange={handleFileChange}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </label>
+                                    <p style={{ fontSize: '0.75rem', color: '#666', marginBottom: '1rem', marginTop: '0.5rem', textAlign: 'center' }}>
                                         Upload an image (JPG, PNG, WebP - max 5MB)
                                     </p>
 
@@ -452,8 +534,22 @@ const VendorProducts = () => {
                                             fontWeight: 600,
                                             cursor: formLoading ? 'not-allowed' : 'pointer',
                                             opacity: formLoading ? 0.7 : 1,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
                                         }}
                                     >
+                                        {formLoading && (
+                                            <div style={{
+                                                width: '16px',
+                                                height: '16px',
+                                                border: '2px solid var(--bg)',
+                                                borderTopColor: 'transparent',
+                                                borderRadius: '50%',
+                                                animation: 'spin 1s linear infinite'
+                                            }} />
+                                        )}
                                         {formLoading ? 'Saving...' : 'Save'}
                                     </button>
                                 </div>
