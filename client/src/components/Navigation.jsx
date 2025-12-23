@@ -181,12 +181,11 @@ const Navigation = ({ isPreloaderFinished }) => {
     ];
 
     if (isAuthenticated) {
+      links.push({ to: "/orders", label: "Orders" });
       links.push({ to: "/cart", label: "Cart" });
 
       if (isVendor) {
         links.push({ to: "/vendor/dashboard", label: "Dashboard" });
-      } else {
-        links.push({ to: "/orders", label: "Orders" });
       }
     }
 

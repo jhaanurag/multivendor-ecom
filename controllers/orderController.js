@@ -145,6 +145,32 @@ exports.getOrders = asyncHandler(async (req, res, next) => {
 // @desc    Update order status
 // @route   PUT /api/orders/:id/status
 // @access  Private (Admin/Shop Owner)
+// @desc    Get single order
+// @route   GET /api/orders/:id
+// @access  Private
+exports.getOrderById = asyncHandler(async (req, res, next) => {
+    // 1. Try to find Order (Parent)
+    let order = await Order.findById(req.params.id)
+        .populate('user', 'name email')
+        .populate('products.product', 'name price images'); // Populate images for better UI
+
+    if (order) {
+        // Find associated sub-orders to get separate statuses
+        const subOrders = await SubOrder.find({ parentOrder: order._id }).populate('shop', 'name');
+        
+        // Transform response to include sub-order details/statuses
+        const orderObj = order.toObject();
+        orderObj.subOrders = subOrders;
+
+        return res.status(200).json({ success: true, data: orderObj });
+    }
+    
+    return next(new ErrorResponse('Order not found', 404));
+});
+
+// @desc    Update order status
+// @route   PUT /api/orders/:id/status
+// @access  Private (Admin/Shop Owner)
 exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
     const { status } = req.body;
     let subOrder = await SubOrder.findById(req.params.id);
@@ -171,16 +197,64 @@ exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
     subOrder.status = status;
     await subOrder.save();
 
-    // Optionally update parent order status if all sub-orders are delivered/cancelled
+    // Sync logic: Update parent order based on sub-orders
     const otherSubOrders = await SubOrder.find({ parentOrder: subOrder.parentOrder });
+    
+    // Check if ALL are delivered/cancelled
     const allFinished = otherSubOrders.every(so => ['delivered', 'cancelled'].includes(so.status));
+    // Check if ANY are shipped/processing (to move from pending)
+    const anyInProgress = otherSubOrders.some(so => ['processing', 'shipped', 'delivered'].includes(so.status));
 
+    const parentOrder = await Order.findById(subOrder.parentOrder);
+    
     if (allFinished) {
-        const parentOrder = await Order.findById(subOrder.parentOrder);
-        // This is a simplified logic - you might want more nuanced parent status
-        parentOrder.status = 'delivered'; // or some 'completed' flag
-        await parentOrder.save();
+        parentOrder.status = 'delivered'; // Or handle verification of all statuses
+    } else if (anyInProgress && parentOrder.status === 'pending') {
+         parentOrder.status = 'processing';
     }
+    
+    await parentOrder.save();
 
     res.status(200).json({ success: true, data: subOrder });
+});
+
+// @desc    Cancel order (Buyer only, if pending)
+// @route   PUT /api/orders/:id/cancel
+// @access  Private
+exports.cancelOrder = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+        return next(new ErrorResponse('Order not found', 404));
+    }
+
+    // Ensure user owns the order
+    if (order.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(new ErrorResponse('Not authorized to cancel this order', 403));
+    }
+
+    if (order.status !== 'pending') {
+        return next(new ErrorResponse('Order cannot be cancelled at this stage', 400));
+    }
+
+    // 1. Update Parent Order Status
+    order.status = 'cancelled';
+    await order.save();
+
+    // 2. Update All Sub-Orders Status
+    await SubOrder.updateMany(
+        { parentOrder: order._id },
+        { status: 'cancelled' }
+    );
+
+    // 3. Restock Products
+    for (const item of order.products) {
+        const product = await Product.findById(item.product);
+        if (product) {
+            product.stock += item.quantity;
+            await product.save();
+        }
+    }
+
+    res.status(200).json({ success: true, data: order });
 });

@@ -201,6 +201,14 @@ const OrdersPage = () => {
                                     </div>
 
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                        <Link to={`/orders/${order._id}`} style={{
+                                            fontSize: '0.85rem',
+                                            color: 'var(--fg)',
+                                            textDecoration: 'underline',
+                                            marginRight: '1rem',
+                                        }}>
+                                            View Details
+                                        </Link>
                                         <span style={{
                                             padding: '0.35rem 0.75rem',
                                             background: getStatusColor(order.status),

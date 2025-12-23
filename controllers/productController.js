@@ -96,9 +96,13 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 // @route   POST /api/products
 // @access  Private (Vendor/Admin)
 exports.createProduct = asyncHandler(async (req, res, next) => {
+    console.log('createProduct payload:', req.body);
+    console.log('createProduct file:', req.file);
+    
     const shop = await Shop.findOne({ owner: req.user.id });
 
     if (!shop && req.user.role !== 'admin') {
+        console.log(`User ${req.user.id} does not have a shop`);
         return next(new ErrorResponse(`User ${req.user.id} does not have a shop`, 400));
     }
 
@@ -111,6 +115,16 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
     if (req.file) {
         req.body.images = [`/uploads/${req.file.filename}`];
     }
+    
+    // Manual validation check for required fields if they are missing
+    if (!req.body.name || !req.body.price || !req.body.stock || !req.body.category) {
+       console.log('Missing required fields:', { 
+           name: req.body.name, 
+           price: req.body.price, 
+           stock: req.body.stock, 
+           category: req.body.category 
+       });
+    }
 
     const product = await Product.create(req.body);
 
@@ -121,6 +135,8 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
 // @route   PUT /api/products/:id
 // @access  Private (Vendor/Admin)
 exports.updateProduct = asyncHandler(async (req, res, next) => {
+    console.log(`updateProduct id: ${req.params.id} payload:`, req.body);
+    
     let product = await Product.findById(req.params.id);
 
     if (!product) {
