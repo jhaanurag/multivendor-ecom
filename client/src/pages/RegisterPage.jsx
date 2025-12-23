@@ -66,26 +66,26 @@ const RegisterPage = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 'var(--space-lg)',
+            padding: '1rem',
             background: 'var(--bg)'
         }}>
             <div ref={containerRef} style={{
                 width: '100%',
-                maxWidth: '460px'
+                maxWidth: '400px'
             }}>
                 {/* Header */}
-                <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
+                <div style={{ marginBottom: '1.25rem', textAlign: 'center' }}>
                     <h1 style={{
                         fontFamily: 'var(--font-display)',
-                        fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                        fontSize: 'clamp(2rem, 4vw, 3rem)',
                         fontWeight: 700,
                         letterSpacing: '-0.04em',
-                        marginBottom: '1rem',
+                        marginBottom: '0.4rem',
                         color: 'var(--fg)'
                     }}>
                         Join <span style={{ fontStyle: 'italic', fontFamily: 'var(--font-serif)' }}>us</span>
                     </h1>
-                    <p style={{ color: 'var(--muted)', fontSize: '1rem' }}>
+                    <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
                         Create your account to get started
                     </p>
                 </div>
@@ -106,11 +106,11 @@ const RegisterPage = () => {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ marginBottom: '0.85rem' }}>
                         <label style={{
                             display: 'block',
-                            marginBottom: '0.5rem',
-                            fontSize: '0.85rem',
+                            marginBottom: '0.35rem',
+                            fontSize: '0.75rem',
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -125,8 +125,8 @@ const RegisterPage = () => {
                             required
                             style={{
                                 width: '100%',
-                                padding: '1rem',
-                                fontSize: '1rem',
+                                padding: '0.65rem',
+                                fontSize: '0.95rem',
                                 border: '1px solid var(--border)',
                                 background: 'transparent',
                                 color: 'var(--fg)',
@@ -139,11 +139,11 @@ const RegisterPage = () => {
                         />
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ marginBottom: '0.85rem' }}>
                         <label style={{
                             display: 'block',
-                            marginBottom: '0.5rem',
-                            fontSize: '0.85rem',
+                            marginBottom: '0.35rem',
+                            fontSize: '0.75rem',
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -158,8 +158,8 @@ const RegisterPage = () => {
                             required
                             style={{
                                 width: '100%',
-                                padding: '1rem',
-                                fontSize: '1rem',
+                                padding: '0.65rem',
+                                fontSize: '0.95rem',
                                 border: '1px solid var(--border)',
                                 background: 'transparent',
                                 color: 'var(--fg)',
@@ -172,11 +172,11 @@ const RegisterPage = () => {
                         />
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ marginBottom: '0.85rem' }}>
                         <label style={{
                             display: 'block',
-                            marginBottom: '0.5rem',
-                            fontSize: '0.85rem',
+                            marginBottom: '0.35rem',
+                            fontSize: '0.75rem',
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -192,8 +192,8 @@ const RegisterPage = () => {
                             minLength={6}
                             style={{
                                 width: '100%',
-                                padding: '1rem',
-                                fontSize: '1rem',
+                                padding: '0.65rem',
+                                fontSize: '0.95rem',
                                 border: '1px solid var(--border)',
                                 background: 'transparent',
                                 color: 'var(--fg)',
@@ -207,11 +207,11 @@ const RegisterPage = () => {
                     </div>
 
                     {/* Role Selection */}
-                    <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ marginBottom: '1rem' }}>
                         <label style={{
                             display: 'block',
-                            marginBottom: '0.75rem',
-                            fontSize: '0.85rem',
+                            marginBottom: '0.5rem',
+                            fontSize: '0.75rem',
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -219,14 +219,14 @@ const RegisterPage = () => {
                         }}>
                             I want to
                         </label>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
                             <button
                                 type="button"
                                 onClick={() => setRole('user')}
                                 style={{
                                     flex: 1,
-                                    padding: '1rem',
-                                    fontSize: '0.9rem',
+                                    padding: '0.7rem',
+                                    fontSize: '0.85rem',
                                     fontWeight: 600,
                                     background: role === 'user' ? 'var(--fg)' : 'transparent',
                                     color: role === 'user' ? 'var(--bg)' : 'var(--fg)',
@@ -242,8 +242,8 @@ const RegisterPage = () => {
                                 onClick={() => setRole('vendor')}
                                 style={{
                                     flex: 1,
-                                    padding: '1rem',
-                                    fontSize: '0.9rem',
+                                    padding: '0.7rem',
+                                    fontSize: '0.85rem',
                                     fontWeight: 600,
                                     background: role === 'vendor' ? 'var(--fg)' : 'transparent',
                                     color: role === 'vendor' ? 'var(--bg)' : 'var(--fg)',
@@ -262,8 +262,8 @@ const RegisterPage = () => {
                         disabled={loading}
                         style={{
                             width: '100%',
-                            padding: '1.1rem',
-                            fontSize: '0.9rem',
+                            padding: '0.85rem',
+                            fontSize: '0.85rem',
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -283,10 +283,10 @@ const RegisterPage = () => {
 
                 {/* Login Link */}
                 <p style={{
-                    marginTop: '2rem',
+                    marginTop: '1.25rem',
                     textAlign: 'center',
                     color: 'var(--muted)',
-                    fontSize: '0.95rem'
+                    fontSize: '0.85rem'
                 }}>
                     Already have an account?{' '}
                     <Link to="/login" style={{

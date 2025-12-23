@@ -481,9 +481,9 @@ const LandingPage = ({ isPreloaderFinished }) => {
         borderBottom: "1px solid var(--border)",
         overflow: "hidden"
       }}>
-        <div style={{ display: "flex", gap: "4rem", whiteSpace: "nowrap" }}>
-          <div className="infinite-marquee" style={{ display: "flex", gap: "4rem", animation: "marquee 30s linear infinite" }}>
-            {['SYDNEY', 'PARIS', 'TOKYO', 'LONDON', 'NEW YORK', 'BERLIN', 'MILAN'].map((city, i) => (
+        <div className="marquee-container" style={{ display: "flex", whiteSpace: "nowrap" }}>
+          <div className="infinite-marquee" style={{ display: "flex", gap: "4rem", animation: "marquee 40s linear infinite" }}>
+            {['SYDNEY', 'PARIS', 'TOKYO', 'LONDON', 'NEW YORK', 'BERLIN', 'MILAN', 'NEW DELHI'].map((city, i) => (
               <span key={i} style={{
                 fontSize: "1.2rem",
                 fontWeight: 700,
@@ -495,8 +495,10 @@ const LandingPage = ({ isPreloaderFinished }) => {
                 {city}
               </span>
             ))}
-            {/* Duplicate for seamless loop */}
-            {['SYDNEY', 'PARIS', 'TOKYO', 'LONDON', 'NEW YORK', 'BERLIN', 'MILAN'].map((city, i) => (
+          </div>
+          {/* Duplicate for seamless loop */}
+          <div className="infinite-marquee" style={{ display: "flex", gap: "4rem", animation: "marquee 40s linear infinite", marginLeft: "4rem" }}>
+            {['SYDNEY', 'PARIS', 'TOKYO', 'LONDON', 'NEW YORK', 'BERLIN', 'MILAN', 'NEW DELHI'].map((city, i) => (
               <span key={`dup-${i}`} style={{
                 fontSize: "1.2rem",
                 fontWeight: 700,
@@ -698,9 +700,13 @@ const LandingPage = ({ isPreloaderFinished }) => {
       </section>
 
       <style>{`
+        .marquee-container {
+          display: flex;
+        }
+        
         @keyframes marquee {
           0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          100% { transform: translateX(-100%); }
         }
 
        /* Removed old bento css */
@@ -717,7 +723,6 @@ const LandingPage = ({ isPreloaderFinished }) => {
       }}>
         <div style={{
           maxWidth: "1260px",
-          margin: "0 auto",
           margin: "0 auto",
           gap: "2rem"
         }}>
@@ -904,7 +909,7 @@ const LandingPage = ({ isPreloaderFinished }) => {
             ))}
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "2rem", paddingTop: "2rem", borderTop: "1px solid rgba(255,255,255,0.2)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "2rem", paddingTop: "2rem" }}>
             <div>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#fff", margin: 0 }}>KSHV</h2>
               <p style={{ opacity: 0.5, marginTop: "0.5rem", fontSize: "0.9rem", color: "#fff" }}>© 2025 All Rights Reserved.</p>
@@ -931,20 +936,20 @@ const LandingPage = ({ isPreloaderFinished }) => {
         overflow: "hidden", // Clipping
         paddingBottom: "0" // Align to bottom
       }}>
-        {/* Vibrant Gradient */}
+        {/* Vibrant Gradient - Made taller and smoother blend */}
         <div
           className="sunrise-gradient"
           style={{
             position: "absolute",
-            bottom: "-20%",
-            left: "0",
-            width: "100%",
-            height: "120%",
-            background: "linear-gradient(to top, #ff0080 0%, #ff8c00 30%, #40e0d0 70%, transparent 100%)",
+            bottom: "-40%",
+            left: "-10%",
+            width: "120%",
+            height: "200%",
+            background: "radial-gradient(ellipse 100% 80% at 50% 100%, #ff0080 0%, #ff8c00 20%, #40e0d0 45%, transparent 70%)",
             opacity: 0,
             pointerEvents: "none",
             zIndex: 1,
-            filter: "blur(40px)"
+            filter: "blur(60px)"
           }}
         />
 

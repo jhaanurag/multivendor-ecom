@@ -66,26 +66,26 @@ const LoginPage = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 'var(--space-lg)',
+            padding: '1rem',
             background: 'var(--bg)'
         }}>
             <div ref={containerRef} style={{
                 width: '100%',
-                maxWidth: '460px'
+                maxWidth: '400px'
             }}>
                 {/* Header */}
-                <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
+                <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
                     <h1 style={{
                         fontFamily: 'var(--font-display)',
-                        fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                        fontSize: 'clamp(2rem, 4vw, 3rem)',
                         fontWeight: 700,
                         letterSpacing: '-0.04em',
-                        marginBottom: '1rem',
+                        marginBottom: '0.5rem',
                         color: 'var(--fg)'
                     }}>
                         Welcome <span style={{ fontStyle: 'italic', fontFamily: 'var(--font-serif)' }}>back</span>
                     </h1>
-                    <p style={{ color: 'var(--muted)', fontSize: '1rem' }}>
+                    <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
                         Sign in to continue to your account
                     </p>
                 </div>
@@ -106,11 +106,11 @@ const LoginPage = () => {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ marginBottom: '1rem' }}>
                         <label style={{
                             display: 'block',
-                            marginBottom: '0.5rem',
-                            fontSize: '0.85rem',
+                            marginBottom: '0.4rem',
+                            fontSize: '0.75rem',
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -125,8 +125,8 @@ const LoginPage = () => {
                             required
                             style={{
                                 width: '100%',
-                                padding: '1rem',
-                                fontSize: '1rem',
+                                padding: '0.75rem',
+                                fontSize: '0.95rem',
                                 border: '1px solid var(--border)',
                                 background: 'transparent',
                                 color: 'var(--fg)',
@@ -139,11 +139,11 @@ const LoginPage = () => {
                         />
                     </div>
 
-                    <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ marginBottom: '1.25rem' }}>
                         <label style={{
                             display: 'block',
-                            marginBottom: '0.5rem',
-                            fontSize: '0.85rem',
+                            marginBottom: '0.4rem',
+                            fontSize: '0.75rem',
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -158,8 +158,8 @@ const LoginPage = () => {
                             required
                             style={{
                                 width: '100%',
-                                padding: '1rem',
-                                fontSize: '1rem',
+                                padding: '0.75rem',
+                                fontSize: '0.95rem',
                                 border: '1px solid var(--border)',
                                 background: 'transparent',
                                 color: 'var(--fg)',
@@ -177,8 +177,8 @@ const LoginPage = () => {
                         disabled={loading}
                         style={{
                             width: '100%',
-                            padding: '1.1rem',
-                            fontSize: '0.9rem',
+                            padding: '0.85rem',
+                            fontSize: '0.85rem',
                             fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -198,10 +198,10 @@ const LoginPage = () => {
 
                 {/* Register Link */}
                 <p style={{
-                    marginTop: '2rem',
+                    marginTop: '1.25rem',
                     textAlign: 'center',
                     color: 'var(--muted)',
-                    fontSize: '0.95rem'
+                    fontSize: '0.85rem'
                 }}>
                     Don't have an account?{' '}
                     <Link to="/register" style={{

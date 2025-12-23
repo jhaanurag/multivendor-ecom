@@ -838,6 +838,16 @@ button:disabled,
   }
 }
 
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* Skeleton loading animation */
 .skeleton {
   background: linear-gradient(90deg,
