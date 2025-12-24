@@ -1,0 +1,460 @@
+/**
+ * About Page Styles
+ * Premium editorial design with dark theme
+ * Matches the main site's design system
+ */
+
+/* ========================================
+   BASE STYLES
+   ======================================== */
+.about-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-x: hidden;
+}
+
+/* ========================================
+   PRELOADER
+   ======================================== */
+.about-preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--bg);
+  z-index: var(--z-max);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  clip-path: inset(0% 0% 0% 0%);
+}
+
+/* Progress Bar */
+.loader-bar-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 2px;
+  background: var(--border);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.about-preloader:not(.loaded) .loader-bar-container {
+  opacity: 1;
+}
+
+.loader-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--fg);
+  transform-origin: left;
+}
+
+/* Stacked Images */
+.preloader-images {
+  position: relative;
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.dev-img-wrapper {
+  position: relative;
+  width: 180px;
+  height: 240px;
+  overflow: hidden;
+  clip-path: inset(100% 0% 0% 0%);
+}
+
+.dev-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: filter 0.5s ease;
+}
+
+.dev-img-wrapper:hover .dev-img {
+  filter: grayscale(0%);
+}
+
+.dev-initial {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--primary-fg);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* THE TEAM Text */
+.team-text-container {
+  overflow: hidden;
+}
+
+.team-text {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--fg);
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+/* DEVELOPERS Text */
+.developers-text {
+  position: absolute;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+}
+
+.dev-letter {
+  font-size: clamp(4rem, 12vw, 10rem);
+  font-weight: 800;
+  color: var(--fg);
+  display: inline-block;
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.about-content {
+  position: relative;
+  min-height: 100vh;
+  opacity: 1;
+}
+
+/* Logo */
+.about-logo {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--fg);
+  z-index: var(--z-sticky);
+  opacity: 0;
+  transform: translateX(-50%) translateY(-20px);
+}
+
+/* Navigation */
+.about-nav {
+  position: fixed;
+  top: 1.5rem;
+  right: 2rem;
+  display: flex;
+  gap: 2rem;
+  z-index: var(--z-sticky);
+}
+
+.nav-link {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--fg);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity var(--transition-fast);
+}
+
+.nav-link:hover {
+  opacity: 0.6;
+}
+
+/* ========================================
+   HERO SECTION
+   ======================================== */
+.about-hero {
+  padding: 8rem 2rem 4rem;
+  opacity: 0;
+}
+
+.hero-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.title-line {
+  font-size: clamp(2rem, 8vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--fg);
+}
+
+.title-accent {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--fg) 0%, var(--muted) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: var(--text-lg);
+  color: var(--muted);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   DEVELOPER CARDS
+   ======================================== */
+.developer-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.developer-card {
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--transition-base);
+}
+
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: filter var(--transition-slow);
+}
+
+.developer-card:hover .card-image {
+  filter: grayscale(0%);
+}
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.6) 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 1.5rem;
+}
+
+.card-number {
+  font-size: var(--text-4xl);
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.card-info {
+  padding: 0 0.5rem;
+}
+
+.name-mask {
+  overflow: hidden;
+}
+
+.card-name {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  color: var(--fg);
+}
+
+.card-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 0.75rem;
+  transform-origin: left;
+}
+
+.card-role {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ========================================
+   BIO SECTION
+   ======================================== */
+.about-bio {
+  padding: 6rem 2rem;
+  background: var(--bg-alt);
+}
+
+.bio-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.bio-title {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--fg);
+}
+
+.bio-text {
+  font-size: var(--text-lg);
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+/* ========================================
+   TECH STACK
+   ======================================== */
+.about-tech {
+  padding: 6rem 2rem;
+}
+
+.tech-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: var(--fg);
+}
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tech-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--transition-fast);
+}
+
+.tech-item:hover {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.about-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.footer-divider {
+  opacity: 0.3;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-links a {
+  font-size: var(--text-sm);
+  color: var(--fg);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.footer-links a:hover {
+  opacity: 0.6;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+  .preloader-images {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .dev-img-wrapper {
+    width: 120px;
+    height: 160px;
+  }
+
+  .about-nav {
+    display: none;
+  }
+
+  .about-hero {
+    padding: 6rem 1rem 3rem;
+  }
+
+  .developer-cards {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .about-footer {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .dev-letter {
+    font-size: clamp(2rem, 10vw, 4rem);
+  }
+
+  .hero-subtitle {
+    font-size: var(--text-base);
+  }
+}
